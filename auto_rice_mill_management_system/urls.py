@@ -17,6 +17,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 
+'''
+1. How to change ‘Django administration’ text?
+By default Django admin shows ‘Django administration’. You have been asked to replace this with ‘UMSRA Administration’
+
+'''
+admin.site.site_header = "Auto Rice Mill Management System"
+admin.site.site_title = "Auto Rice Mill Management System Admin Portal"
+admin.site.index_title = "Welcome to Auto Rice Mill Management System"
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('home/',include("mill.urls"))
