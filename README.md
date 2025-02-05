@@ -57,3 +57,16 @@
     'home.apps.HomeConfig',
     ]
 # set apps urls to project urls
+
+
+ami khaled mahmud boltechilam jorinar mill theke 
+
+jorinar mao
+
+
+fgkdjshlgjsd
+kjfdghkjdsbk
+fndjxhvbdsb
+jfndjnbvdsbh
+ndmhvbkjd
+kfdjnvsdbv
