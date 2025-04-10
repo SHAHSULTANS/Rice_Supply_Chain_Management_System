@@ -1,8 +1,8 @@
 """
-URL configuration for auto_rice_mill_management_system project.
+URL configuration for Rice_Supply_Chain_Management_System project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.1/topics/http/urls/
+    https://docs.djangoproject.com/en/5.2/topics/http/urls/
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -15,18 +15,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,include
-
-'''
-1. How to change ‘Django administration’ text?
-By default Django admin shows ‘Django administration’. You have been asked to replace this with ‘UMSRA Administration’
-
-'''
-admin.site.site_header = "Auto Rice Mill Management System"
-admin.site.site_title = "Auto Rice Mill Management System Admin Portal"
-admin.site.index_title = "Welcome to Auto Rice Mill Management System"
+from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('home/',include("mill.urls"))
+    path('',include('RSCMS_app.urls')),
 ]
