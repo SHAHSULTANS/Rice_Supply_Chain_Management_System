@@ -1,0 +1,11 @@
+
+{% if role == 'admin' %}
+    <h2>This is <span style="color: red;">ADMIN</span> dashboard</h2>
+{% elif role == 'customer' %}
+    <h2>This is <span style="color: red;">CUSTOMER</span> dashboard</h2>
+{% elif role == 'dealer' %}
+    <h2>This is <span style="color: red;">DEALER</span> dashboard</h2>
+{% elif role == 'manager' %}
+    <h2>This is <span style="color: red;">MANAGER</span> dashboard</h2>
+{% endif %}
+    

@@ -14,7 +14,7 @@ def register_view(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('login_view')
+            return redirect('login')
     else:
         form = CustomUserCreationForm()
     return render(request,'auth/register.html',{'form':form})
@@ -25,13 +25,49 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request,user)
-            return HttpResponse("Login Successfully")
-            # return role_based_redirect(user)
+            return role_based_redirect(user)
         else:
             messages.error(request,"Invalid username of password")
     else:
         form = AuthenticationForm()
     return render(request,'auth/login.html',{'form':form})
 
+
+def check_admin(user):
+    return user.is_authenticated and user.role == 'admin'
+def check_manager(user):
+    return user.is_authenticated and user.role == 'manager'
+def check_customer(user):
+    return user.is_authenticated and user.role == 'customer'
+def check_dealer(user):
+    return user.is_authenticated and user.role == 'dealer'
+
+@login_required(login_url='login')
+@user_passes_test(check_admin)
+def admin_dashboard(request):
+    return render(request, 'RSCMS_app/dashboard.html',{'role':'admin'})
+
+@login_required(login_url='login')
+@user_passes_test(check_manager)
+def manager_dashboard(request):
+    return render(request, 'RSCMS_app/dashboard.html',{'role':'manager'})
+
+@login_required(login_url='login')
+@user_passes_test(check_dealer)
+def dealer_dashboard(request):
+    return render(request, 'RSCMS_app/dashboard.html',{'role':'dealer'})
+
+@login_required(login_url='login')
+@user_passes_test(check_customer)
+def customer_dashboard(request):
+    return render(request, 'RSCMS_app/dashboard.html',{'role':'customer'})
+
 def role_based_redirect(user):
-    pass
+    if user.role == 'admin':
+        return redirect('admin_dashboard')
+    elif user.role == 'manager':
+        return redirect('manager_dashboard')
+    elif user.role == 'dealer':
+       return redirect('dealer_dashboard')
+    elif user.role == 'customer':
+       return redirect('customer_dashboard')
