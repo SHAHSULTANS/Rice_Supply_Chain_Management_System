@@ -1,4 +1,9 @@
+{% extends 'base.html' %}
 
+{% block title %}dashboard{% endblock title %}
+    
+
+{% block content %}
 {% if role == 'admin' %}
     <h2>This is <span style="color: red;">ADMIN</span> dashboard</h2>
 {% elif role == 'customer' %}
@@ -8,4 +13,7 @@
 {% elif role == 'manager' %}
     <h2>This is <span style="color: red;">MANAGER</span> dashboard</h2>
 {% endif %}
+    
+{% endblock content %}
+    
     
