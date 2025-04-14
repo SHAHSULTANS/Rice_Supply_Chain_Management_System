@@ -3,10 +3,6 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 
 
 # Create your views here.
-from django.http import HttpResponse
-
-def dealer_view(request):
-    return HttpResponse("Welcome dealer_view.")
 
 def check_dealer(user):
     return user.is_authenticated and user.role == 'dealer'

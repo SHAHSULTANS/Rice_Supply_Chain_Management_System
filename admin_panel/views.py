@@ -3,10 +3,6 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 
 
 # Create your views here.
-from django.http import HttpResponse
-
-def admin_view(request):
-    return HttpResponse("Welcome to your admin_view.")
 
 def check_admin(user):
     return user.is_authenticated and user.role == 'admin'
