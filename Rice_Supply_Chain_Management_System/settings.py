@@ -14,7 +14,7 @@ from pathlib import Path
 import os
 
 # for custom user
-AUTH_USER_MODEL = 'RSCMS_app.CustomUser'
+AUTH_USER_MODEL = 'accounts.CustomUser'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'accounts',       # ✅ Add this if it's missing
+    'dealer',
+    'manager',
+    'customer',
+    'admin_panel',
     'RSCMS_app',
 ]
 
