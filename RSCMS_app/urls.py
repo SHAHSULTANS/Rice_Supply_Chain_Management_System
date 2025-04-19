@@ -4,6 +4,7 @@ from RSCMS_app import views
 
 
 urlpatterns = [    
+    path("",views.home, name="home"),   
     path('accounts/', include('accounts.urls')),
     path('dealer/', include('dealer.urls')),
     path('manager/', include('manager.urls')),

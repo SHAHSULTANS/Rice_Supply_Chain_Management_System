@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Welcome, {{ dealer.user.username }}</h2>
+        <div>
+          <a href="{% url 'add_paddy_post' %}" class="btn btn-success me-2">
+            <strong>+ Add Post</strong>
+          </a>
+          <a href="{% url "marketplace_paddy_posts" %}" class="btn btn-outline-primary">
+            See All Posts
+          </a>
+        </div>
+      </div>
+      
+
+  {% if posts %}
+    <div class="row">
+      {% for post in posts %}
+        <div class="col-md-4 mb-4">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Quantity: {{ post.quantity }} units</h5>
+              <p class="card-text">
+                <strong>Moisture:</strong> {{ post.moisture_content }}%<br>
+                <strong>Price:</strong> ₹{{ post.price_per_mon }}<br>
+                <strong>Available:</strong> {{ post.is_available|yesno:"Yes,No" }}<br>
+                <strong>Posted:</strong> {{ post.stored_since|date:"M d, Y H:i" }}
+              </p>
+              {% if post.quality_notes %}
+              <p><em>{{ post.quality_notes|truncatechars:60 }}</em></p>
+              {% endif %}
+              <!-- You can add Edit/Delete buttons here -->
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info">No paddy posts yet. Click "+ Add Post" to list your stock.</div>
+  {% endif %}
+</div>
+{% endblock %}

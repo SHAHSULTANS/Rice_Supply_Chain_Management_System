@@ -75,3 +75,10 @@
 #        return redirect('dealer_dashboard')
 #     elif user.role == 'customer':
 #        return redirect('customer_dashboard')
+
+
+from django.shortcuts import render
+
+
+def home(request):
+    return render(request, 'home.html')
