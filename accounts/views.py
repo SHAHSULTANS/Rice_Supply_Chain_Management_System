@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.urls import reverse
 
 from .forms import CustomUserCreationForm
 
@@ -12,8 +13,15 @@ def register_view(request):
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('login')
+            user = form.save()
+            role = user.role
+            print(role)
+            
+            #role for custom user models.
+            if role == 'dealer':
+                return redirect("dealer_profile_create", user_id=user.id)
+            else:
+                return redirect('login')
     else:
         form = CustomUserCreationForm()
     return render(request, 'accounts/auth/register.html', {'form': form})

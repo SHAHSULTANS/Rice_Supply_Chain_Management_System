@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">Marketplace - Available Paddy Stocks</h2>
+  <div class="row">
+    {% for post in posts %}
+      <div class="col-md-4 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">
+                Dealer: <a href="#">{{ post.dealer.user.username }}</a>
+            </h5>
+            <p class="card-text">
+              <strong>Quantity:</strong> {{ post.quantity }} units<br>
+              <strong>Moisture:</strong> {{ post.moisture_content }}%<br>
+              <strong>Price:</strong> ₹{{ post.price_per_mon }}<br>
+              <strong>Posted:</strong> {{ post.stored_since|date:"M d, Y H:i" }}<br>
+              <strong>Available:</strong> {{ post.is_available|yesno:"Yes,No" }}
+            </p>
+            {% if post.quality_notes %}
+              <p><em>{{ post.quality_notes|truncatechars:60 }}</em></p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
