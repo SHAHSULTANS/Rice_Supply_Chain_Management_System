@@ -11,8 +11,7 @@ class ManagerProfileForm(forms.ModelForm):
             'address': forms.Textarea(attrs={'class':'form-control'}),
             'mill_name': forms.TextInput(attrs={'class':'form-control'}),
             'mill_location': forms.Textarea(attrs={'class':'form-control'}),
-            'experience_year': forms.IntegerField(attrs={'class':'form-control'}),
+            'experience_year': forms.NumberInput(attrs={'class':'form-control'}),
             'bio': forms.Textarea(attrs={'class':'form-control'}),
-            'profile_image': forms.ImageField(attrs={'class':'form-control'}),
+            'profile_image': forms.ClearableFileInput(attrs={'class':'form-control'}),
         }
-        
