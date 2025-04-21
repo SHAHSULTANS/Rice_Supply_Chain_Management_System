@@ -20,7 +20,7 @@
         <a class="nav-link text-white {% if request.resolver_match.url_name == 'update_manager_profile' %}active{% endif %}" href="{% url 'update_manager_profile' %}">✏️ Edit Profile</a>
         <a class="nav-link text-white {% if request.resolver_match.url_name == 'create_rice_post' %}active{% endif %}" href="{% url 'create_rice_post' %}">➕ Create Rice Post</a>
         <a class="nav-link text-white {% if request.resolver_match.url_name == 'show_rice_post' %}active{% endif %}" href="{% url 'show_rice_post' %}">📃 My Rice Posts</a>
-        <a class="nav-link text-info" href="{% url 'marketplace_paddy_posts' %}">🚪 Paddy Post</a>
+        <a class="nav-link text-info" href="{% url 'marketplace_paddy_posts' %}">🚪 Explore Paddy Post</a>
     </nav>
 </div>
 {% endif %}
