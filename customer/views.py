@@ -8,4 +8,4 @@ def check_customer(user):
 @login_required(login_url='login')
 @user_passes_test(check_customer)
 def customer_dashboard(request):
-    return render(request, 'RSCMS_app/dashboard.html',{'role':'customer'})
+    return render(request, 'customer/dashboard.html',{'role':'customer'})

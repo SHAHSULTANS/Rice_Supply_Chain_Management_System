@@ -10,4 +10,4 @@ def check_admin(user):
 @login_required(login_url='login')
 @user_passes_test(check_admin)
 def admin_dashboard(request):
-    return render(request, 'RSCMS_app/dashboard.html',{'role':'admin'})
+    return render(request, 'admin/dashboard.html',{'role':'admin'})
