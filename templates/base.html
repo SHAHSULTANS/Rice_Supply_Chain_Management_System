@@ -26,31 +26,9 @@
     <div class="d-flex flex-grow-1" style="min-height: 0;">
 
         <!-- ✅ Sidebar for Manager -->
-        {% if request.user.is_authenticated and request.user.role == "manager" %}
-        <div id="sidebar" class="bg-secondary text-white" style="min-width: 250px;">
-                    
-        <!-- Profile Picture -->
-        <div class="text-center my-2">
-            {% if manager and manager.profile_image %}
-                <img src="{{ manager.profile_image.url }}" class="rounded-circle img-thumbnail" style="width: 150px; height: 150px; object-fit: cover; margin-bottom: 10px;" alt="Profile Image">
-            {% else %}
-                <img src="{% static 'images/default_profile.png' %}" class="rounded-circle img-thumbnail" style="width: 150px; height: 150px; object-fit: cover; margin-bottom: 10px;" alt="Default Profile Image">
-            {% endif %}
-        </div>
-            
-            <div class="sidebar-user-name p-1 fs-4 border-bottom">{{manager.full_name}}</div>
-            <div class="sidebar-header p-1 fs-5 border-bottom">Manager Panel</div>
-            <!-- Sidebar Navigation -->
-            <nav class="nav flex-column p-2">
-                <a class="nav-link text-white {% if request.resolver_match.url_name == 'manager_dashboard' %}active{% endif %}" href="{% url 'manager_dashboard' %}">🏠 Dashboard</a>
-                <a class="nav-link text-white {% if request.resolver_match.url_name == 'manager_profile' %}active{% endif %}" href="{% url 'manager_profile' %}">👤 View Profile</a>
-                <a class="nav-link text-white {% if request.resolver_match.url_name == 'update_manager_profile' %}active{% endif %}" href="{% url 'update_manager_profile' %}">✏️ Edit Profile</a>
-                <a class="nav-link text-white {% if request.resolver_match.url_name == 'create_rice_post' %}active{% endif %}" href="{% url 'create_rice_post' %}">➕ Create Rice Post</a>
-                <a class="nav-link text-white {% if request.resolver_match.url_name == 'show_rice_post' %}active{% endif %}" href="{% url 'show_rice_post' %}">📃 My Rice Posts</a>
-                <a class="nav-link text-info" href="{% url 'marketplace_paddy_posts' %}">🚪 Paddy Post</a>
-            </nav>
-        </div>
-        {% endif %}
+
+        {% include 'SlideBar.html' %}   
+        
 
         <!-- ✅ Main Content Area -->
         <div id="content" class="flex-grow-1 p-3">
