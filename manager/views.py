@@ -15,3 +15,5 @@ def show_post_rice(request):
     pass
 def update_manager_profile(request):
     pass
+def manager_profile(request):
+    pass

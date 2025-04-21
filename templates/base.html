@@ -4,30 +4,56 @@
     <meta charset="UTF-8">
     <title>{% block title %}Rice Supply Chain Management System{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-    <!-- Bootstrap CDN -->
+    {% load static %}
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+    <link rel="stylesheet" href="{% static 'manager/css/dashboard.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     {% block extra_head %}{% endblock %}
 </head>
-<body>
- {% include 'navbar.html' %}
+<body class="d-flex flex-column min-vh-100">
 
-    <div class="container">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            {% endfor %}
+    <!-- ✅ Navbar stays at the top -->
+    {% include 'navbar.html' %}
+
+    <!-- ✅ Main Content Wrapper -->
+    <div class="d-flex flex-grow-1" style="min-height: 0;">
+
+        <!-- ✅ Sidebar (only for manager) -->
+        {% if request.user.is_authenticated and request.user.role == "manager" %}
+        <div id="sidebar" class="bg-dark text-white">
+            <div class="sidebar-header p-3 fs-5 border-bottom">Manager Panel</div>
+            <nav class="nav flex-column p-2">
+                <a class="nav-link text-white {% if request.resolver_match.url_name == 'manager_dashboard' %}active{% endif %}" href="{% url 'manager_dashboard' %}">🏠 Dashboard</a>
+                <a class="nav-link text-white {% if request.resolver_match.url_name == 'manager_profile' %}active{% endif %}" href="{% url 'manager_profile' %}">👤 View Profile</a>
+                <a class="nav-link text-white {% if request.resolver_match.url_name == 'update_manager_profile' %}active{% endif %}" href="{% url 'update_manager_profile' %}">✏️ Edit Profile</a>
+                <a class="nav-link text-white {% if request.resolver_match.url_name == 'create_post_rice' %}active{% endif %}" href="{% url 'create_post_rice' %}">➕ Create Rice Post</a>
+                <a class="nav-link text-white {% if request.resolver_match.url_name == 'show_post_rice' %}active{% endif %}" href="{% url 'show_post_rice' %}">📃 My Rice Posts</a>
+                <a class="nav-link text-danger" href="{% url 'logout' %}">🚪 Logout</a>
+            </nav>
+        </div>
         {% endif %}
-        
-        {% block content %}
-        {% endblock %}
+
+        <!-- ✅ Main Content Area -->
+        <div id="content" class="flex-grow-1 p-3">
+            <div class="container">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+
     </div>
 
-    <!-- Bootstrap JS -->
+    <!-- ✅ Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     {% block extra_scripts %}{% endblock %}
 </body>
