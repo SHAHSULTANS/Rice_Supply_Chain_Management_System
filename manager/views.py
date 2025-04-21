@@ -7,4 +7,4 @@ def check_manager(user):
 @login_required(login_url='login')
 @user_passes_test(check_manager)
 def manager_dashboard(request):
-    return render(request, 'RSCMS_app/dashboard.html', {'role': 'manager'})
+    return render(request, 'manager/dashboard.html')
