@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Rice Posts{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4"><i class="fas fa-list"></i> My Rice Posts</h2>
+
+    {% if rice_posts %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for post in rice_posts %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        {% if post.rice_image %}
+                            <img src="{{ post.rice_image.url }}" class="card-img-top" alt="Rice Image" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <img src="{% static 'images/default_rice.jpg' %}" class="card-img-top" alt="Default Rice Image" style="height: 200px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">Quality: {{ post.quality }}</h5>
+                            <p class="card-text"><strong>Quantity:</strong> {{ post.quantity_kg }} kg</p>
+                            <p class="card-text"><strong>Price/kg:</strong> ${{ post.price_per_kg }}</p>
+                            <p class="card-text"><strong>Description:</strong> {{ post.description|truncatechars:100 }}</p>
+                            <div class="d-flex justify-content-between">
+                                <p class="card-text">
+                                    <span class="badge {% if post.is_sold %}bg-danger{% else %}bg-success{% endif %}">
+                                        {% if post.is_sold %}Sold{% else %}Available{% endif %}
+                                    </span>
+                                </p>
+                                <a href="{% url 'update_rice_post' post.id %}" class="btn btn-primary">Edit</a>
+                            </div>
+                        </div>
+                        <div class="card-footer text-muted">
+                            Posted on {{ post.created_at|date:"M d, Y" }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center" role="alert">
+            You haven't posted any rice yet. <a href="{% url 'create_rice_post' %}">Create a post now!</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

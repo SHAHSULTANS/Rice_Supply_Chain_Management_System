@@ -5,8 +5,9 @@ urlpatterns = [
     path('dashboard/manager/',views.manager_dashboard, name='manager_dashboard'),
     path('manager_profile/',views.manager_profile, name='manager_profile'),
     path('update_manager_profile/',views.update_manager_profile, name='update_manager_profile'),
-    path('show_post_rice/',views.show_post_rice, name='show_post_rice'),
-    path('create_post_rice/',views.create_post_rice, name='create_post_rice'),
+    path('show_rice_post/',views.show_rice_post, name='show_rice_post'),
+    path('create_rice_post/',views.create_rice_post, name='create_rice_post'),
+    path('update_rice_post/<int:id>',views.update_rice_post, name='update_rice_post'),
     
     
 

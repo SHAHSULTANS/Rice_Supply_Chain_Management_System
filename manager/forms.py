@@ -15,3 +15,15 @@ class ManagerProfileForm(forms.ModelForm):
             'bio': forms.Textarea(attrs={'class':'form-control'}),
             'profile_image': forms.ClearableFileInput(attrs={'class':'form-control'}),
         }
+
+class RicePostForm(forms.ModelForm):
+    class Meta:
+        model = RicePost
+        fields = ['quality', 'quantity_kg', 'price_per_kg', 'description', 'rice_image']
+        widgets = {
+            'quality': forms.TextInput(attrs={'class': 'form-control'}),
+            'quantity_kg': forms.NumberInput(attrs={'class': 'form-control'}),
+            'price_per_kg': forms.NumberInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'rice_image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        }

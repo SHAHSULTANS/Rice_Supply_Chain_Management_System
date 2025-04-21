@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render,redirect,get_object_or_404
 from .models import ManagerProfile, RicePost
-from .forms import ManagerProfileForm
+from .forms import ManagerProfileForm, RicePostForm
 
 def check_manager(user):
     return user.is_authenticated and user.role == 'manager'
@@ -11,12 +11,40 @@ def check_manager(user):
 def manager_dashboard(request):
     return render(request, 'manager/dashboard.html')
 
-def create_post_rice(request):
-    pass
-def show_post_rice(request):
-    pass
+@login_required(login_url='login')
+def create_rice_post(request):
+    if request.method == "POST":
+        form = RicePostForm(request.POST, request.FILES)
+        if form.is_valid():
+            rice_post = form.save(commit=False)
+            rice_post.manager = request.user  # 👈 Assign the manager here
+            rice_post.save()
+            print("User:", request.user.username)
+            print("Role:", request.user.role)
+            return redirect("show_rice_post")
+    else:
+        form = RicePostForm()
+    return render(request, "manager/create_rice_post.html", {'form': form})
+
+@login_required(login_url='login')
+def update_rice_post(request,id):
+    rice_post = get_object_or_404(RicePost,id=id)
+    if request.method == "POST":
+        form = RicePostForm(request.POST, request.FILES, instance=rice_post)
+        if form.is_valid():
+            form.save()
+            return redirect("show_rice_post")
+    else:
+        form = RicePostForm(instance=rice_post)
+    return render(request,"manager/update_rice_post.html",{"form":form})
+
+@login_required(login_url='login')
+def show_rice_post(request):
+    rice_posts = RicePost.objects.filter(manager=request.user, is_sold=False).order_by("-created_at")
+    return render(request,"manager/show_rice_post.html",{'rice_posts':rice_posts})
 
 
+@login_required(login_url='login')
 def update_manager_profile(request):
     profile = get_object_or_404(ManagerProfile, user=request.user)
 
@@ -31,6 +59,7 @@ def update_manager_profile(request):
     return render(request, "manager/update_manager_profile.html", {'form': form})
 
 
+@login_required(login_url='login')
 def manager_profile(request):
     manager, created = ManagerProfile.objects.get_or_create(user=request.user)
     return render(request,"manager/manager_profile.html",{'manager':manager})
