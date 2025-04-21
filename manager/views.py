@@ -63,3 +63,11 @@ def update_manager_profile(request):
 def manager_profile(request):
     manager, created = ManagerProfile.objects.get_or_create(user=request.user)
     return render(request,"manager/manager_profile.html",{'manager':manager})
+
+
+@login_required(login_url='login')
+def explore_paddy_post(request):
+    return redirect("marketplace_paddy_posts")
+
+
+
