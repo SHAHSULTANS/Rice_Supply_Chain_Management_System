@@ -13,4 +13,5 @@ def create_post_rice(request):
     pass
 def show_post_rice(request):
     pass
-
+def update_manager_profile(request):
+    pass
