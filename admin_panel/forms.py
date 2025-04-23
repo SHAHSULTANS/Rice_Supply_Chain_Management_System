@@ -6,7 +6,7 @@ class AdminProfileForm(forms.ModelForm):
         model = AdminProfile
         fields = ['full_name','phone_number','license_number','address','bio','profile_image']
 
-        wedgets = {
+        widgets = {
             'full_name':forms.TextInput(attrs={'class':'form-control'}),
             'phone_number': forms.TextInput(attrs={'class':'form-control'}),
             'address': forms.Textarea(attrs={'class':'form-control'}),

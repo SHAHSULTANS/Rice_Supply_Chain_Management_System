@@ -14,7 +14,15 @@ def admin_dashboard(request):
     return render(request, 'admin/dashboard.html',{'role':'admin'})
 
 def update_admin_profile(request):
-    return render(request,"admin/update_admin_profile.html")
+    profile = get_object_or_404(AdminProfile, user=request.user)
+    if request.method == "POST":
+        form = AdminProfileForm(request.POST,request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect("admin_profile")
+    else:
+        form = AdminProfileForm(instance=profile)
+    return render(request,"admin/update_admin_profile.html",{'form':form})
 
 def admin_profile(request):
     admin, created = AdminProfile.objects.get_or_create(user=request.user)
