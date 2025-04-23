@@ -1,14 +1,14 @@
-# from .models import ManagerProfile
+from .models import AdminProfile
 
-# def manager_profile(request):
-#     if request.user.is_authenticated:
-#         try:
-#             manager = ManagerProfile.objects.get(user=request.user)
-#             return {'manager': manager}
-#         except ManagerProfile.DoesNotExist:
-#             return {}
-#     return {}
+def admin_profile(request):
+    if request.user.is_authenticated:
+        try:
+            admin = AdminProfile.objects.get(user=request.user)
+            return {'admin': admin}
+        except AdminProfile.DoesNotExist:
+            return {}
+    return {}
 
 """
-Use a context processor to make manager available in all templates
+Use a context processor to make admin available in all templates
 """
