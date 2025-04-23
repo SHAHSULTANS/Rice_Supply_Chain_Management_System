@@ -1,13 +1,50 @@
 {% extends 'base.html' %}
 
-{% block title %}Manager dashboard{% endblock title %}
-    
+{% block title %}Amin Dashboard{% endblock title %}
 
 {% block content %}
-<h1>This is admin dashboard</h1>
-    
+<div class="container mt-4">
+    <h2 class="mb-4">👨‍🏭 Welcome to the Admin Dashboard</h2>
+
+    <div class="row g-4">
+        <!-- Profile Section -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">📝 Profile</h5>
+                    <p class="card-text">View or update your admin profile details.</p>
+                    <a href="{% url 'admin_profile' %}" class="btn btn-primary">View Profile</a>
+                    <a href="{% url 'update_admin_profile' %}" class="btn btn-outline-secondary">Edit Profile</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manage Posts -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">📃 Your Rice Posts</h5>
+                    <p class="card-text">View, update, or delete your existing rice posts.</p>
+                    <a href="{% url 'show_rice_post' %}" class="btn btn-info">Manage Posts</a>
+                </div>
+            </div>
+        </div>
+
+        <!--see paddy post  -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100 border-danger">
+                <div class="card-body">
+                    <h5 class="card-title text-danger">🚪 Explore Paddy Post</h5>
+                    <p class="card-text">See all delears paddy post.</p>
+                    <a href="{% url 'explore_paddy_post' %}" class="btn btn-danger">Explore</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}
-    
+
+
 
 {% comment %} 
 username : abdullah

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Profile{% endblock %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4"><i class="fas fa-user-circle"></i> Admin Profile</h2>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            Profile Details
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Profile Info (left side) -->
+                <div class="col-md-8">
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold">Full Name:</div>
+                        <div class="col-sm-8">{{ admin.full_name }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold">Username:</div>
+                        <div class="col-sm-8">{{ admin.user.username }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold">Email:</div>
+                        <div class="col-sm-8">{{ admin.user.email }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold">Phone:</div>
+                        <div class="col-sm-8">{{ admin.phone_number }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold">Address:</div>
+                        <div class="col-sm-8">{{ admin.address }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold">License Number:</div>
+                        <div class="col-sm-8">{{ admin.mill_name }}</div>
+                    </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold">Bio:</div>
+                        <div class="col-sm-8">{{ admin.bio }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold">Joined At:</div>
+                        <div class="col-sm-8">{{ admin.created_at|date:"F d, Y - H:i" }}</div>
+                    </div>
+                </div>
+
+                <!-- Profile Image (right side) -->
+                <div class="col-md-4 text-center">
+                    {% if admin.profile_image %}
+                        <img src="{{ admin.profile_image.url }}" alt="Profile Image"
+                             class="img-thumbnail shadow"
+                             style="width: 250px; height: 250px; object-fit: cover;">
+                    {% else %}
+                        <img src="{% static 'images/default_profile.png' %}" alt="Default Image"
+                             class="img-thumbnail shadow"
+                             style="width: 250px; height: 250px; object-fit: cover;">
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 text-end">
+        <a href="{% url 'update_admin_profile' %}" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Edit Profile
+        </a>
+    </div>
+</div>
+{% endblock %}
