@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import render,redirect,get_object_or_404
+from django.shortcuts import render,redirect,get_object_or_404,HttpResponse
 from .models import ManagerProfile, RicePost
 from .forms import ManagerProfileForm, RicePostForm
 
@@ -40,7 +40,11 @@ def update_rice_post(request,id):
 
 @login_required(login_url='login')
 def show_rice_post(request):
-    rice_posts = RicePost.objects.filter(manager=request.user, is_sold=False).order_by("-created_at")
+    if request.user.role in ['admin','manager']:
+        rice_posts = RicePost.objects.filter( is_sold=False).order_by("-created_at")
+    else:
+        #TODO have to add a html file for this response
+        return HttpResponse("Only admin and manager can see this post")
     return render(request,"manager/show_rice_post.html",{'rice_posts':rice_posts})
 
 

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Edit Paddy Post</h2>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Update Post</button>
+    <a href="{% url 'dealer_dashboard' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}

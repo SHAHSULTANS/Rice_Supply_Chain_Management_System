@@ -56,6 +56,20 @@ def add_paddy_post(request):
 
 
 
-def marketplace_paddy_posts(request):
+def see_all_paddy_posts(request):
     posts = PaddyStock.objects.filter(is_available=True).order_by('-stored_since')
     return render(request, 'dealer/paddy_posts.html', {'posts': posts})
+
+
+def edit_paddy_post(request, post_id):
+    post = get_object_or_404(PaddyStock, id=post_id)
+
+    if request.method == 'POST':
+        form = PaddyStockForm(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect('dealer_dashboard')
+    else:
+        form = PaddyStockForm(instance=post)
+
+    return render(request, 'dealer/edit_post.html', {'form': form})
