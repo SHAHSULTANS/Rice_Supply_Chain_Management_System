@@ -73,5 +73,12 @@ def manager_profile(request):
 def explore_paddy_post(request):
     return redirect("marketplace_paddy_posts")
 
+def delete_rice_post(request,id):
+    rice_post = get_object_or_404(RicePost,id=id)
+    if request.method == "POST":
+        rice_post.delete()
+        return redirect("show_rice_post")
+    
+
 
 

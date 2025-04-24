@@ -8,6 +8,7 @@ urlpatterns = [
     path('show_rice_post/',views.show_rice_post, name='show_rice_post'),
     path('create_rice_post/',views.create_rice_post, name='create_rice_post'),
     path('update_rice_post/<int:id>',views.update_rice_post, name='update_rice_post'),
+    path('delete_rice_post/<int:id>',views.delete_rice_post, name='delete_rice_post'),
     path('explore_paddy_post',views.explore_paddy_post, name='explore_paddy_post'),
     
     
