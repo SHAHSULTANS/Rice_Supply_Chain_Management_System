@@ -12,6 +12,10 @@
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="mb-3">
+                    <label for="id_quality" class="form-label">Rice Name</label>
+                    {{ form.rice_name }}
+                </div>
+                <div class="mb-3">
                     <label for="id_quality" class="form-label">Quality</label>
                     {{ form.quality }}
                 </div>

@@ -21,6 +21,7 @@
                         {% endif %}
 
                         <div class="card-body">
+                            <h4 class="card-title mb-2">Rice Name: {{ post.rice_name }}</h4>
                             <h5 class="card-title mb-2">Quality: {{ post.quality }}</h5>
                             <p class="card-text mb-1"><strong>Quantity:</strong> {{ post.quantity_kg }} kg</p>
                             <p class="card-text mb-1"><strong>Price/kg:</strong> ${{ post.price_per_kg }}</p>
@@ -59,5 +60,6 @@
             </a>
         </div>
     {% endif %}
+    <a href="{% url 'create_rice_post'%}" class="btn btn-primary mt-3" >Create Rice Post</a>
 </div>
 {% endblock %}

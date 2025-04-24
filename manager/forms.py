@@ -19,8 +19,9 @@ class ManagerProfileForm(forms.ModelForm):
 class RicePostForm(forms.ModelForm):
     class Meta:
         model = RicePost
-        fields = ['quality', 'quantity_kg', 'price_per_kg', 'description', 'rice_image']
+        fields = ['rice_name','quality', 'quantity_kg', 'price_per_kg', 'description', 'rice_image']
         widgets = {
+            'rice_name': forms.TextInput(attrs={'class': 'form-control'}),
             'quality': forms.TextInput(attrs={'class': 'form-control'}),
             'quantity_kg': forms.NumberInput(attrs={'class': 'form-control'}),
             'price_per_kg': forms.NumberInput(attrs={'class': 'form-control'}),

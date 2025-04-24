@@ -21,6 +21,7 @@ class ManagerProfile(models.Model):
     
 class RicePost(models.Model):
     manager = models.ForeignKey(CustomUser,on_delete=models.CASCADE, limit_choices_to={'role':'manager'})
+    rice_name = models.CharField(max_length=200, blank=True, null=True)
     quality = models.CharField(max_length=100)
     quantity_kg = models.FloatField()
     price_per_kg = models.DecimalField(max_digits=6, decimal_places=2)
