@@ -75,3 +75,12 @@ def edit_paddy_post(request, post_id):
     return render(request, 'dealer/edit_post.html', {'form': form})
 
 
+
+
+from django.contrib import messages
+def delete_post(request, post_id):
+    post = get_object_or_404(PaddyStock, id=post_id)
+    if request.method == 'POST':
+        post.delete()
+        messages.success(request, 'Post deleted successfully.')
+    return redirect('dealer_dashboard')  
