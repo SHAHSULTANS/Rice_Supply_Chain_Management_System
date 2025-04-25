@@ -7,6 +7,8 @@ from decimal import Decimal
 
 def check_manager(user):
     return user.is_authenticated and user.role == 'manager'
+def check_manager_and_customer(user):
+    return user.is_authenticated and user.role in ['manager', 'customer']
 
 @login_required(login_url="login")
 @user_passes_test(check_manager)
@@ -52,7 +54,7 @@ def delete_rice_post(request,id):
         return redirect("show_rice_post")
 
 @login_required(login_url="login")
-@user_passes_test(check_manager)
+@user_passes_test(check_manager_and_customer)
 def show_rice_post(request):
     if request.user.role in ['admin','manager','customer']:
         rice_posts = RicePost.objects.filter( is_sold=False).order_by("-created_at")
