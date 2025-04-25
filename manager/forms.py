@@ -1,5 +1,5 @@
 from django import forms
-from .models import ManagerProfile, RicePost
+from .models import ManagerProfile, RicePost, Purchase_paddy
 
 class ManagerProfileForm(forms.ModelForm):
     class Meta:
@@ -19,11 +19,17 @@ class ManagerProfileForm(forms.ModelForm):
 class RicePostForm(forms.ModelForm):
     class Meta:
         model = RicePost
-        fields = ['quality', 'quantity_kg', 'price_per_kg', 'description', 'rice_image']
+        fields = ['rice_name','quality', 'quantity_kg', 'price_per_kg', 'description', 'rice_image']
         widgets = {
+            'rice_name': forms.TextInput(attrs={'class': 'form-control'}),
             'quality': forms.TextInput(attrs={'class': 'form-control'}),
             'quantity_kg': forms.NumberInput(attrs={'class': 'form-control'}),
             'price_per_kg': forms.NumberInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'rice_image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
+        
+class Purchase_paddyForm(forms.ModelForm):
+    class Meta:
+        model = Purchase_paddy
+        fields = ['quantity_purchased','transport_cost']

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}About Us{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">About Us</h1>
+    <p>
+        The <strong>Rice Supply Chain Management System</strong> is a web-based platform developed by a team of Computer Science students at Jahangirnagar University. Our mission is to modernize the traditional rice supply chain by providing a transparent, digital solution that connects farmers, dealers, mill managers, and customers on a single platform.
+    </p>
+
+    <p>
+        This project addresses the challenges faced in rural rice trading—such as poor pricing transparency, inefficient logistics, and manual transaction records—by introducing a system where stakeholders can interact, negotiate, and transact easily and fairly.
+    </p>
+
+    <h3 class="mt-4">Our Team</h3>
+    <ul>
+        <li><strong>Abdullah (Roll: 383)</strong> – Manager Module Developer</li>
+        <li><strong>Shanto (Roll: 379)</strong> – Dealer Module Developer</li>
+        <li><strong>Khaled (Roll: 391)</strong> – Admin Module Developer</li>
+        <li><strong>Tawhid (Roll: 395)</strong> – Customer & Payment Module Developer</li>
+    </ul>
+    <a href="{% url 'project_proposal' %}">Project Proposal</a>
+    <p class="mt-4">
+        We are dedicated to solving real-world agricultural challenges through technology, and we believe this project has the potential to make a meaningful difference in the food distribution chain.
+    </p>
+</div>
+{% endblock content %}

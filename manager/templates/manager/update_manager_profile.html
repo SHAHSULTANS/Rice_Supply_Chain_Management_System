@@ -7,7 +7,10 @@
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Update Profile</button>
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary">Update Profile</button>
+            <a href="{% url 'manager_profile' %}" class="btn btn-secondary">Cancel</a>
+        </div>
     </form>
 </div>
 {% endblock %}
