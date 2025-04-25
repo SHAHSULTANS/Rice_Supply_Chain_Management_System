@@ -85,7 +85,7 @@ def delete_rice_post(request,id):
 @login_required(login_url="login")
 @user_passes_test(check_manager)
 def explore_paddy_post(request):
-    paddy_stocks = PaddyStock.objects.filter(is_available=True).order_by('-stored_since')
+    paddy_stocks = PaddyStock.objects.all().order_by('-stored_since')
     return render(request, 'manager/explore_paddy_post.html', {'paddy_stocks': paddy_stocks})
 
 
