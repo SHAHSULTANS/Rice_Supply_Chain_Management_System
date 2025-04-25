@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render,redirect,get_object_or_404,HttpResponse
-from .models import ManagerProfile, RicePost
+from .models import ManagerProfile, RicePost, Purchase_paddy
 from dealer.models import PaddyStock
-from .forms import ManagerProfileForm, RicePostForm 
+from .forms import ManagerProfileForm, RicePostForm, Purchase_paddyForm
+from decimal import Decimal
 
 def check_manager(user):
     return user.is_authenticated and user.role == 'manager'
@@ -70,11 +71,7 @@ def manager_profile(request):
     return render(request,"manager/manager_profile.html",{'manager':manager})
 
 
-@login_required(login_url="login")
-@user_passes_test(check_manager)
-def explore_paddy_post(request):
-    paddy_stocks = PaddyStock.objects.filter(is_available=True).order_by('-stored_since')
-    return render(request, 'manager/explore_paddy_post.html', {'paddy_stocks': paddy_stocks})
+
 
 def delete_rice_post(request,id):
     rice_post = get_object_or_404(RicePost,id=id)
@@ -83,6 +80,38 @@ def delete_rice_post(request,id):
         return redirect("show_rice_post")
 
     
+    
+    
+@login_required(login_url="login")
+@user_passes_test(check_manager)
+def explore_paddy_post(request):
+    paddy_stocks = PaddyStock.objects.filter(is_available=True).order_by('-stored_since')
+    return render(request, 'manager/explore_paddy_post.html', {'paddy_stocks': paddy_stocks})
 
+
+@login_required(login_url="login")
+@user_passes_test(check_manager)
+def purchase_paddy(request,id):
+    paddy = get_object_or_404(PaddyStock, id=id , is_available=True)
+    if request.method == "POST":
+        form = Purchase_paddyForm(request.POST)
+        if form.is_valid():
+            purchase = form.save(commit=False)
+            purchase.manager = request.user
+            purchase.paddy = paddy
+            purchase.total_price = (Decimal(purchase.quantity_purchased) * paddy.price_per_mon) + purchase.transport_cost
+            purchase.save()
+            
+            paddy.is_available = False
+            paddy.save()
+    else:
+        form = Purchase_paddyForm()
+    return render(request, "manager/purchase_paddy.html",{'form':form , 'paddy':paddy})
+    
+@login_required(login_url="login")
+@user_passes_test(check_manager)
+def purchase_history(request):
+    purchases = Purchase_paddy.objects.filter(manager=request.user).order_by("-purchase_date")
+    return render(request,"manager/purchase_history.html",{'purchases':purchases})
 
 

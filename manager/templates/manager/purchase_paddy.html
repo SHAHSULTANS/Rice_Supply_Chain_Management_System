@@ -17,10 +17,10 @@
             <div class="col-md-8">
                 <div class="card-body">
                     <h5 class="card-title">{{ paddy.paddy_name }}</h5>
-                    <p class="card-text"><strong>Dealer:</strong> {{ paddy.dealer.username }}</p>
-                    <p class="card-text"><strong>Quality:</strong> {{ paddy.quality }}</p>
-                    <p class="card-text"><strong>Available Quantity:</strong> {{ paddy.quantity_kg }} kg</p>
-                    <p class="card-text"><strong>Price per KG:</strong> ৳{{ paddy.price_per_kg }}</p>
+                    <p class="card-text"><strong>Dealer:</strong> {{ paddy.dealer.user.username }}</p>
+                    <p class="card-text"><strong>Quality:</strong> {{ paddy.moisture_content }} %</p>
+                    <p class="card-text"><strong>Available Quantity:</strong> {{ paddy.quantity }} kg</p>
+                    <p class="card-text"><strong>Price per :</strong> ৳{{ paddy.price_per_mon }}</p>
                     <p class="card-text">{{ paddy.description }}</p>
                 </div>
             </div>

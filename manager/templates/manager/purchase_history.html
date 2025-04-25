@@ -21,9 +21,9 @@
                 {% for purchase in purchases %}
                 <tr>
                     <td>{{ purchase.paddy.paddy_name }}</td>
-                    <td>{{ purchase.paddy.dealer.username }}</td>
+                    <td>{{ purchase.paddy.dealer.user.username }}</td>
                     <td>{{ purchase.quantity_purchased }}</td>
-                    <td>{{ purchase.paddy.price_per_kg }}</td>
+                    <td>{{ purchase.paddy.price_per_mon }}</td>
                     <td>{{ purchase.transport_cost }}</td>
                     <td>{{ purchase.total_price }}</td>
                     <td>{{ purchase.purchase_date|date:"M d, Y h:i A" }}</td>

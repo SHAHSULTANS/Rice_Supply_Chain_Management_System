@@ -1,5 +1,5 @@
 from django import forms
-from .models import ManagerProfile, RicePost
+from .models import ManagerProfile, RicePost, Purchase_paddy
 
 class ManagerProfileForm(forms.ModelForm):
     class Meta:
@@ -29,3 +29,7 @@ class RicePostForm(forms.ModelForm):
             'rice_image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
         
+class Purchase_paddyForm(forms.ModelForm):
+    class Meta:
+        model = Purchase_paddy
+        fields = ['quantity_purchased','transport_cost']
