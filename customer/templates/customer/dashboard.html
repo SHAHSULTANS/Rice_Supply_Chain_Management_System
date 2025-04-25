@@ -1,14 +1,32 @@
 {% extends 'base.html' %}
 
-{% block title %}Customer dashboard{% endblock title %}
-    
+{% block title %}Customer Dashboard{% endblock title %}
 
 {% block content %}
-<h1>This is customer dashboard</h1>
-    
-{% endblock content %}
-    
+<div class="container mt-4">
+    <h2 class="mb-4">👨‍🏭 Welcome to the Customer Dashboard</h2>
 
+    <div class="row g-4">
+        <!-- Profile Section -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">📝 Profile</h5>
+                    <p class="card-text">View or update your manager profile details.</p>
+                    <a href="{% url 'customer_profile' %}" class="btn btn-primary">View Profile</a>
+                    <a href="{% url 'update_customer_profile' %}" class="btn btn-outline-secondary">Edit Profile</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock content %}
+
+{% comment %} 
+username : manager
+password : sakib@1234
+{% endcomment %}
 {% comment %} 
 username : customer
 password : soumik@1234

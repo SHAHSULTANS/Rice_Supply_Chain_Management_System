@@ -73,6 +73,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'manager.context_processors.manager_profile',
                 'admin_panel.context_processors.admin_profile',
+                'customer.context_processors.customer_profile'
             ],
         },
     },

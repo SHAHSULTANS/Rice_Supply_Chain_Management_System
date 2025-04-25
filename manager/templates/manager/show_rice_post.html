@@ -6,7 +6,12 @@
 {% block content %}
 <div class="container mt-5">
     <h2 class="mb-4 text-primary">
+        {% if request.user.role == "customer" %}
+        <i class="fas fa-seedling me-2"></i>Explore Rice Posts
+        {% else %}
         <i class="fas fa-seedling me-2"></i>My Rice Posts
+
+        {% endif %}
     </h2>
 
     {% if rice_posts %}
@@ -43,7 +48,11 @@
                                         </button>
                                     </form>
                                 </div>
+                               
                             </div>
+                            {% if request.user.role == "customer" %}
+                            <a href="{% url "purchase_rice" post.id %}" class="btn btn-primary">Order Now</a>
+                            {% endif %}
                         </div>
 
                         <div class="card-footer text-muted small">
@@ -61,6 +70,11 @@
             </a>
         </div>
     {% endif %}
+    {% if request.user.role == "customer" %}
+        {{pass}}
+    {% else %}
     <a href="{% url 'create_rice_post'%}" class="btn btn-primary mt-3" >Create Rice Post</a>
+
+    {% endif %}
 </div>
 {% endblock %}
