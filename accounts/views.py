@@ -52,4 +52,4 @@ def role_based_redirect(user):
     elif user.role == 'dealer':
         return redirect('dealer_dashboard')
     elif user.role == 'customer':
-        return redirect('customer_dashboard')
+        return redirect('explore_rice_post')
