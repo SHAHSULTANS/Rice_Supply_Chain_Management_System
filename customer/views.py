@@ -33,3 +33,7 @@ def update_customer_profile(request):
         
 def purchase_rice(request,id):
     return HttpResponse("have to implement this part")
+
+
+def explore_rice_post(request):
+    return redirect("show_rice_post")

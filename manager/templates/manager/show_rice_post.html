@@ -37,6 +37,8 @@
                                 <span class="fw-bold">Status: <span class="badge {% if post.is_sold %}bg-danger{% else %}bg-success{% endif %}">
                                     {% if post.is_sold %}Sold{% else %}Available{% endif %}
                                 </span></span>
+                                {% if request.user.role == "customer" %}
+                                {% else %}
                                 <div class="d-flex gap-2">
                                     <a href="{% url 'update_rice_post' post.id %}" class="btn btn-outline-primary btn-sm">
                                         <i class="fas fa-edit"></i> Edit
@@ -48,10 +50,12 @@
                                         </button>
                                     </form>
                                 </div>
+                                {% endif %}
+
                                
                             </div>
                             {% if request.user.role == "customer" %}
-                            <a href="{% url "purchase_rice" post.id %}" class="btn btn-primary">Order Now</a>
+                            <a href="{% url "purchase_rice" post.id %}" class="btn btn-primary my-3">Order Now</a>
                             {% endif %}
                         </div>
 
