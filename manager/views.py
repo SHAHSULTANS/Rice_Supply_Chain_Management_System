@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render,redirect,get_object_or_404,HttpResponse
 from .models import ManagerProfile, RicePost
-from .forms import ManagerProfileForm, RicePostForm
+from dealer.models import PaddyStock
+from .forms import ManagerProfileForm, RicePostForm 
 
 def check_manager(user):
     return user.is_authenticated and user.role == 'manager'
@@ -69,15 +70,18 @@ def manager_profile(request):
     return render(request,"manager/manager_profile.html",{'manager':manager})
 
 
-@login_required(login_url='login')
+@login_required(login_url="login")
+@user_passes_test(check_manager)
 def explore_paddy_post(request):
-    return redirect("marketplace_paddy_posts")
+    paddy_stocks = PaddyStock.objects.filter(is_available=True).order_by('-stored_since')
+    return render(request, 'manager/explore_paddy_post.html', {'paddy_stocks': paddy_stocks})
 
 def delete_rice_post(request,id):
     rice_post = get_object_or_404(RicePost,id=id)
     if request.method == "POST":
         rice_post.delete()
         return redirect("show_rice_post")
+
     
 
 

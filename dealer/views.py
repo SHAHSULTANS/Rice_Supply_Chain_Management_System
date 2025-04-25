@@ -73,3 +73,5 @@ def edit_paddy_post(request, post_id):
         form = PaddyStockForm(instance=post)
 
     return render(request, 'dealer/edit_post.html', {'form': form})
+
+

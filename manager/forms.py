@@ -28,3 +28,4 @@ class RicePostForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'rice_image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
+        
