@@ -1,5 +1,5 @@
 {% load static %}
-
+{% comment %} For manager section {% endcomment %}
 {% if request.user.is_authenticated and request.user.role == "manager" %}
 <div id="sidebar" class="bg-secondary text-white" style="min-width: 250px;">
 <!-- Profile Picture -->
@@ -28,6 +28,7 @@
 
 
 
+{% comment %} For admin section {% endcomment %}
 {% if request.user.is_authenticated and request.user.role == "admin" %}
 <div id="sidebar" class="bg-secondary text-white" style="min-width: 250px;">
 <!-- Profile Picture -->
