@@ -86,7 +86,8 @@ def delete_rice_post(request,id):
 @user_passes_test(check_manager)
 def explore_paddy_post(request):
     paddy_stocks = PaddyStock.objects.all().order_by('-stored_since')
-    return render(request, 'manager/explore_paddy_post.html', {'paddy_stocks': paddy_stocks})
+    return render(request, 'dealer/paddy_posts.html', {'posts': paddy_stocks})
+#Here update by shanto. This explore paddy_post function is used to show all paddy posts in the manager dashboard. That comes from the dealer app template.
 
 
 @login_required(login_url="login")
@@ -101,8 +102,9 @@ def purchase_paddy(request,id):
             purchase.paddy = paddy
             purchase.total_price = (Decimal(purchase.quantity_purchased) * paddy.price_per_mon) + purchase.transport_cost
             purchase.save()
-            
-            paddy.is_available = False
+            paddy.quantity=paddy.quantity -  (Decimal(purchase.quantity_purchased))
+            if paddy.quantity <= 0:
+                paddy.is_available = False
             paddy.save()
     else:
         form = Purchase_paddyForm()

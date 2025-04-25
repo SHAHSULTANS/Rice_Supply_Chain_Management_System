@@ -8,7 +8,7 @@
   <!-- Enhanced Header with Search and Filter -->
   <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
     <h2 class="mb-3 mb-md-0 text-center text-md-start">
-      <i class="fas fa-store me-2 text-success"></i>Paddy Marketplace
+      <i class="fas fa-store me-2 text-success"></i>Paddy Available In Marketplace
     </h2>
     <div class="d-flex">
       <div class="input-group me-2" style="max-width: 250px;">
@@ -70,11 +70,11 @@
         <div class="card h-100 border-0 shadow-sm overflow-hidden">
           <!-- Dynamic Image with fallback -->
           <div class="position-relative" style="height: 180px; overflow: hidden;">
-            {% comment %} {% if post.image %}
-              <img src="../../media/rice_image/rice_{{ forloop.counter|add:1 }}.jpg" class="card-img-top h-100 object-fit-cover" alt="{{ post.variety }} paddy">
-            {% else %} {% endcomment %}
+            {% if post.image %}
+              <img src="{{post.image.url}}" class="card-img-top h-100 object-fit-cover" alt="{{ post.variety }} paddy">
+            {% else %}
               <img src="../../media/rice_image/rice_2.jpg" class="card-img-top h-100 object-fit-cover" alt="Paddy stock">
-            {% comment %} {% endif %} {% endcomment %}
+            {% endif %}
             <div class="position-absolute top-0 end-0 bg-success text-white px-2 py-1 small">
               {% if post.is_available %}
                 <i class="fas fa-check-circle me-1"></i> Available
@@ -138,7 +138,7 @@
             <!-- Action Buttons -->
             <div class="mt-auto d-grid gap-2">
               {% if post.is_available %}
-                <a href="#" class="btn btn-success">
+                <a href="{% url "purchase_paddy" post.id %}" class="btn btn-success">
                   <i class="fas fa-shopping-cart me-2"></i>Order Now
                 </a>
                 <a href="#" class="btn btn-outline-secondary">
