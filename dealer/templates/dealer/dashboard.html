@@ -74,10 +74,10 @@
               <div class="text-xs fw-bold text-info text-uppercase mb-1">
                 Avg. Price
               </div>
-              <div class="h5 mb-0 fw-bold text-gray-800">₹{{ avg_price|default:"0" }}/mon</div>
+              <div class="h5 mb-0 fw-bold text-gray-800"><span>&#2547;</span>{{ avg_price|default:"0" }}/mon</div>
             </div>
             <div class="col-auto">
-              <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+              <span class="fa fa-2x text-gray-300" style="font-family: Arial, sans-serif;">৳</span>
             </div>
           </div>
         </div>
@@ -142,7 +142,7 @@
                   {% for post in posts %}
                     <tr>
                       <td>
-                        <strong>{{ post.variety|default:"Premium Paddy" }}</strong>
+                        <strong>{{ post.name|default:"Premium Paddy" }}</strong>
                         <div class="small text-muted">{{ post.stored_since|date:"M d, Y" }}</div>
                       </td>
                       <td>{{ post.quantity }} units</td>

@@ -1,4 +1,8 @@
 {% extends 'base.html' %}
+{% load static %}
+
+
+
 {% block content %}
 <div class="container py-5">
   <!-- Enhanced Header with Search and Filter -->
@@ -37,7 +41,7 @@
       <div class="card bg-light border-0 rounded-3 shadow-sm h-100">
         <div class="card-body text-center py-3">
           <h5 class="text-muted mb-1">Avg. Price</h5>
-          <p class="h4 text-primary mb-0">₹{{ avg_price|default:"--" }}/mon</p>
+          <p class="h4 text-primary mb-0"><span>&#2547;</span>{{ avg_price|default:"--" }}/mon</p>
         </div>
       </div>
     </div>
@@ -84,7 +88,7 @@
             <!-- Dealer Info with Rating -->
             <div class="d-flex align-items-center mb-3">
               <div class="flex-shrink-0">
-                <img src="{% if post.dealer.profile_image %}{{ post.dealer.profile_image.url }}{% else %}../../media/default_profile.png{% endif %}" 
+                <img src="{% if post.dealer.profile_image %}{{ post.dealer.profile_image.url }}{% else %}{% static "dealer/author.svg" %}{% endif %}" 
                      class="rounded-circle border" width="40" height="40" alt="{{ post.dealer.user.username }}">
               </div>
               <div class="flex-grow-1 ms-3">
@@ -101,7 +105,7 @@
             </div>
 
             <!-- Paddy Details -->
-            <h5 class="card-title text-truncate">{{ post.variety|default:"Premium Paddy" }}</h5>
+            <h5 class="card-title text-truncate">{{ post.name|default:"Premium Paddy" }} Paddy</h5>
             
             <div class="d-flex justify-content-between align-items-center mb-2">
               <span class="badge bg-success bg-opacity-10 text-success">{{ post.quantity }} units</span>
@@ -112,7 +116,7 @@
             <!-- Price Section -->
             <div class="d-flex justify-content-between align-items-center mb-3">
               <div>
-                <span class="h4 text-success">₹{{ post.price_per_mon }}</span>
+                <span class="h4 text-success"><span class="fa fa-2x text-gray-300" style="font-family: Arial, sans-serif;">৳</span>{{ post.price_per_mon }}</span>
                 <span class="text-muted">/mon</span>
               </div>
               <div class="text-end">
