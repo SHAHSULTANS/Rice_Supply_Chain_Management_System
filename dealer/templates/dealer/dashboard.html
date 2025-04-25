@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
   Dealer Dashboard | AgriConnect
@@ -217,7 +218,7 @@
           </h6>
         </div>
         <div class="card-body text-center">
-          <img src="{% if dealer.profile_image %}{{ dealer.profile_image.url }}{% else %}../../media/default-profile.png{% endif %}" 
+          <img src="{% if dealer.profile_image %}{{ dealer.profile_image.url }}{% else %}{% static 'dealer/author.svg' %}{% endif %}" 
                class="rounded-circle mb-3 border" width="100" height="100" alt="Profile">
           <h5 class="fw-bold mb-1">{{ dealer.user.username }}</h5>
           <p class="text-muted small mb-3">{{ dealer.user.email }}</p>
