@@ -8,12 +8,13 @@ from decimal import Decimal
 def check_manager(user):
     return user.is_authenticated and user.role == 'manager'
 
-@login_required(login_url='login')
+@login_required(login_url="login")
 @user_passes_test(check_manager)
 def manager_dashboard(request):
     return render(request, 'manager/dashboard.html')
 
-@login_required(login_url='login')
+@login_required(login_url="login")
+@user_passes_test(check_manager)
 def create_rice_post(request):
     if request.method == "POST":
         form = RicePostForm(request.POST, request.FILES)
@@ -28,7 +29,8 @@ def create_rice_post(request):
         form = RicePostForm()
     return render(request, "manager/create_rice_post.html", {'form': form})
 
-@login_required(login_url='login')
+@login_required(login_url="login")
+@user_passes_test(check_manager)
 def update_rice_post(request,id):
     rice_post = get_object_or_404(RicePost,id=id)
     if request.method == "POST":
@@ -40,7 +42,17 @@ def update_rice_post(request,id):
         form = RicePostForm(instance=rice_post)
     return render(request,"manager/update_rice_post.html",{"form":form})
 
-@login_required(login_url='login')
+
+@login_required(login_url="login")
+@user_passes_test(check_manager)
+def delete_rice_post(request,id):
+    rice_post = get_object_or_404(RicePost,id=id)
+    if request.method == "POST":
+        rice_post.delete()
+        return redirect("show_rice_post")
+
+@login_required(login_url="login")
+@user_passes_test(check_manager)
 def show_rice_post(request):
     if request.user.role in ['admin','manager']:
         rice_posts = RicePost.objects.filter( is_sold=False).order_by("-created_at")
@@ -50,7 +62,8 @@ def show_rice_post(request):
     return render(request,"manager/show_rice_post.html",{'rice_posts':rice_posts})
 
 
-@login_required(login_url='login')
+@login_required(login_url="login")
+@user_passes_test(check_manager)
 def update_manager_profile(request):
     profile = get_object_or_404(ManagerProfile, user=request.user)
 
@@ -65,19 +78,13 @@ def update_manager_profile(request):
     return render(request, "manager/update_manager_profile.html", {'form': form})
 
 
-@login_required(login_url='login')
+@login_required(login_url="login")
+@user_passes_test(check_manager)
 def manager_profile(request):
     manager, created = ManagerProfile.objects.get_or_create(user=request.user)
     return render(request,"manager/manager_profile.html",{'manager':manager})
 
 
-
-
-def delete_rice_post(request,id):
-    rice_post = get_object_or_404(RicePost,id=id)
-    if request.method == "POST":
-        rice_post.delete()
-        return redirect("show_rice_post")
 
     
     
