@@ -19,7 +19,7 @@
                     <p><strong>Price:</strong> {{ post.price_per_kg }}৳ /kg</p>
                     <p><strong>Available Stock:</strong> {{ post.quantity_kg }} kg</p>
                     <p class="mt-3"><strong>Description:</strong></p>
-                    <p>{{ post.description }}</p>
+                    <p>{{ post.description | linebreaksbr  }}</p>
 
                     <!-- Action Buttons -->
                     <div class="d-grid gap-3 mt-4">

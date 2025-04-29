@@ -1,8 +1,8 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render,redirect,get_object_or_404,HttpResponse
-from .models import ManagerProfile, RicePost, Purchase_paddy
+from .models import ManagerProfile, RicePost, Purchase_paddy,PurchaseRice
 from dealer.models import PaddyStock
-from .forms import ManagerProfileForm, RicePostForm, Purchase_paddyForm
+from .forms import ManagerProfileForm, RicePostForm, Purchase_paddyForm, PurchaseRiceForm
 from decimal import Decimal
 
 def check_manager(user):
@@ -61,7 +61,11 @@ def explore_all_rice_post(request):
     else:
         #TODO have to add a html file for this response
         return HttpResponse("Only admin, manager and customer can see this post")
-    return render(request,"manager/show_rice_post.html",{'rice_posts':rice_posts})
+    context = {
+        "check" : 1,
+        'rice_posts':rice_posts
+    }
+    return render(request,"manager/show_rice_post.html",context)
 
 @login_required(login_url="login")
 @user_passes_test(check_manager_and_customer)
@@ -71,7 +75,11 @@ def show_my_rice_post(request):
     else:
         #TODO have to add a html file for this response
         return HttpResponse("Only manager can see this post")
-    return render(request,"manager/show_rice_post.html",{'rice_posts':rice_posts})
+    context = {
+        "check" : 2,
+        'rice_posts':rice_posts
+    }
+    return render(request,"manager/show_rice_post.html",context)
 
 def individual_rice_post_detail(request,id):
     rice_post = get_object_or_404(RicePost,id=id)
@@ -128,6 +136,7 @@ def purchase_paddy(request,id):
             if paddy.quantity <= 0:
                 paddy.is_available = False
             paddy.save()
+            return redirect("purchase_history")
     else:
         form = Purchase_paddyForm()
     return render(request, "manager/purchase_paddy.html",{'form':form , 'paddy':paddy})
@@ -135,8 +144,37 @@ def purchase_paddy(request,id):
 @login_required(login_url="login")
 @user_passes_test(check_manager)
 def purchase_history(request):
-    purchases = Purchase_paddy.objects.filter(manager=request.user).order_by("-purchase_date")
-    return render(request,"manager/purchase_history.html",{'purchases':purchases})
+    purchases_paddy = Purchase_paddy.objects.filter(manager=request.user).order_by("-purchase_date")
+    purchases_rice = PurchaseRice.objects.filter(manager=request.user).order_by("-purchase_date")
+    context = {
+        "purchases_paddy" : purchases_paddy,
+        "purchases_rice" : purchases_rice
+    }
+    
+    return render(request,"manager/purchase_history.html",context)
+
+
+def purchase_rice(request, id):
+    rice = get_object_or_404(RicePost,id=id)
+    if request.method == "POST":
+        form = PurchaseRiceForm(request.POST)
+        if form.is_valid():
+            purchase = form.save(commit=False) 
+            purchase.manager = request.user
+            purchase.rice  = rice 
+            purchase.total_price = (Decimal(purchase.quantity_purchased)*rice.price_per_kg) + purchase.delivery_cost
+            purchase.save()
+            rice.quantity_kg = rice.quantity_kg - purchase.quantity_purchased  
+            if rice.quantity_kg <= 0:
+                rice.is_sold = True  
+            rice.save() 
+            return redirect("purchase_history")
+    else:
+        form = PurchaseRiceForm() 
+    return render(request, "manager/purchase_rice.html",{'form':form , 'rice':rice})
+
+
+
 
 
 def make_payment(request,id):

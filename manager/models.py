@@ -43,7 +43,18 @@ class Purchase_paddy(models.Model):
     def __str__(self):
         return f"Purchases By f{self.manager.full_name} from {self.paddy.dealer.username}"
         
-        
+
+class PurchaseRice(models.Model):
+    manager = models.ForeignKey(CustomUser,on_delete=models.CASCADE)
+    rice = models.ForeignKey(RicePost,on_delete=models.CASCADE)
+    quantity_purchased = models.FloatField()
+    total_price = models.DecimalField(max_digits=10,decimal_places=2)
+    delivery_cost = models.DecimalField(max_digits=6,decimal_places=2,default=0)
+    is_confirmed = models.BooleanField(default=False)
+    purchase_date = models.DateTimeField(auto_now_add=True)
+    
+
+
         
 class Payment(models.Model):
     purchase = models.OneToOneField(Purchase_paddy,on_delete=models.CASCADE)

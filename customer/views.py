@@ -31,7 +31,7 @@ def update_customer_profile(request):
     return render(request,"customer/update_customer_profile.html",{'form':form})
         
         
-def purchase_rice(request,id):
+def purchase_rice_from_manager(request,id):
     return HttpResponse("have to implement this part")
 
 

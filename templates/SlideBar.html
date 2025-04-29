@@ -24,6 +24,7 @@
         <hr class="my-1">
         <a class="nav-link text-info {% if request.resolver_match.url_name == 'explore_all_rice_post' %}active{% endif %}" href="{% url 'explore_all_rice_post' %}">🚪 Explore All Paddy Post</a>
         <a class="nav-link text-info {% if request.resolver_match.url_name == 'explore_paddy_post' %}active{% endif %}" href="{% url 'explore_paddy_post' %}">🚪 Explore Paddy Post</a>
+        <hr class="my-1">
         <a class="nav-link text-light {% if request.resolver_match.url_name == 'purchase_history' %}active{% endif %}" href="{% url 'purchase_history' %}">🚪 Purchases History</a>
     </nav>
 </div>
@@ -44,7 +45,7 @@
 </div>
     
     <div class="sidebar-user-name p-1 fs-4 border-bottom">{{admin.full_name}}</div>
-    <div class="sidebar-header p-1 fs-5 border-bottom">admin Panel</div>
+    <div class="sidebar-header p-1 fs-5 border-bottom">Admin Panel</div>
     <!-- Sidebar Navigation -->
     <nav class="nav flex-column p-2">
         <a class="nav-link text-white {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}" href="{% url 'admin_dashboard' %}">🏠 Dashboard</a>
@@ -71,13 +72,13 @@
 </div>
     
     <div class="sidebar-user-name p-1 fs-4 border-bottom">{{customer.full_name}}</div>
-    <div class="sidebar-header p-1 fs-5 border-bottom">customer Panel</div>
+    <div class="sidebar-header p-1 fs-5 border-bottom">Customer Panel</div>
     <!-- Sidebar Navigation -->
     <nav class="nav flex-column p-2">
         <a class="nav-link text-white {% if request.resolver_match.url_name == 'customer_dashboard' %}active{% endif %}" href="{% url 'customer_dashboard' %}">🏠 Dashboard</a>
         <a class="nav-link text-white {% if request.resolver_match.url_name == 'customer_profile' %}active{% endif %}" href="{% url 'customer_profile' %}">👤 View Profile</a>
         <a class="nav-link text-white {% if request.resolver_match.url_name == 'update_customer_profile' %}active{% endif %}" href="{% url "update_customer_profile" %}">✏️ Edit Profile</a>
-        <a class="nav-link text-white {% if request.resolver_match.url_name == 'show_rice_post' %}active{% endif %}" href="{% url "show_rice_post" %}">📃 Explore Rice Posts</a>
+        <a class="nav-link text-white {% if request.resolver_match.url_name == 'explore_all_rice_post' %}active{% endif %}" href="{% url "explore_all_rice_post" %}">📃 Explore Rice Posts</a>
     </nav>
 </div>
 {% endif %}
