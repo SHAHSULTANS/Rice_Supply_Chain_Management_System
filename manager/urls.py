@@ -16,6 +16,7 @@ path('explore_paddy_post/', views.explore_paddy_post, name='explore_paddy_post')
 
     path('purchase_paddy/<int:id>/', views.purchase_paddy, name='purchase_paddy'),
     path('purchase_history/', views.purchase_history, name='purchase_history'),
+    path('make_payment/<int:id>/', views.make_payment, name='make_payment'),
     
     
 ]

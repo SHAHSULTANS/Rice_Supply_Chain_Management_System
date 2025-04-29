@@ -15,18 +15,29 @@
                     <th>Transport Cost (৳)</th>
                     <th>Total Price (৳)</th>
                     <th>Date</th>
+                    <th>Payment</th>
                 </tr>
             </thead>
             <tbody>
                 {% for purchase in purchases %}
                 <tr>
-                    <td>{{ purchase.paddy.paddy_name }}</td>
+                    <td>{{ purchase.paddy.name }}</td>
                     <td>{{ purchase.paddy.dealer.user.username }}</td>
                     <td>{{ purchase.quantity_purchased }}</td>
                     <td>{{ purchase.paddy.price_per_mon }}</td>
                     <td>{{ purchase.transport_cost }}</td>
                     <td>{{ purchase.total_price }}</td>
                     <td>{{ purchase.purchase_date|date:"M d, Y h:i A" }}</td>
+                    <td>
+                        {% if purchase.payment %}
+                        <span class="text-success">paid</span>
+                        {% else %}
+                        <a href="{% url 'make_payment' purchase.id %}" class="btn btn-sm btn-primary">Make payment</a>
+                            
+                        {% endif %}
+
+                    </td>
+                        
                 </tr>
                 {% endfor %}
             </tbody>

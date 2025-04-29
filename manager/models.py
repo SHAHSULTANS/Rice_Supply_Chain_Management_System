@@ -45,3 +45,18 @@ class Purchase_paddy(models.Model):
         
         
         
+class Payment(models.Model):
+    purchase = models.OneToOneField(Purchase_paddy,on_delete=models.CASCADE)
+    amount_paid = models.DecimalField(max_digits=10,decimal_places=2)
+    payment_status = models.CharField(max_length=20,choices=[
+        ('pending', 'Pending'),
+        ('success', 'Success'),
+        ('failed', 'Failed')
+    ],default='pending')
+    payment_date = models.DateTimeField(auto_now_add=True)
+    paymant_method = models.CharField(max_length=40,default="MockPay")
+    
+    def __str__(self):
+        return f"payment for purchase {self.purchase.id} - {self.payment_status}"
+    
+    
