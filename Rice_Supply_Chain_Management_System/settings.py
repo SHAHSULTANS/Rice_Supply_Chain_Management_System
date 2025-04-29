@@ -47,7 +47,12 @@ INSTALLED_APPS = [
     'customer',
     'admin_panel',
     'RSCMS_app',
+    'widget_tweaks',
+    'crispy_forms',
+    'crispy_bootstrap5', 
 ]
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
