@@ -128,4 +128,3 @@ def purchase_history(request):
 
 def make_payment(request,id):
     paddy = get_object_or_404(PaddyStock,id=id , manager=request.user)
-    

@@ -11,6 +11,19 @@
             <h3 class="text-center mb-4 fw-bold text-success">
                 <i class="fas fa-user-plus me-2"></i>Create Your Account
             </h3>
+            <!-- Form Errors -->
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Oops! Something went wrong:</strong>
+                <ul class="mb-0">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <li><strong>{{ field|title }}</strong>: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
 
 
             <form method="post" novalidate>
@@ -23,13 +36,6 @@
                         <span class="input-group-text"><i class="fas fa-user"></i></span>
                         {{ form.username|add_class:"form-control" }}
                     </div>
-                    {% if form.username.errors %}
-                        <div class="text-danger">
-                            {% for error in form.username.errors %}
-                                <p>{{ error }}</p>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
                 </div>
 
                 <!-- Email -->
@@ -39,26 +45,12 @@
                         <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                         {{ form.email|add_class:"form-control" }}
                     </div>
-                    {% if form.email.errors %}
-                        <div class="text-danger">
-                            {% for error in form.email.errors %}
-                                <p>{{ error }}</p>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
                 </div>
 
                 <!-- Role -->
                 <div class="mb-3">
                     <label for="id_role" class="form-label">Select Role</label>
                     {{ form.role|add_class:"form-select" }}
-                    {% if form.role.errors %}
-                        <div class="text-danger">
-                            {% for error in form.role.errors %}
-                                <p>{{ error }}</p>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
                 </div>
 
                 <!-- Password -->
@@ -68,13 +60,6 @@
                         <span class="input-group-text"><i class="fas fa-lock"></i></span>
                         {{ form.password1|add_class:"form-control" }}
                     </div>
-                    {% if form.password1.errors %}
-                        <div class="text-danger">
-                            {% for error in form.password1.errors %}
-                                <p>{{ error }}</p>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
                 </div>
 
                 <!-- Confirm Password -->
@@ -84,13 +69,6 @@
                         <span class="input-group-text"><i class="fas fa-lock"></i></span>
                         {{ form.password2|add_class:"form-control" }}
                     </div>
-                    {% if form.password2.errors %}
-                        <div class="text-danger">
-                            {% for error in form.password2.errors %}
-                                <p>{{ error }}</p>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
                 </div>
 
 

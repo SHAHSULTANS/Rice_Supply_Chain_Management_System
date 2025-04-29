@@ -21,9 +21,8 @@ def register_view(request):
             if user.role == 'dealer' and dealer_form.is_valid():
                 dealer_profile = dealer_form.save(commit=False)
                 dealer_profile.user = user  # Link the dealer profile to the created user
-                dealer_profile.save()
-                
-        return redirect('login')  
+                dealer_profile.save()    
+            return redirect('login')  
     else:
         form = CustomUserCreationForm()
         dealer_form=DealerProfileForm()
