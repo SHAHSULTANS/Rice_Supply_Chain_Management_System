@@ -9,7 +9,7 @@
         <div class="row no-gutters">
             <div class="col-md-4">
                 {% if rice.rice_image %}
-                    <img src="{{ paddy.rice_image.url }}" class="card-img" alt="{{ rice.rice_name }}">
+                    <img src="{{ rice.rice_image.url }}" class="card-img" alt="{{ rice.rice_name }}">
                 {% else %}
                     <img src="{% static 'default_images/default_rice.jpg' %}" class="card-img" alt="Default rice">
                 {% endif %}
