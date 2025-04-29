@@ -2,13 +2,9 @@ from django import forms
 from .models import DealerProfile, PaddyStock
 
 class DealerProfileForm(forms.ModelForm):
-    class Meta:
+     class Meta:
         model = DealerProfile
-        fields = ['license_number', 'storage_capacity']
-        widgets = {
-            'license_number': forms.TextInput(attrs={'class': 'form-control'}),
-            'storage_capacity': forms.NumberInput(attrs={'class': 'form-control'}),
-        }
+        exclude = ['user'] 
 
 
 
