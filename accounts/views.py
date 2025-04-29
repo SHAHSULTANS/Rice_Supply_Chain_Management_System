@@ -6,25 +6,29 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse
-
+from dealer.forms import DealerProfileForm
 from .forms import CustomUserCreationForm
 
 def register_view(request):
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
+        dealer_form = DealerProfileForm(request.POST)
+        
         if form.is_valid():
-            user = form.save()
-            role = user.role
-            print(role)
+            user = form.save()  # Save user first
             
-            #role for custom user models.
-            if role == 'dealer':
-                return redirect("dealer_profile_create", user_id=user.id)
-            else:
-                return redirect('login')
+            # Only save dealer form if the user is a 'dealer'
+            if user.role == 'dealer' and dealer_form.is_valid():
+                dealer_profile = dealer_form.save(commit=False)
+                dealer_profile.user = user  # Link the dealer profile to the created user
+                dealer_profile.save()
+                
+        return redirect('login')  
     else:
         form = CustomUserCreationForm()
-    return render(request, 'accounts/auth/register.html', {'form': form})
+        dealer_form=DealerProfileForm()
+
+    return render(request, 'accounts/auth/register.html', {'form': form,"dealer_form":dealer_form})
 
 def login_view(request):
     if request.method == "POST":
