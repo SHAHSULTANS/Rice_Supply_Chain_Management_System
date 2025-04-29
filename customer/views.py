@@ -36,4 +36,4 @@ def purchase_rice(request,id):
 
 
 def explore_rice_post(request):
-    return redirect("show_rice_post")
+    return redirect("explore_all_rice_post")

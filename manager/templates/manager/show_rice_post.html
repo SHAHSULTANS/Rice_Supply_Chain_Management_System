@@ -27,6 +27,7 @@
 
                         <div class="card-body">
                             <h4 class="card-title mb-2">Rice Name: {{ post.rice_name }}</h4>
+                            <h4 class="card-title mb-2">Owner's Name: {{ post.manager.managerprofile.full_name }}</h4>
                             <h5 class="card-title mb-2">Quality: {{ post.quality }}</h5>
                             <p class="card-text mb-1"><strong>Quantity:</strong> {{ post.quantity_kg }} kg</p>
                             <p class="card-text mb-1"><strong>Price/kg:</strong> ${{ post.price_per_kg }}</p>
@@ -38,7 +39,7 @@
                                     {% if post.is_sold %}Sold{% else %}Available{% endif %}
                                 </span></span>
                                 {% if request.user.role == "customer" %}
-                                {% else %}
+                                {% elif request.user.role == "manager" and request.user == post.manager %}
                                 <div class="d-flex gap-2">
                                     <a href="{% url 'update_rice_post' post.id %}" class="btn btn-outline-primary btn-sm">
                                         <i class="fas fa-edit"></i> Edit
@@ -50,6 +51,9 @@
                                         </button>
                                     </form>
                                 </div>
+                                {% else %}
+                                <a href="{% url "purchase_rice" post.id %}" class="btn btn-primary my-3">Order Now</a>
+
                                 {% endif %}
 
                                

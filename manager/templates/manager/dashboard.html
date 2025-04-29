@@ -34,9 +34,18 @@
         <div class="col-md-6">
             <div class="card shadow-sm h-100">
                 <div class="card-body">
-                    <h5 class="card-title">📃 Your Rice Posts</h5>
+                    <h5 class="card-title">📃 My Rice Posts</h5>
                     <p class="card-text">View, update, or delete your existing rice posts.</p>
-                    <a href="{% url 'show_rice_post' %}" class="btn btn-info">Manage Posts</a>
+                    <a href="{% url 'show_my_rice_post' %}" class="btn btn-info">Manage Posts</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">📃 Explore All Rice Posts</h5>
+                    <p class="card-text">View, update, or delete your existing rice posts.</p>
+                    <a href="{% url 'explore_all_rice_post' %}" class="btn btn-info">Manage Posts</a>
                 </div>
             </div>
         </div>

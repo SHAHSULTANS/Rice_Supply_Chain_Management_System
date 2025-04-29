@@ -26,7 +26,7 @@ def create_rice_post(request):
             rice_post.save()
             print("User:", request.user.username)
             print("Role:", request.user.role)
-            return redirect("show_rice_post")
+            return redirect("show_my_rice_post")
     else:
         form = RicePostForm()
     return render(request, "manager/create_rice_post.html", {'form': form})
@@ -39,7 +39,7 @@ def update_rice_post(request,id):
         form = RicePostForm(request.POST, request.FILES, instance=rice_post)
         if form.is_valid():
             form.save()
-            return redirect("show_rice_post")
+            return redirect("show_my_rice_post")
     else:
         form = RicePostForm(instance=rice_post)
     return render(request,"manager/update_rice_post.html",{"form":form})
@@ -55,7 +55,7 @@ def delete_rice_post(request,id):
 
 @login_required(login_url="login")
 @user_passes_test(check_manager_and_customer)
-def show_rice_post(request):
+def explore_all_rice_post(request):
     if request.user.role in ['admin','manager','customer']:
         rice_posts = RicePost.objects.filter( is_sold=False).order_by("-created_at")
     else:
@@ -63,6 +63,15 @@ def show_rice_post(request):
         return HttpResponse("Only admin, manager and customer can see this post")
     return render(request,"manager/show_rice_post.html",{'rice_posts':rice_posts})
 
+@login_required(login_url="login")
+@user_passes_test(check_manager_and_customer)
+def show_my_rice_post(request):
+    if request.user.role in ['manager']:
+        rice_posts = RicePost.objects.filter(manager=request.user, is_sold=False).order_by("-created_at")
+    else:
+        #TODO have to add a html file for this response
+        return HttpResponse("Only manager can see this post")
+    return render(request,"manager/show_rice_post.html",{'rice_posts':rice_posts})
 
 @login_required(login_url="login")
 @user_passes_test(check_manager)

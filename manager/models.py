@@ -4,7 +4,7 @@ from dealer.models import PaddyStock
 # Create your models here.
 
 class ManagerProfile(models.Model):
-    user = models.OneToOneField(CustomUser,on_delete=models.CASCADE,limit_choices_to={'role':'manager'})
+    user = models.OneToOneField(CustomUser,on_delete=models.CASCADE,limit_choices_to={'role':'manager'},related_name="managerprofile")
     full_name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=11)
     address = models.TextField()
