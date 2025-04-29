@@ -73,6 +73,10 @@ def show_my_rice_post(request):
         return HttpResponse("Only manager can see this post")
     return render(request,"manager/show_rice_post.html",{'rice_posts':rice_posts})
 
+def individual_rice_post_detail(request,id):
+    rice_post = get_object_or_404(RicePost,id=id)
+    return render(request,"manager/individual_rice_post_detail.html",{'post':rice_post})
+
 @login_required(login_url="login")
 @user_passes_test(check_manager)
 def update_manager_profile(request):

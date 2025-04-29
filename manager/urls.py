@@ -9,6 +9,7 @@ urlpatterns = [
     
     path('show_my_rice_post/',views.show_my_rice_post, name='show_my_rice_post'),
     path('explore_all_rice_post/',views.explore_all_rice_post, name='explore_all_rice_post'),
+    path('individual_rice_post_detail/<int:id>',views.individual_rice_post_detail, name='individual_rice_post_detail'),
     path('create_rice_post/',views.create_rice_post, name='create_rice_post'),
     path('update_rice_post/<int:id>',views.update_rice_post, name='update_rice_post'),
     path('delete_rice_post/<int:id>',views.delete_rice_post, name='delete_rice_post'),
