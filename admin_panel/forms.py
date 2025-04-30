@@ -1,5 +1,7 @@
 from django import forms
 from .models import AdminProfile
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 class AdminProfileForm(forms.ModelForm):
     class Meta:
@@ -14,3 +16,11 @@ class AdminProfileForm(forms.ModelForm):
             'bio': forms.Textarea(attrs={'class':'form-control'}),
             'profile_image': forms.ClearableFileInput(attrs={'class':'form-control'}),
         }
+
+
+class PasswordResetRequestForm(forms.Form):
+    email = forms.EmailField(
+        max_length=254,
+        required=True,
+        widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email'})
+    )

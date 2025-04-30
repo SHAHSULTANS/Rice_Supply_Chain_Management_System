@@ -12,8 +12,8 @@ import uuid
 
 def check_manager(user):
     return user.is_authenticated and user.role == 'manager'
-def check_manager_and_customer(user):
-    return user.is_authenticated and user.role in ['manager', 'customer']
+def check_manager_and_customer_and_admin(user):
+    return user.is_authenticated and user.role in ['manager', 'customer','admin']
 
 @login_required(login_url="login")
 @user_passes_test(check_manager)
@@ -59,7 +59,7 @@ def delete_rice_post(request,id):
         return redirect("show_rice_post")
 
 @login_required(login_url="login")
-@user_passes_test(check_manager_and_customer)
+@user_passes_test(check_manager_and_customer_and_admin)
 def explore_all_rice_post(request):
     if request.user.role in ['admin','manager','customer']:
         rice_posts = RicePost.objects.filter( is_sold=False).order_by("-created_at")
@@ -73,7 +73,7 @@ def explore_all_rice_post(request):
     return render(request,"manager/show_rice_post.html",context)
 
 @login_required(login_url="login")
-@user_passes_test(check_manager_and_customer)
+@user_passes_test(check_manager)
 def show_my_rice_post(request):
     if request.user.role in ['manager']:
         rice_posts = RicePost.objects.filter(manager=request.user, is_sold=False).order_by("-created_at")
