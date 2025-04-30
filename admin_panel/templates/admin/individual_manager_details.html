@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Manager Details{% endblock title %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg border-0">
+        <div class="row g-0">
+            <div class="col-md-4 text-center p-4">
+                {% if manager.profile_image %}
+                    <img src="{{ manager.profile_image.url }}" class="img-fluid border rounded" style="max-width: 100%; height: auto;" alt="Manager Image">
+                {% else %}
+                    <img src="{% static 'default_images/default_manager.png' %}" class="img-fluid border rounded" style="max-width: 100%; height: auto;" alt="Default Manager Image">
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <div class="card-body p-4">
+                    <h3 class="card-title">{{ manager.full_name }}</h3>
+                    <p><strong>Email:</strong> {{ manager.user.email }}</p>
+                    <p><strong>Phone:</strong> {{ manager.phone_number }}</p>
+                    <p><strong>Mill Name:</strong> {{ manager.mill_name }}</p>
+                    <p><strong>Mill Location:</strong> {{ manager.mill_location }}</p>
+                    <p><strong>Experience:</strong> {{ manager.experience_year }} years</p>
+                    <p><strong>Bio:</strong> {{ manager.bio|default:"No bio provided." }}</p>
+                    <p><strong>Joined:</strong> {{ manager.created_at|date:"F d, Y" }}</p>
+
+                    <a href="{% url 'see_all_manager' %}" class="btn btn-secondary mt-3">Back to List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

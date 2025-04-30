@@ -12,8 +12,10 @@ import uuid
 
 def check_manager(user):
     return user.is_authenticated and user.role == 'manager'
-def check_manager_and_customer(user):
-    return user.is_authenticated and user.role in ['manager', 'customer']
+def check_manager_and_customer_and_admin(user):
+    return user.is_authenticated and user.role in ['manager', 'customer','admin']
+def check_manager_and_admin(user):
+    return user.is_authenticated and user.role in ['manager','admin']
 
 @login_required(login_url="login")
 @user_passes_test(check_manager)
@@ -59,7 +61,7 @@ def delete_rice_post(request,id):
         return redirect("show_rice_post")
 
 @login_required(login_url="login")
-@user_passes_test(check_manager_and_customer)
+@user_passes_test(check_manager_and_customer_and_admin)
 def explore_all_rice_post(request):
     if request.user.role in ['admin','manager','customer']:
         rice_posts = RicePost.objects.filter( is_sold=False).order_by("-created_at")
@@ -73,7 +75,7 @@ def explore_all_rice_post(request):
     return render(request,"manager/show_rice_post.html",context)
 
 @login_required(login_url="login")
-@user_passes_test(check_manager_and_customer)
+@user_passes_test(check_manager)
 def show_my_rice_post(request):
     if request.user.role in ['manager']:
         rice_posts = RicePost.objects.filter(manager=request.user, is_sold=False).order_by("-created_at")
@@ -91,7 +93,7 @@ def individual_rice_post_detail(request,id):
     return render(request,"manager/individual_rice_post_detail.html",{'post':rice_post})
 
 @login_required(login_url="login")
-@user_passes_test(check_manager)
+@user_passes_test(check_manager_and_admin)
 def update_manager_profile(request):
     profile = get_object_or_404(ManagerProfile, user=request.user)
 
@@ -104,6 +106,21 @@ def update_manager_profile(request):
         form = ManagerProfileForm(instance=profile)
 
     return render(request, "manager/update_manager_profile.html", {'form': form})
+
+
+def update_manager_profile_by_admin(request,id):
+    profile = get_object_or_404(ManagerProfile, pk=id)
+
+    if request.method == "POST":
+        form = ManagerProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect("see_all_manager")  # replace with your correct URL name
+    else:
+        form = ManagerProfileForm(instance=profile)
+
+    return render(request, "manager/update_manager_profile.html", {'form': form})
+
 
 
 @login_required(login_url="login")
