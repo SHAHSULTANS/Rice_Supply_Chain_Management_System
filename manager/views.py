@@ -133,10 +133,17 @@ def purchase_paddy(request,id):
         form = Purchase_paddyForm(request.POST)
         if form.is_valid():
             purchase = form.save(commit=False)
+            
+            if purchase.quantity_purchased > paddy.quantity:
+                form.add_error('quantity_purchased', "Not enough stock available.")
+                return render(request, "manager/purchase_paddy.html", {'form': form, 'paddy': paddy})
+            
             purchase.manager = request.user
             purchase.paddy = paddy
             purchase.total_price = Decimal((purchase.quantity_purchased/40.0) * float(paddy.price_per_mon)) + purchase.transport_cost
             purchase.save()
+            
+            
             paddy.quantity=paddy.quantity -  (Decimal(purchase.quantity_purchased))
             if paddy.quantity <= 0:
                 paddy.is_available = False
@@ -156,6 +163,11 @@ def purchase_rice(request, id):
         form = PurchaseRiceForm(request.POST)
         if form.is_valid():
             purchase = form.save(commit=False) 
+            
+            if purchase.quantity_purchased > rice.quantity_kg:
+                form.add_error('quantity_purchased', "Not enough rice available.")
+                return render(request, "manager/purchase_rice.html", {'form': form, 'rice': rice})
+            
             purchase.manager = request.user
             purchase.rice  = rice 
             purchase.total_price = (Decimal(purchase.quantity_purchased)*rice.price_per_kg) + purchase.delivery_cost
