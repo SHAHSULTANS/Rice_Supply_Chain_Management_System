@@ -51,6 +51,11 @@
         <a class="nav-link text-white {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}" href="{% url 'admin_dashboard' %}">🏠 Dashboard</a>
         <a class="nav-link text-white {% if request.resolver_match.url_name == 'admin_profile' %}active{% endif %}" href="{% url 'admin_profile' %}">👤 View Profile</a>
         <a class="nav-link text-white {% if request.resolver_match.url_name == 'update_admin_profile' %}active{% endif %}" href="{% url 'update_admin_profile' %}">✏️ Edit Profile</a>
+        <hr>
+        <a class="nav-link text-white {% if request.resolver_match.url_name == 'see_all_delears' %}active{% endif %}" href="{% url 'see_all_delears' %}">👤 See All Delears</a>
+        <a class="nav-link text-white {% if request.resolver_match.url_name == 'see_all_manager' %}active{% endif %}" href="{% url 'see_all_manager' %}">👤 See All Managers</a>
+        <a class="nav-link text-white {% if request.resolver_match.url_name == 'see_all_customers' %}active{% endif %}" href="{% url 'see_all_customers' %}">👤 See All Customers</a>
+        <hr>
         <a class="nav-link text-white {% if request.resolver_match.url_name == 'explore_all_rice_post' %}active{% endif %}" href="{% url 'explore_all_rice_post' %}">📃 Explore Rice Posts</a>
         <a class="nav-link text-info" href="{% url 'marketplace_paddy_posts' %}">🚪 Explore Paddy Post</a>
     </nav>

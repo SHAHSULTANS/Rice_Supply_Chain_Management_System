@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Customer Details{% endblock title %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg border-0">
+        <div class="row g-0">
+            <div class="col-md-4 text-center p-4">
+                {% if customer.image %}
+                    <img src="{{ customer.image.url }}" class="img-fluid rounded border" style="max-width: 100%; height: auto;" alt="Customer Image">
+                {% else %}
+                    <img src="{% static 'default_images/default_customer.png' %}" class="img-fluid rounded border" style="max-width: 100%; height: auto;" alt="Default Customer Image">
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <div class="card-body p-4">
+                    <h3 class="card-title">{{ customer.full_name }}</h3>
+                    <p><strong>Email:</strong> {{ customer.user.email }}</p>
+                    <p><strong>Phone Number:</strong> {{ customer.phone_number }}</p>
+                    <p><strong>Address:</strong> {{ customer.address }}</p>
+                    <p><strong>Date of Birth:</strong> {{ customer.date_of_birth|default:"Not Provided" }}</p>
+                    <p><strong>Joined:</strong> {{ customer.created_at|date:"F d, Y" }}</p>
+
+                    <a href="{% url 'see_all_customers' %}" class="btn btn-secondary mt-3">Back to List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

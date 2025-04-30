@@ -5,6 +5,7 @@ urlpatterns = [
     path('dashboard/manager/',views.manager_dashboard, name='manager_dashboard'),
     path('manager_profile/',views.manager_profile, name='manager_profile'),
     path('update_manager_profile/',views.update_manager_profile, name='update_manager_profile'),
+    path('update_manager_profile/<int:id>/',views.update_manager_profile_by_admin, name='update_manager_profile_by_admin'),
     
     
     path('show_my_rice_post/',views.show_my_rice_post, name='show_my_rice_post'),

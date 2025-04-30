@@ -11,6 +11,9 @@ from django.conf import settings
 
 from .forms import PasswordResetRequestForm, AdminProfileForm,UserPasswordChangeForm
 from .models import AdminProfile
+from dealer.models import DealerProfile
+from manager.models import ManagerProfile
+from customer.models import CustomerProfile
 
 # Check if user is an admin
 def check_admin(user):
@@ -44,6 +47,66 @@ def update_admin_profile(request):
     else:
         form = AdminProfileForm(instance=profile)
     return render(request, "admin/update_admin_profile.html", {'form': form})
+
+
+
+
+
+def see_all_delears(request):
+    delears = DealerProfile.objects.all()
+    return render(request,"admin/see_all_delears.html",{'delears':delears})
+
+def individuals_delear_details(request, id):
+    dealer = get_object_or_404(DealerProfile, pk=id)
+    return render(request, "admin/individuals_delear_details.html", {'dealer': dealer})
+
+
+def see_all_manager(request):
+    managers = ManagerProfile.objects.all()
+    return render(request,"admin/see_all_manager.html",{'managers':managers})
+
+def individual_manager_details(request, id):
+    manager = get_object_or_404(ManagerProfile, pk=id)
+    return render(request, "admin/individual_manager_details.html", {'manager': manager})
+
+
+
+
+def see_all_customers(request):
+    customers = CustomerProfile.objects.all()
+    return render(request, 'admin/see_all_customer.html', {'customers': customers})
+
+def individual_customer_details(request, id):
+    customer = get_object_or_404(CustomerProfile, pk=id)
+    return render(request, 'admin/individuals_customer_details.html', {'customer': customer})
+
+
+
+def delete_customer(request,id):
+    customer = get_object_or_404(CustomerProfile, pk=id)
+    if request.method == "POST":
+        customer.delete()
+        return redirect("see_all_customers")
+
+def delete_manager(request,id):
+    manager = get_object_or_404(ManagerProfile, pk=id)
+    if request.method == "POST":
+        manager.delete()
+        return redirect("see_all_manager")
+
+
+def delete_delear(request,id):
+    delear = get_object_or_404(DealerProfile, pk=id)
+    if request.method == "POST":
+        delear.delete()
+        return redirect("see_all_delears")
+
+
+
+
+
+
+
 
 # Temporary OTP Storage
 otp_storage = {}
