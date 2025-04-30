@@ -21,15 +21,20 @@ urlpatterns = [
 
     path('purchase_paddy/<int:id>/', views.purchase_paddy, name='purchase_paddy'),
     path('purchase_rice/<int:id>/', views.purchase_rice, name='purchase_rice'),
-    
     path('purchase_history/', views.purchase_history, name='purchase_history'),
     
     # path('Mock_Payment_UI/', views.Mock_Payment_UI, name='Mock_Payment_UI'),
     
 
 
-    path('mock_paddy_payment/<int:purchase_id>/', views.mock_paddy_payment, name='mock_paddy_payment'),    path('mock_rice_payment/<int:rice_id>/', views.mock_rice_payment, name='mock_rice_payment'),
+    path('mock_paddy_payment/<int:purchase_id>/', views.mock_paddy_payment, name='mock_paddy_payment'),    
     path('mock_paddy_payment_success/', views.mock_paddy_payment_success, name='mock_paddy_payment_success'),
     path('mock_paddy_payment_fail/', views.mock_paddy_payment_fail, name='mock_paddy_payment_fail'),
 
+    
+    path('mock_rice_payment/<int:rice_id>/', views.mock_rice_payment, name='mock_rice_payment'),
+    path('mock_rice_payment_success/', views.mock_rice_payment_success, name='mock_rice_payment_success'),
+    path('mock_rice_payment_fail/', views.mock_rice_payment_fail, name='mock_rice_payment_fail'),
+    
+    
 ]

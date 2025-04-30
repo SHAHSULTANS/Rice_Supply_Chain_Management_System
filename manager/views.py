@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render,redirect,get_object_or_404,HttpResponse
 from .models import ManagerProfile, RicePost, Purchase_paddy,PurchaseRice,PaymentForPaddy
 from dealer.models import PaddyStock
-from .forms import ManagerProfileForm, RicePostForm, Purchase_paddyForm, PurchaseRiceForm,PaymentForPaddyForm
+from .forms import ManagerProfileForm, RicePostForm, Purchase_paddyForm, PurchaseRiceForm,PaymentForPaddyForm, PaymentForRiceForm
 from decimal import Decimal
 
 
@@ -183,18 +183,20 @@ def purchase_history(request):
     return render(request,"manager/purchase_history.html",context)
 
 
+# Mock payment Getaway for paddy
 @login_required
 def mock_paddy_payment(request, purchase_id):
     purchase = get_object_or_404(Purchase_paddy, pk=purchase_id, manager=request.user)
-    paddy = purchase.paddy  # Already related through ForeignKey
 
     if request.method == 'POST':
         form = PaymentForPaddyForm(request.POST)
+        paddy = purchase.paddy  # Already related through ForeignKey
+        
         if form.is_valid():
             payment = form.save(commit=False)
             payment.user = request.user
             payment.paddy = paddy
-            payment.transaction_id = 'MOCK-' + uuid.uuid4().hex[:8]
+            payment.transaction_id = f'MOCK-{uuid.uuid4().hex[:8]}'
 
             # Simulated payment logic
             if payment.amount == purchase.total_price:
@@ -218,15 +220,57 @@ def mock_paddy_payment(request, purchase_id):
     return render(request, 'manager/payment/mock_paddy_payment.html', context)
 
 
-
+@login_required
 def mock_paddy_payment_success(request):
     return render(request,"manager/payment/mock_paddy_payment_success.html")
+@login_required
 def mock_paddy_payment_fail(request):
     return render(request,"manager/payment/mock_paddy_payment_fail.html")
 
 
+
+# Mock payment Getaway for paddy
+@login_required
 def mock_rice_payment(request,rice_id):
-    pass
+    purchase =get_object_or_404(PurchaseRice,pk=rice_id, manager=request.user)
+    if request.method == "POST":
+        form = PaymentForRiceForm(request.POST)
+        rice = purchase.rice
+        
+        if form.is_valid():
+            payment= form.save(commit=False)
+            payment.user = request.user
+            payment.rice = rice
+            payment.transaction_id = f'MOCK-{uuid.uuid4().hex[:8]}'
+            if payment.amount == purchase.total_price:
+                payment.is_paid = True
+                payment.status = "success"
+                purchase.payment = True
+                payment.save()
+                purchase.save()
+                return redirect("mock_rice_payment_success")
+            else:
+                payment.status = "Failed"
+                payment.save()
+                return redirect("mock_rice_payment_fail")
+            
+        
+    else:
+        form = PaymentForRiceForm()
+    context = {
+        "form" : form,
+        'purchase' : purchase
+    }
+    return render(request,"manager/payment/mock_rice_payment.html",context)
+
+@login_required
+def mock_rice_payment_success(request):
+    return render(request,"manager/payment/mock_rice_payment_success.html")
+
+@login_required
+def mock_rice_payment_fail(request):
+    return render(request,"manager/payment/mock_rice_payment_fail.html")
+
 
 
 # @login_required

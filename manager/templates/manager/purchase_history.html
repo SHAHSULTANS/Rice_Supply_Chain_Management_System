@@ -31,7 +31,7 @@
                     <td>{{ purchase.purchase_date|date:"M d, Y h:i A" }}</td>
                     <td>
                         {% if purchase.payment %}
-                            <span class="text-success">Paid</span>
+                            <span class=" btn btn-success btn-large">Paid</span>
                         {% else %}
                             <a href="{% url 'mock_paddy_payment' purchase.id %}" class="btn btn-sm btn-primary">Mock Pay</a>
                         {% endif %}
@@ -77,9 +77,9 @@
                     <td>{{ purchase.purchase_date|date:"M d, Y h:i A" }}</td>
                     <td>
                         {% if purchase.payment %}
-                            <span class="text-success">Paid</span>
+                            <span class="btn btn-success btn-large">Paid</span>
                         {% else %}
-                            <a href="{% url 'mock_rice_payment' purchase.rice.id %}" class="btn btn-sm btn-primary">Mock Pay</a>
+                            <a href="{% url 'mock_rice_payment' purchase.id %}" class="btn btn-sm btn-primary">Mock Pay</a>
                         {% endif %}
                     </td>
                 </tr>
