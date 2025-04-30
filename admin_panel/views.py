@@ -1,6 +1,6 @@
 import random
 from datetime import datetime, timedelta
-
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.conf import settings
 
-from .forms import PasswordResetRequestForm, AdminProfileForm
+from .forms import PasswordResetRequestForm, AdminProfileForm,UserPasswordChangeForm
 from .models import AdminProfile
 
 # Check if user is an admin
@@ -120,4 +120,27 @@ def reset_password(request, email):
         else:
             messages.error(request, "Passwords do not match. Try again.")
     return render(request, "password_reset_and_change/reset_password.html", {'email': email})
+
+
+
+
+
+@login_required(login_url='login_user')
+def change_password(request):
+    if request.method == 'POST':
+        form = UserPasswordChangeForm(data=request.POST, user=request.user)  # ✅ Corrected form initialization
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # ✅ Keep user logged in
+            messages.success(request, "Your password was successfully updated!")
+            return redirect('password_change_complete')  # ✅ Redirect instead of re-rendering
+    else:
+        form = UserPasswordChangeForm(user=request.user)
+
+    return render(request, 'password_reset_and_change/change_password.html', {'form': form})
+
+def password_change_complete(request):
+    return render(request, 'password_reset_and_change/password_change_complete.html')
+
+
 
