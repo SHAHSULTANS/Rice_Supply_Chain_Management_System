@@ -5,6 +5,7 @@ from dealer.models import PaddyStock
 from .forms import ManagerProfileForm, RicePostForm, Purchase_paddyForm, PurchaseRiceForm,PaymentForPaddyForm
 from decimal import Decimal
 
+
 import uuid
 
 
@@ -134,7 +135,7 @@ def purchase_paddy(request,id):
             purchase = form.save(commit=False)
             purchase.manager = request.user
             purchase.paddy = paddy
-            purchase.total_price = (Decimal(purchase.quantity_purchased) * paddy.price_per_mon) + purchase.transport_cost
+            purchase.total_price = Decimal((purchase.quantity_purchased/40.0) * float(paddy.price_per_mon)) + purchase.transport_cost
             purchase.save()
             paddy.quantity=paddy.quantity -  (Decimal(purchase.quantity_purchased))
             if paddy.quantity <= 0:
@@ -214,15 +215,30 @@ def mock_paddy_payment(request, purchase_id):
         'purchase': purchase,
         'form': form,
     }
-    return render(request, 'manager/mock_paddy_payment.html', context)
+    return render(request, 'manager/payment/mock_paddy_payment.html', context)
 
 
 
 def mock_paddy_payment_success(request):
-    return render(request,"manager/mock_paddy_payment_success.html")
+    return render(request,"manager/payment/mock_paddy_payment_success.html")
 def mock_paddy_payment_fail(request):
-    return render(request,"manager/mock_paddy_payment_fail.html")
+    return render(request,"manager/payment/mock_paddy_payment_fail.html")
 
 
 def mock_rice_payment(request,rice_id):
     pass
+
+
+# @login_required
+# def Mock_Payment_UI(request):
+#     if request.method == 'POST':
+#         amount = request.POST.get('total_amount')
+#         purchase_id = request.POST.get('purchase_id')
+#         purchase = get_object_or_404(Purchase_paddy, id=purchase_id)
+
+#         return render(request, 'manager/payment/Mock_Payment_UI.html', {
+#             'amount': amount,
+#             'purchase': purchase,
+#         })
+
+#     return redirect('some_error_page')

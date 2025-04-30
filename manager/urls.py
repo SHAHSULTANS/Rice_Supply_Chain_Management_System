@@ -24,12 +24,12 @@ urlpatterns = [
     
     path('purchase_history/', views.purchase_history, name='purchase_history'),
     
+    # path('Mock_Payment_UI/', views.Mock_Payment_UI, name='Mock_Payment_UI'),
+    
 
 
     path('mock_paddy_payment/<int:purchase_id>/', views.mock_paddy_payment, name='mock_paddy_payment'),    path('mock_rice_payment/<int:rice_id>/', views.mock_rice_payment, name='mock_rice_payment'),
     path('mock_paddy_payment_success/', views.mock_paddy_payment_success, name='mock_paddy_payment_success'),
     path('mock_paddy_payment_fail/', views.mock_paddy_payment_fail, name='mock_paddy_payment_fail'),
-    # path('mock/payment/success/', views.mock_payment_success, name='mock_payment_success'),
-    # path('mock/payment/fail/', views.mock_payment_fail, name='mock_payment_fail'),
 
 ]
