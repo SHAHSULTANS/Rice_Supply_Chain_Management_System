@@ -1,5 +1,5 @@
 from django import forms
-from .models import ManagerProfile, RicePost, Purchase_paddy, PurchaseRice
+from .models import ManagerProfile, RicePost, Purchase_paddy, PurchaseRice,PaymentForPaddy
 
 class ManagerProfileForm(forms.ModelForm):
     class Meta:
@@ -38,3 +38,13 @@ class PurchaseRiceForm(forms.ModelForm):
     class Meta:
         model = PurchaseRice
         fields = ['quantity_purchased','delivery_cost']
+        
+        
+        
+class PaymentForPaddyForm(forms.ModelForm):
+    class Meta:
+        model = PaymentForPaddy
+        fields = ['amount']
+        widgets = {
+            'amount': forms.NumberInput(attrs={'class': 'form-control'}),
+        }

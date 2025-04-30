@@ -33,15 +33,16 @@ class RicePost(models.Model):
     
 class Purchase_paddy(models.Model):
     manager = models.ForeignKey(CustomUser,on_delete=models.CASCADE,limit_choices_to={'role':'manager'})
-    paddy = models.ForeignKey(PaddyStock,on_delete=models.CASCADE)
+    paddy = models.ForeignKey(PaddyStock,on_delete=models.CASCADE,related_name="purchase_paddy")
     quantity_purchased = models.FloatField()
     total_price = models.DecimalField(max_digits=10,decimal_places=2)
     transport_cost = models.DecimalField(max_digits=6,decimal_places=2,default=0)
     is_confirmed = models.BooleanField(default=False)
+    payment = models.BooleanField(default=False)
     purchase_date = models.DateTimeField(auto_now_add=True)
         
     def __str__(self):
-        return f"Purchases By f{self.manager.full_name} from {self.paddy.dealer.username}"
+        return f"Purchases By {self.manager.full_name} from {self.paddy.dealer.username}"
         
 
 class PurchaseRice(models.Model):
@@ -51,23 +52,29 @@ class PurchaseRice(models.Model):
     total_price = models.DecimalField(max_digits=10,decimal_places=2)
     delivery_cost = models.DecimalField(max_digits=6,decimal_places=2,default=0)
     is_confirmed = models.BooleanField(default=False)
+    payment = models.BooleanField(default=False)
     purchase_date = models.DateTimeField(auto_now_add=True)
     
 
+class PaymentForPaddy(models.Model):
+    PAYMENT_STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Processing', 'Processing'),
+        ('Success', 'Success'),
+        ('Failed', 'Failed'),
+    ]
 
-        
-class Payment(models.Model):
-    purchase = models.OneToOneField(Purchase_paddy,on_delete=models.CASCADE)
-    amount_paid = models.DecimalField(max_digits=10,decimal_places=2)
-    payment_status = models.CharField(max_length=20,choices=[
-        ('pending', 'Pending'),
-        ('success', 'Success'),
-        ('failed', 'Failed')
-    ],default='pending')
-    payment_date = models.DateTimeField(auto_now_add=True)
-    paymant_method = models.CharField(max_length=40,default="MockPay")
-    
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    paddy = models.ForeignKey(PaddyStock, on_delete=models.CASCADE)
+    transaction_id = models.CharField(max_length=100, unique=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    is_paid = models.BooleanField(default=False)
+    status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='Pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
-        return f"payment for purchase {self.purchase.id} - {self.payment_status}"
+        return f"{self.transaction_id} - {self.status}"
+        
+
     
     

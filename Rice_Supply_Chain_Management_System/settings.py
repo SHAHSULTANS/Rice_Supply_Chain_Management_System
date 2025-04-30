@@ -149,3 +149,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # timezone
 USE_TZ = True
 TIME_ZONE = 'Asia/Dhaka'
+
+# for payment getaway
+
+SSLCOMMERZ_STORE_ID = 'rices6811907decec8'
+SSLCOMMERZ_STORE_PASSWORD = 'rices6811907decec8@ssl'
+SSLCOMMERZ_INIT_URL = 'https://sandbox.sslcommerz.com/gwprocess/v4/api.php'  # Use production URL for live
+SSLCOMMERZ_VALIDATION_URL = 'https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php'

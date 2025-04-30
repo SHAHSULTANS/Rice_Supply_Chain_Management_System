@@ -1,9 +1,13 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render,redirect,get_object_or_404,HttpResponse
-from .models import ManagerProfile, RicePost, Purchase_paddy,PurchaseRice
+from .models import ManagerProfile, RicePost, Purchase_paddy,PurchaseRice,PaymentForPaddy
 from dealer.models import PaddyStock
-from .forms import ManagerProfileForm, RicePostForm, Purchase_paddyForm, PurchaseRiceForm
+from .forms import ManagerProfileForm, RicePostForm, Purchase_paddyForm, PurchaseRiceForm,PaymentForPaddyForm
 from decimal import Decimal
+
+import uuid
+
+
 
 def check_manager(user):
     return user.is_authenticated and user.role == 'manager'
@@ -141,19 +145,10 @@ def purchase_paddy(request,id):
         form = Purchase_paddyForm()
     return render(request, "manager/purchase_paddy.html",{'form':form , 'paddy':paddy})
     
+
+
 @login_required(login_url="login")
 @user_passes_test(check_manager)
-def purchase_history(request):
-    purchases_paddy = Purchase_paddy.objects.filter(manager=request.user).order_by("-purchase_date")
-    purchases_rice = PurchaseRice.objects.filter(manager=request.user).order_by("-purchase_date")
-    context = {
-        "purchases_paddy" : purchases_paddy,
-        "purchases_rice" : purchases_rice
-    }
-    
-    return render(request,"manager/purchase_history.html",context)
-
-
 def purchase_rice(request, id):
     rice = get_object_or_404(RicePost,id=id)
     if request.method == "POST":
@@ -174,8 +169,60 @@ def purchase_rice(request, id):
     return render(request, "manager/purchase_rice.html",{'form':form , 'rice':rice})
 
 
+@login_required(login_url="login")
+@user_passes_test(check_manager)
+def purchase_history(request):
+    purchases_paddy = Purchase_paddy.objects.filter(manager=request.user).order_by("-purchase_date")
+    purchases_rice = PurchaseRice.objects.filter(manager=request.user).order_by("-purchase_date")
+    context = {
+        "purchases_paddy" : purchases_paddy,
+        "purchases_rice" : purchases_rice
+    }
+    
+    return render(request,"manager/purchase_history.html",context)
+
+
+@login_required
+def mock_paddy_payment(request, purchase_id):
+    purchase = get_object_or_404(Purchase_paddy, pk=purchase_id, manager=request.user)
+    paddy = purchase.paddy  # Already related through ForeignKey
+
+    if request.method == 'POST':
+        form = PaymentForPaddyForm(request.POST)
+        if form.is_valid():
+            payment = form.save(commit=False)
+            payment.user = request.user
+            payment.paddy = paddy
+            payment.transaction_id = 'MOCK-' + uuid.uuid4().hex[:8]
+
+            # Simulated payment logic
+            if payment.amount == purchase.total_price:
+                payment.is_paid = True
+                payment.status = "Success"
+                purchase.payment = True
+                purchase.save()
+                payment.save()
+                return redirect('mock_paddy_payment_success')
+            else:
+                payment.status = "Failed"
+                payment.save()
+                return redirect('mock_paddy_payment_fail')
+    else:
+        form = PaymentForPaddyForm()
+
+    context = {
+        'purchase': purchase,
+        'form': form,
+    }
+    return render(request, 'manager/mock_paddy_payment.html', context)
 
 
 
-def make_payment(request,id):
-    paddy = get_object_or_404(PaddyStock,id=id , manager=request.user)
+def mock_paddy_payment_success(request):
+    return render(request,"manager/mock_paddy_payment_success.html")
+def mock_paddy_payment_fail(request):
+    return render(request,"manager/mock_paddy_payment_fail.html")
+
+
+def mock_rice_payment(request,rice_id):
+    pass
