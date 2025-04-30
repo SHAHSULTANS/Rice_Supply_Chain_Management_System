@@ -17,13 +17,16 @@
     
     {% block extra_head %}{% endblock %}
 </head>
-<body class="d-flex flex-column min-vh-100">
+<!-- <body class="d-flex flex-column min-vh-100"> -->
+<body class="d-flex flex-column min-vh-100" style="overflow: hidden;">
 
     <!-- ✅ Navbar -->
     {% include 'navbar.html' %}
 
     <!-- ✅ Main Layout -->
-    <div class="d-flex flex-grow-1" style="min-height: 0;">
+    <!-- <div class="d-flex flex-grow-1" style="min-height: 0;"> -->
+   <!-- ✅ Main Layout -->
+<div class="d-flex flex-grow-1 overflow-hidden" style="min-height: 0;">
 
         <!-- ✅ Sidebar for Manager -->
 
@@ -31,7 +34,8 @@
         
 
         <!-- ✅ Main Content Area -->
-        <div id="content" class="flex-grow-1 p-3">
+        <!-- <div id="content" class="flex-grow-1 p-3"> -->
+        <div id="content" class="flex-grow-1 p-3 overflow-auto" style="max-height: calc(100vh - 56px - 56px);">
             <div class="container">
                 {% if messages %}
                     {% for message in messages %}

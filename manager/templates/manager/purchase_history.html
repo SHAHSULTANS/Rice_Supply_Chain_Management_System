@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Paddy Purchases Section -->
+<div class="container mb-5 mt-5">
+    <h2 class="mb-4">Your Purchase History For Paddy</h2>
+
+    {% if purchases_paddy %}
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Paddy Name</th>
+                    <th>Dealer</th>
+                    <th>Quantity (kg)</th>
+                    <th>Price/Mon (৳)</th>
+                    <th>Transport Cost (৳)</th>
+                    <th>Total Price (৳)</th>
+                    <th>Date</th>
+                    <th>Payment</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for purchase in purchases_paddy %}
+                <tr>
+                    <td>{{ purchase.paddy.name }}</td>
+                    <td>{{ purchase.paddy.dealer.user.username }}</td>
+                    <td>{{ purchase.quantity_purchased }}</td>
+                    <td>{{ purchase.paddy.price_per_mon }}</td>
+                    <td>{{ purchase.transport_cost }}</td>
+                    <td>{{ purchase.total_price }}</td>
+                    <td>{{ purchase.purchase_date|date:"M d, Y h:i A" }}</td>
+                    <td>
+                        {% if purchase.payment %}
+                            <span class=" btn btn-success btn-large">Paid</span>
+                        {% else %}
+                            <a href="{% url 'mock_paddy_payment' purchase.id %}" class="btn btn-sm btn-primary">Mock Pay</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>You have not made any purchases yet.</p>
+    {% endif %}
+</div>
+
+<hr>
+
+<!-- Rice Purchases Section -->
+<div class="container mt-5">
+    <h2 class="mb-4">Your Purchase History For Rice</h2>
+
+    {% if purchases_rice %}
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Rice Name</th>
+                    <th>Manager</th>
+                    <th>Quantity (kg)</th>
+                    <th>Price/kg (৳)</th>
+                    <th>Delivery Cost (৳)</th>
+                    <th>Total Price (৳)</th>
+                    <th>Date</th>
+                    <th>Payment</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for purchase in purchases_rice %}
+                <tr>
+                    <td>{{ purchase.rice.rice_name }}</td>
+                    <td>{{ purchase.rice.manager.managerprofile.full_name }}</td>
+                    <td>{{ purchase.quantity_purchased }}</td>
+                    <td>{{ purchase.rice.price_per_kg }}</td>
+                    <td>{{ purchase.delivery_cost }}</td>
+                    <td>{{ purchase.total_price }}</td>
+                    <td>{{ purchase.purchase_date|date:"M d, Y h:i A" }}</td>
+                    <td>
+                        {% if purchase.payment %}
+                            <span class="btn btn-success btn-large">Paid</span>
+                        {% else %}
+                            <a href="{% url 'mock_rice_payment' purchase.id %}" class="btn btn-sm btn-primary">Mock Pay</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>You have not made any purchases yet.</p>
+    {% endif %}
+
+    <a href="{% url 'manager_dashboard' %}" class="btn btn-success mt-4">Back</a>
+</div>
+
+{% endblock %}

@@ -47,7 +47,12 @@ INSTALLED_APPS = [
     'customer',
     'admin_panel',
     'RSCMS_app',
+    'widget_tweaks',
+    'crispy_forms',
+    'crispy_bootstrap5', 
 ]
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -73,6 +78,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'manager.context_processors.manager_profile',
                 'admin_panel.context_processors.admin_profile',
+                'customer.context_processors.customer_profile'
             ],
         },
     },
@@ -130,6 +136,7 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS =[
     os.path.join(BASE_DIR,'static')
 ]
+# STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # for storing media
 MEDIA_URL = '/media/'
@@ -139,3 +146,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# timezone
+USE_TZ = True
+TIME_ZONE = 'Asia/Dhaka'
+
+# for payment getaway
+
+SSLCOMMERZ_STORE_ID = 'rices6811907decec8'
+SSLCOMMERZ_STORE_PASSWORD = 'rices6811907decec8@ssl'
+SSLCOMMERZ_INIT_URL = 'https://sandbox.sslcommerz.com/gwprocess/v4/api.php'  # Use production URL for live
+SSLCOMMERZ_VALIDATION_URL = 'https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php'

@@ -1,0 +1,38 @@
+<!-- templates/manager/purchase_paddy.html -->
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Purchase Paddy</h2>
+
+    <div class="card mb-4">
+        <div class="row no-gutters">
+            <div class="col-md-4">
+                {% if paddy.image %}
+                    <img src="{{ paddy.image.url }}" class="card-img" alt="{{ paddy.name }}">
+                {% else %}
+                    <img src="{% static 'default_images/default_paddy.jpg' %}" class="card-img" alt="Default Paddy">
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{ paddy.name }}</h5>
+                    <p class="card-text"><strong>Dealer:</strong> {{ paddy.dealer.user.username }}</p>
+                    <p class="card-text"><strong>Quality:</strong> {{ paddy.moisture_content }} %</p>
+                    <p class="card-text"><strong>Available Quantity:</strong> {{ paddy.quantity }} kg</p>
+                    <p class="card-text"><strong>Price per :</strong> ৳{{ paddy.price_per_mon }}</p>
+                    <p class="card-text">{{ paddy.description }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h4>Purchase Form</h4>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Purchase</button>
+        <a href="{% url 'explore_paddy_post' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

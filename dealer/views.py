@@ -25,7 +25,7 @@ def dealer_profile_create(request, user_id):
     user = CustomUser.objects.get(id=user_id)
 
     if request.method == "POST":
-        form = DealerProfileForm(request.POST)
+        form = DealerProfileForm(request.POST, request.FILES)
         if form.is_valid():
             dealer = form.save(commit=False)
             dealer.user = user
@@ -41,7 +41,7 @@ def dealer_profile_create(request, user_id):
 
 def add_paddy_post(request):
     if request.method == 'POST':
-        form = PaddyStockForm(request.POST)
+        form = PaddyStockForm(request.POST , request.FILES)
         if form.is_valid():
             paddy_post = form.save(commit=False)
             # Get dealer profile of logged-in user
@@ -65,7 +65,7 @@ def edit_paddy_post(request, post_id):
     post = get_object_or_404(PaddyStock, id=post_id)
 
     if request.method == 'POST':
-        form = PaddyStockForm(request.POST, instance=post)
+        form = PaddyStockForm(request.POST, request.FILES, instance=post)
         if form.is_valid():
             form.save()
             return redirect('dealer_dashboard')
@@ -73,3 +73,14 @@ def edit_paddy_post(request, post_id):
         form = PaddyStockForm(instance=post)
 
     return render(request, 'dealer/edit_post.html', {'form': form})
+
+
+
+
+from django.contrib import messages
+def delete_post(request, post_id):
+    post = get_object_or_404(PaddyStock, id=post_id)
+    if request.method == 'POST':
+        post.delete()
+        messages.success(request, 'Post deleted successfully.')
+    return redirect('dealer_dashboard')  
