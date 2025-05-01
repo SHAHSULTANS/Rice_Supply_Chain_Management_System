@@ -55,6 +55,8 @@ class PurchaseRice(models.Model):
     payment = models.BooleanField(default=False)
     purchase_date = models.DateTimeField(auto_now_add=True)
     
+    def __str__(self):
+        return f"Rice Purchase by {self.manager.username} - {self.rice.rice_name}"
 
 class PaymentForPaddy(models.Model):
     PAYMENT_STATUS_CHOICES = [
