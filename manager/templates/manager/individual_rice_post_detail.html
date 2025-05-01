@@ -32,9 +32,16 @@
                                 <i class="fas fa-shopping-cart"></i> Order Now
                             </a>
                         {% endif %}
+                        {% if request.user.role == "admin" %}
+                        <a href="{% url 'see_all_manager' %}" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-2">
+                            <i class="fas fa-arrow-left"></i> Back 
+                        </a>
+                        {% else %}
                         <a href="{% url 'explore_all_rice_post' %}" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-2">
                             <i class="fas fa-arrow-left"></i> Back to List
                         </a>
+
+                        {% endif %}
                     </div>
                 </div>
             </div>

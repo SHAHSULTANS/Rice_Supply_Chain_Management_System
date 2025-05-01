@@ -58,7 +58,11 @@ def see_all_delears(request):
 
 def individuals_delear_details(request, id):
     dealer = get_object_or_404(DealerProfile, pk=id)
-    return render(request, "admin/individuals_delear_details.html", {'dealer': dealer})
+    paddy_stocks = dealer.paddystock_set.all()  # fetch all related paddy stocks
+    return render(request, "admin/individuals_delear_details.html", {
+        'dealer': dealer,
+        'paddy_stocks': paddy_stocks
+    })
 
 
 def see_all_manager(request):

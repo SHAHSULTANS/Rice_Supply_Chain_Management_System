@@ -39,7 +39,7 @@ def create_rice_post(request):
     return render(request, "manager/create_rice_post.html", {'form': form})
 
 @login_required(login_url="login")
-@user_passes_test(check_manager)
+@user_passes_test(check_manager_and_admin)
 def update_rice_post(request,id):
     rice_post = get_object_or_404(RicePost,id=id)
     if request.method == "POST":
@@ -53,7 +53,7 @@ def update_rice_post(request,id):
 
 
 @login_required(login_url="login")
-@user_passes_test(check_manager)
+@user_passes_test(check_manager_and_admin)
 def delete_rice_post(request,id):
     rice_post = get_object_or_404(RicePost,id=id)
     if request.method == "POST":
