@@ -3,7 +3,11 @@
 
 <!-- Paddy Purchases Section -->
 <div class="container mb-5 mt-5">
+    {% if check == 1 %}
+    <h2 class="mb-4"><span class="text-danger fw-bold">{{manager.full_name}}'s </span>Purchase History For Paddy</h2>
+    {% else %}
     <h2 class="mb-4">Your Purchase History For Paddy</h2>
+    {% endif %}
 
     {% if purchases_paddy %}
         <table class="table table-bordered table-striped">
@@ -49,7 +53,11 @@
 
 <!-- Rice Purchases Section -->
 <div class="container mt-5">
+    {% if check == 1 %}
+    <h2 class="mb-4"><span class="text-danger fw-bold">{{manager.full_name}}'s </span>Purchase History For Rice</h2>
+    {% else %}
     <h2 class="mb-4">Your Purchase History For Rice</h2>
+    {% endif %}
 
     {% if purchases_rice %}
         <table class="table table-bordered table-striped">

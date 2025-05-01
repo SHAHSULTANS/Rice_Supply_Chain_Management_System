@@ -20,6 +20,7 @@
                 <div class="card-body p-4">
                     <h3 class="card-title">{{ manager.full_name }}</h3>
                     <ul class="list-unstyled">
+                        {% comment %} {{manager.id}} {% endcomment %}
                         <li><strong>Email:</strong> {{ manager.user.email }}</li>
                         <li><strong>Phone:</strong> {{ manager.phone_number }}</li>
                         <li><strong>Mill Name:</strong> {{ manager.mill_name }}</li>
@@ -27,6 +28,7 @@
                         <li><strong>Experience:</strong> {{ manager.experience_year }} years</li>
                         <li><strong>Bio:</strong> {{ manager.bio|default:"No bio provided." }}</li>
                         <li><strong>Joined:</strong> {{ manager.created_at|date:"F d, Y" }}</li>
+                        <a href="{% url "purchase_history_seen_admin" manager.id %}" class="btn btn-primary mt-3">Purchases History</a>
                     </ul>
                 </div>
             </div>
