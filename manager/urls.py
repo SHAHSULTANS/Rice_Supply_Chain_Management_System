@@ -23,6 +23,7 @@ urlpatterns = [
     path('purchase_paddy/<int:id>/', views.purchase_paddy, name='purchase_paddy'),
     path('purchase_rice/<int:id>/', views.purchase_rice, name='purchase_rice'),
     path('purchase_history/', views.purchase_history, name='purchase_history'),
+    path('purchase_history_seen_admin/<int:id>', views.purchase_history_seen_admin, name='purchase_history_seen_admin'),
     
     # path('Mock_Payment_UI/', views.Mock_Payment_UI, name='Mock_Payment_UI'),
     

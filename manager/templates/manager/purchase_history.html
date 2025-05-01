@@ -3,7 +3,11 @@
 
 <!-- Paddy Purchases Section -->
 <div class="container mb-5 mt-5">
+    {% if check == 1 %}
+    <h2 class="mb-4"><span class="text-danger fw-bold">{{manager.full_name}}'s </span>Purchase History For Paddy</h2>
+    {% else %}
     <h2 class="mb-4">Your Purchase History For Paddy</h2>
+    {% endif %}
 
     {% if purchases_paddy %}
         <table class="table table-bordered table-striped">
@@ -16,7 +20,7 @@
                     <th>Transport Cost (৳)</th>
                     <th>Total Price (৳)</th>
                     <th>Date</th>
-                    <th>Payment</th>
+                    <th>Payment Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -29,12 +33,22 @@
                     <td>{{ purchase.transport_cost }}</td>
                     <td>{{ purchase.total_price }}</td>
                     <td>{{ purchase.purchase_date|date:"M d, Y h:i A" }}</td>
-                    <td>
-                        {% if purchase.payment %}
-                            <span class=" btn btn-success btn-large">Paid</span>
-                        {% else %}
-                            <a href="{% url 'mock_paddy_payment' purchase.id %}" class="btn btn-sm btn-primary">Mock Pay</a>
-                        {% endif %}
+                    <td >
+                        <div class="d-flex justify-content-center">
+                            {% if request.user.role == "admin" %}
+                                {% if purchase.payment %}
+                                    <span class="btn btn-success">Paid</span>
+                                {% else %}
+                                    <a href="#" class="btn btn-sm btn-primary">Unpaid</a>
+                                {% endif %}
+                            {% else %}
+                                {% if purchase.payment %}
+                                    <span class="btn btn-success">Paid</span>
+                                {% else %}
+                                    <a href="{% url 'mock_paddy_payment' purchase.id %}" class="btn btn-sm btn-primary">Mock Pay</a>
+                                {% endif %}
+                            {% endif %}
+                        </div>
                     </td>
                 </tr>
                 {% endfor %}
@@ -49,7 +63,11 @@
 
 <!-- Rice Purchases Section -->
 <div class="container mt-5">
+    {% if check == 1 %}
+    <h2 class="mb-4"><span class="text-danger fw-bold">{{manager.full_name}}'s </span>Purchase History For Rice</h2>
+    {% else %}
     <h2 class="mb-4">Your Purchase History For Rice</h2>
+    {% endif %}
 
     {% if purchases_rice %}
         <table class="table table-bordered table-striped">
@@ -75,12 +93,22 @@
                     <td>{{ purchase.delivery_cost }}</td>
                     <td>{{ purchase.total_price }}</td>
                     <td>{{ purchase.purchase_date|date:"M d, Y h:i A" }}</td>
-                    <td>
-                        {% if purchase.payment %}
-                            <span class="btn btn-success btn-large">Paid</span>
-                        {% else %}
-                            <a href="{% url 'mock_rice_payment' purchase.id %}" class="btn btn-sm btn-primary">Mock Pay</a>
-                        {% endif %}
+                    <td >
+                        <div class="d-flex justify-content-center">
+                            {% if request.user.role == "admin" %}
+                                {% if purchase.payment %}
+                                    <span class="btn btn-success">Paid</span>
+                                {% else %}
+                                    <a href="#" class="btn btn-sm btn-primary">Unpaid</a>
+                                {% endif %}
+                            {% else %}
+                                {% if purchase.payment %}
+                                    <span class="btn btn-success">Paid</span>
+                                {% else %}
+                                    <a href="{% url 'mock_paddy_payment' purchase.id %}" class="btn btn-sm btn-primary">Mock Pay</a>
+                                {% endif %}
+                            {% endif %}
+                        </div>
                     </td>
                 </tr>
                 {% endfor %}
@@ -89,8 +117,11 @@
     {% else %}
         <p>You have not made any purchases yet.</p>
     {% endif %}
-
-    <a href="{% url 'manager_dashboard' %}" class="btn btn-success mt-4">Back</a>
+        {% if request.user.role == "admin" %}
+        <a href="{% url 'see_all_manager' %}" class="btn btn-success mt-4">Back</a>
+        {% else %}
+        <a href="{% url 'manager_dashboard' %}" class="btn btn-success mt-4">Back</a>
+        {% endif %}
 </div>
 
 {% endblock %}
