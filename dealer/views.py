@@ -84,3 +84,30 @@ def delete_post(request, post_id):
         post.delete()
         messages.success(request, 'Post deleted successfully.')
     return redirect('dealer_dashboard')  
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import DealerProfile
+from .forms import DealerProfileEditForm
+
+def edit_dealer_profile(request):
+    dealer_profile = request.user.dealerprofile
+    print(dealer_profile)
+    
+    
+    if request.method == 'POST':
+        form = DealerProfileEditForm(request.POST, instance=dealer_profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('dealer_dashboard')
+    else:
+        form = DealerProfileEditForm(instance=dealer_profile)
+    
+    context = {
+        'form': form,
+        'dealer': dealer_profile
+    }
+    return render(request, 'dealer/edit_profile.html', context)
