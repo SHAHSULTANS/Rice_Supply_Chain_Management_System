@@ -1,7 +1,8 @@
+from datetime import timezone
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse
-
+from django.db.models import Count, Sum, Avg
 from accounts.models import CustomUser
 from dealer.forms import DealerProfileForm, PaddyStockForm
 from dealer.models import DealerProfile, PaddyStock
@@ -14,11 +15,34 @@ def check_dealer(user):
 
 @login_required(login_url='login')
 @user_passes_test(check_dealer)
+@login_required
 def dealer_dashboard(request):
     dealer = get_object_or_404(DealerProfile, user=request.user)
-    
+
+    # Get all posts by this dealer
     posts = PaddyStock.objects.filter(dealer=dealer).order_by('-stored_since')
-    return render(request, 'dealer/dashboard.html', {'dealer': dealer, 'posts': posts})
+
+    # Dashboard metrics
+    active_posts_count = posts.filter(is_available=True).count()
+    total_quantity = posts.aggregate(total=Sum('quantity'))['total'] or 0
+    avg_price = posts.aggregate(avg=Avg('price_per_mon'))['avg'] or 0
+
+    # Count of recent orders (last 30 days)
+    # recent_orders_count = Order.objects.filter(
+    #     paddy__dealer=dealer,
+    #     created_at__gte=timezone.now() - timezone.timedelta(days=30)
+    # ).count()
+
+    context = {
+        'dealer': dealer,
+        'posts': posts,
+        'active_posts_count': active_posts_count,
+        'total_quantity': total_quantity,
+        'avg_price': round(avg_price, 2),
+        'recent_orders_count': 20,
+    }
+
+    return render(request, 'dealer/dashboard.html', context)
 
 
 def dealer_profile_create(request, user_id):
