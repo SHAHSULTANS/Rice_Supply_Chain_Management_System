@@ -10,5 +10,6 @@ urlpatterns = [
     path('paddy/edit/<int:post_id>/', views.edit_paddy_post, name='edit_paddy_post'),
     path('delete/<int:post_id>/', views.delete_post, name='delete_post'),
     path('profile/edit/',views.edit_dealer_profile, name='edit_dealer_profile'),
+    path('orders/', views.dealer_order_list, name='dealer_order_list'),
 
 ]

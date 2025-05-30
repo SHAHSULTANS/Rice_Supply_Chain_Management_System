@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Your Recent Orders</h2>
+  {% if orders %}
+    <table class="table table-striped mt-3">
+      <thead>
+        <tr>
+          <th>Manager</th>
+          <th>Paddy</th>
+          <th>Quantity</th>
+          <th>Total Price</th>
+          <th>Transport Cost</th>
+          <th>Confirmed</th>
+          <th>Paid</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+          <tr>
+            <td>{{ order.manager}}</td>
+            <td>{{ order.paddy.name }}</td>
+            <td>{{ order.quantity_purchased }}</td>
+            <td>৳{{ order.total_price }}</td>
+            <td>৳{{ order.transport_cost }}</td>
+            <td>{{ order.is_confirmed|yesno:"Yes,No" }}</td>
+            <td>{{ order.payment|yesno:"Yes,No" }}</td>
+            <td>{{ order.purchase_date|date:"M d, Y H:i" }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="alert alert-info mt-3">You have no orders yet.</div>
+  {% endif %}
+</div>
+{% endblock %}

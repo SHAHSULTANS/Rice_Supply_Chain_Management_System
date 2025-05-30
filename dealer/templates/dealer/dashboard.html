@@ -74,7 +74,7 @@
               <div class="text-xs fw-bold text-info text-uppercase mb-1">
                 Avg. Price
               </div>
-              <div class="h5 mb-0 fw-bold text-gray-800"><span>&#2547;</span>{{ avg_price|default:"0" }}/mon</div>
+              <div class="h5 mb-0 fw-bold text-gray-800"><span>&#2547;</span>{{ avg_price|default:"0" }}/মন</div>
             </div>
             <div class="col-auto">
               <span class="fa fa-2x text-gray-300" style="font-family: Arial, sans-serif;">৳</span>
@@ -84,22 +84,25 @@
       </div>
     </div>
     <div class="col-xl-3 col-md-6 mb-4">
-      <div class="card border-start-warning shadow h-100 py-2">
-        <div class="card-body">
-          <div class="row no-gutters align-items-center">
-            <div class="col me-2">
-              <div class="text-xs fw-bold text-warning text-uppercase mb-1">
-                Recent Orders
-              </div>
-              <div class="h5 mb-0 fw-bold text-gray-800">{{ recent_orders_count }}</div>
+  <a href="{% url 'dealer_order_list' %}" style="text-decoration: none;">
+    <div class="card border-start-warning shadow h-100 py-2 hover-effect">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col me-2">
+            <div class="text-xs fw-bold text-warning text-uppercase mb-1">
+              Recent Orders
             </div>
-            <div class="col-auto">
-              <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
-            </div>
+            <div class="h5 mb-0 fw-bold text-gray-800">{{ recent_orders_count }}</div>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
           </div>
         </div>
       </div>
     </div>
+  </a>
+</div>
+
   </div>
 
   <!-- Recent Activity and Listings -->
@@ -146,7 +149,7 @@
                         <div class="small text-muted">{{ post.stored_since|date:"M d, Y" }}</div>
                       </td>
                       <td>{{ post.quantity }} units</td>
-                      <td>₹{{ post.price_per_mon }}/mon</td>
+                      <td>৳{{ post.price_per_mon }}/মন</td>
                       <td>{{ post.moisture_content }}%</td>
                       <td>
                         {% if post.is_available %}
@@ -326,4 +329,31 @@
     });
   });
 </script>
+
+
+<style>
+  .hover-effect {
+    transition: all 0.3s ease;
+  }
+  
+  .hover-effect:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    border-left: 4px solid #ffc107 !important; /* Warning color */
+  }
+  
+  a:hover .text-warning {
+    color: #ffca2c !important; /* Lighter warning color on hover */
+  }
+  
+  a:hover .text-gray-800 {
+    color: #2d3748 !important; /* Darker text on hover for better contrast */
+  }
+  
+  a:hover .text-gray-300 {
+    color: #d1d5db !important; /* Lighter icon color on hover */
+  }
+</style>
 {% endblock %}
+
+

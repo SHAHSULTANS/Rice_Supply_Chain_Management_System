@@ -6,7 +6,9 @@ from django.db.models import Count, Sum, Avg
 from accounts.models import CustomUser
 from dealer.forms import DealerProfileForm, PaddyStockForm
 from dealer.models import DealerProfile, PaddyStock
-
+from manager.models import Purchase_paddy
+from django.utils import timezone
+from datetime import timedelta
 
 # Create your views here.
 
@@ -28,10 +30,10 @@ def dealer_dashboard(request):
     avg_price = posts.aggregate(avg=Avg('price_per_mon'))['avg'] or 0
 
     # Count of recent orders (last 30 days)
-    # recent_orders_count = Order.objects.filter(
-    #     paddy__dealer=dealer,
-    #     created_at__gte=timezone.now() - timezone.timedelta(days=30)
-    # ).count()
+    recent_orders_count = Purchase_paddy.objects.filter(
+        paddy__dealer=dealer,
+        purchase_date__gte=timezone.now() - timezone.timedelta(days=30)
+    ).count()
 
     context = {
         'dealer': dealer,
@@ -39,7 +41,7 @@ def dealer_dashboard(request):
         'active_posts_count': active_posts_count,
         'total_quantity': total_quantity,
         'avg_price': round(avg_price, 2),
-        'recent_orders_count': 20,
+        'recent_orders_count': recent_orders_count,
     }
 
     return render(request, 'dealer/dashboard.html', context)
@@ -135,3 +137,14 @@ def edit_dealer_profile(request):
         'dealer': dealer_profile
     }
     return render(request, 'dealer/edit_profile.html', context)
+
+
+
+#order list
+
+@login_required
+def dealer_order_list(request):
+    dealer = get_object_or_404(DealerProfile, user=request.user)
+    orders = Purchase_paddy.objects.filter(paddy__dealer=dealer).select_related('paddy', 'manager').order_by('-purchase_date')
+    
+    return render(request, 'dealer/order_list.html', {'orders': orders, 'dealer': dealer})
