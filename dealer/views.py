@@ -171,3 +171,142 @@ def dealer_order_list(request):
     orders = Purchase_paddy.objects.filter(paddy__dealer=dealer).select_related('paddy', 'manager').order_by('-purchase_date')
     
     return render(request, 'dealer/order_list.html', {'orders': orders, 'dealer': dealer})
+
+
+
+
+
+
+#View State for Dealer
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum, Count, Avg, F, Q, Case, When, Value, FloatField
+from datetime import datetime, timedelta
+from django.utils import timezone
+# from .models import PaddyStock, Purchase_paddy
+
+@login_required
+def dealer_stats(request):
+    dealer = request.user.dealerprofile
+    
+    # Date ranges for statistics
+    today = timezone.now().date()
+    last_30_days = today - timedelta(days=30)
+    
+    recent_orders_count = Purchase_paddy.objects.filter(
+        paddy__dealer=dealer,
+        purchase_date__gte=timezone.now() - timezone.timedelta(days=30)
+    ).count()
+    # Sales data (from Purchase_paddy)
+    sales_data = Purchase_paddy.objects.filter(
+        paddy__dealer=dealer,
+        purchase_date__gte=last_30_days,
+        is_confirmed=True
+    ).extra({
+        'day': "date(purchase_date)"
+    }).values('day').annotate(
+        total=Sum('total_price'),
+        quantity=Sum('quantity_purchased')
+    ).order_by('day')
+    
+    sales_labels = [sale['day'].strftime('%b %d') for sale in sales_data]
+    sales_values = [float(sale['total']) for sale in sales_data]
+    quantity_sold = [float(sale['quantity']) for sale in sales_data]
+    
+    # Top selling paddy varieties
+    top_varieties = Purchase_paddy.objects.filter(
+        paddy__dealer=dealer,
+        is_confirmed=True
+    ).values(
+        'paddy__name'
+    ).annotate(
+        total_quantity=Sum('quantity_purchased'),
+        total_sales=Sum('total_price'),
+        count=Count('id')
+    ).order_by('-total_sales')[:5]
+    
+    total_sales_all = sum(variety['total_sales'] for variety in top_varieties) if top_varieties else 0
+    top_varieties_data = []
+    top_varieties_labels = []
+    
+    for variety in top_varieties:
+        percentage = round((variety['total_sales'] / total_sales_all) * 100) if total_sales_all > 0 else 0
+        top_varieties_data.append(percentage)
+        top_varieties_labels.append(variety['paddy__name'])
+    
+    # Purchase status breakdown
+    purchase_status = Purchase_paddy.objects.filter(
+        paddy__dealer=dealer
+    ).aggregate(
+        total=Count('id'),
+        confirmed=Count('id', filter=Q(is_confirmed=True)),
+        paid=Count('id', filter=Q(payment=True)),
+        pending=Count('id', filter=Q(is_confirmed=False))
+    )
+    
+    # Inventory status - simplified without Cast
+    inventory_status = []
+    for stock in PaddyStock.objects.filter(dealer=dealer):
+        days_in_stock = (timezone.now() - stock.stored_since).days
+        total_sold = Purchase_paddy.objects.filter(
+            paddy=stock,
+            is_confirmed=True
+        ).aggregate(total=Sum('quantity_purchased'))['total'] or 0
+        
+        turnover_rate = days_in_stock / total_sold if total_sold > 0 else 0
+        
+        inventory_status.append({
+            'name': stock.name,
+            'stock': stock.quantity,
+            'sold': total_sold,
+            'turnover': round(turnover_rate, 1),
+            'status': 'Low' if stock.quantity < 100 else 'Medium' if stock.quantity < 500 else 'Good',
+            'moisture': stock.moisture_content,
+            'price': stock.price_per_mon
+        })
+    
+    # Calculate conversion rate
+    total_stock = PaddyStock.objects.filter(dealer=dealer).aggregate(
+        total=Sum('quantity')
+    )['total'] or 0
+    
+    sold_stock = Purchase_paddy.objects.filter(
+        paddy__dealer=dealer,
+        is_confirmed=True
+    ).aggregate(
+        total=Sum('quantity_purchased')
+    )['total'] or 0
+    
+    conversion_rate = round((sold_stock / total_stock) * 100, 1) if total_stock > 0 else 0
+    
+    
+    print(( len(top_varieties_labels)))
+    print(len(top_varieties))
+    
+    context = {
+        'total_sales': recent_orders_count,
+        'total_quantity_sold': sum(quantity_sold) if quantity_sold else 0,
+        'completed_orders': purchase_status['confirmed'],
+        'pending_orders': purchase_status['pending'],
+        'paid_orders': purchase_status['paid'],
+        'conversion_rate': conversion_rate,
+        'avg_rating': dealer.average_rating() if hasattr(dealer, 'average_rating') else 4.8,
+        'sales_labels': sales_labels,
+        'sales_data': sales_values,
+        'quantity_sold': quantity_sold,
+        'top_varieties_labels': top_varieties_labels,
+        'top_varieties_data': top_varieties_data,
+        'top_varieties': zip(top_varieties_labels, top_varieties_data),
+        'order_status_data': [
+            purchase_status['confirmed'],
+            purchase_status['pending'],
+            purchase_status['paid'],
+            purchase_status['total'] - purchase_status['confirmed']  # cancelled/rejected
+        ],
+        'inventory_status': inventory_status,
+        'recent_purchases': Purchase_paddy.objects.filter(
+            paddy__dealer=dealer
+        ).select_related('manager', 'paddy').order_by('-purchase_date')[:5]
+    }
+    
+    return render(request, 'dealer/dealer_stats.html', context)
