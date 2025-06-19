@@ -83,8 +83,31 @@ def add_paddy_post(request):
 
 
 def see_all_paddy_posts(request):
-    posts = PaddyStock.objects.filter(is_available=True).order_by('-stored_since')
-    return render(request, 'dealer/paddy_posts.html', {'posts': posts})
+    sort = request.GET.get('sort', 'recent')
+
+    posts = PaddyStock.objects.filter(is_available=True)
+
+    if sort == 'price_asc':
+        posts = posts.order_by('price_per_mon')
+    elif sort == 'price_desc':
+        posts = posts.order_by('-price_per_mon')
+    elif sort == 'moisture':
+        posts = posts.order_by('moisture_content')
+    else:  # 'recent' বা By Default
+        posts = posts.order_by('-stored_since')
+
+    avg_price = posts.aggregate(avg=Avg('price_per_mon'))['avg']
+    total_quantity = posts.aggregate(total=Sum('quantity'))['total'] or 0
+    top_dealer = posts.values('dealer__user__username').annotate(post_count=Count('id')).order_by('-post_count').first()
+
+    return render(request, 'dealer/paddy_posts.html', {
+        'posts': posts,
+        'avg_price': avg_price,
+        'total_quantity': total_quantity,
+        'top_dealer': top_dealer['dealer__user__username'] if top_dealer else None,
+        'current_sort': sort,
+    })
+
 
 
 def edit_paddy_post(request, post_id):

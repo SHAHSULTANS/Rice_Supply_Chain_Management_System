@@ -1,5 +1,4 @@
-{% extends 'base.html' %}
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <div class="container-fluid px-4 py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
@@ -34,8 +33,13 @@
             <tr class="align-middle">
               <td class="ps-4">
                 <div class="d-flex align-items-center">
-                  <div class="avatar avatar-sm bg-light-primary rounded-circle me-">
-                    <span>{{ order.manager}}{{ order.manager.last_name|first|upper }}</span>
+                  <div
+                    class="avatar avatar-sm bg-light-primary rounded-circle me-"
+                  >
+                    <span
+                      >{{ order.manager}}{{ order.manager.last_name|first|upper
+                      }}</span
+                    >
                     {% comment %} <span>shanto</span> {% endcomment %}
                   </div>
                   <div>
@@ -47,7 +51,13 @@
               <td>
                 <div class="d-flex align-items-center">
                   {% if order.paddy.image %}
-                  <img src="{{ order.paddy.image.url }}" alt="{{ order.paddy.name }}" class="rounded me-3" width="40" height="40">
+                  <img
+                    src="{{ order.paddy.image.url }}"
+                    alt="{{ order.paddy.name }}"
+                    class="rounded me-3"
+                    width="40"
+                    height="40"
+                  />
                   {% else %}
                   <div class="bg-light rounded me-3 p-2">
                     <i class="fas fa-seedling text-success"></i>
@@ -55,7 +65,9 @@
                   {% endif %}
                   <div>
                     <h6 class="mb-0">{{ order.paddy.name }}</h6>
-                    <small class="text-muted">Moisture: {{ order.paddy.moisture_content }}%</small>
+                    <small class="text-muted"
+                      >Moisture: {{ order.paddy.moisture_content }}%</small
+                    >
                   </div>
                 </div>
               </td>
@@ -63,32 +75,38 @@
               <td>
                 <div class="d-flex flex-column">
                   <span class="fw-bold">৳{{ order.total_price }}</span>
-                  <small class="text-muted">৳{{ order.transport_cost }} transport</small>
+                  <small class="text-muted"
+                    >৳{{ order.transport_cost }} transport</small
+                  >
                 </div>
               </td>
               <td>
-                <span class="badge rounded-pill 
-                  {% if order.is_confirmed and order.payment %}bg-success
-                  {% elif order.is_confirmed %}bg-primary
-                  {% else %}bg-warning{% endif %}">
+                <span
+                  class="badge rounded-pill {% if order.is_confirmed and order.payment %}bg-success {% elif order.is_confirmed %}bg-primary {% else %}bg-warning{% endif %}"
+                >
                   {% if order.is_confirmed and order.payment %}
-                  <i class="fas fa-check-circle me-1"></i> Completed
-                  {% elif order.is_confirmed %}
-                  <i class="fas fa-clock me-1"></i> Processing
-                  {% else %}
-                  <i class="fas fa-hourglass-half me-1"></i> Pending
-                  {% endif %}
+                  <i class="fas fa-check-circle me-1"></i> Completed {% elif
+                  order.is_confirmed %}
+                  <i class="fas fa-clock me-1"></i> Processing {% else %}
+                  <i class="fas fa-hourglass-half me-1"></i> Pending {% endif %}
                 </span>
               </td>
               <td>
                 <div class="d-flex flex-column">
                   <span>{{ order.purchase_date|date:"M d, Y" }}</span>
-                  <small class="text-muted">{{ order.purchase_date|date:"h:i A" }}</small>
+                  <small class="text-muted"
+                    >{{ order.purchase_date|date:"h:i A" }}</small
+                  >
                 </div>
               </td>
               <td class="text-end pe-4">
                 <div class="dropdown">
-                  <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="orderActions" data-bs-toggle="dropdown">
+                  <button
+                    class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                    type="button"
+                    id="orderActions"
+                    data-bs-toggle="dropdown"
+                  >
                     <i class="fas fa-ellipsis-h"></i>
                   </button>
                   <ul class="dropdown-menu dropdown-menu-end">
@@ -122,7 +140,8 @@
 
   <div class="d-flex justify-content-between align-items-center mt-3">
     <div class="text-muted">
-      Showing <span class="fw-bold">{{ orders|length }}</span> of <span class="fw-bold">{{ orders|length }}</span> orders
+      Showing <span class="fw-bold">{{ orders|length }}</span> of
+      <span class="fw-bold">{{ orders|length }}</span> orders
     </div>
     <nav aria-label="Page navigation">
       <ul class="pagination pagination-sm">
@@ -142,10 +161,19 @@
   <div class="card border-0 shadow-sm">
     <div class="card-body text-center py-5">
       <div class="empty-state">
-        {% comment %} <img src="{% static 'images/empty-order.svg' %}" alt="No orders" width="200" class="mb-4"> {% endcomment %}
+        {% comment %}
+        <img
+          src="{% static 'images/empty-order.svg' %}"
+          alt="No orders"
+          width="200"
+          class="mb-4"
+        />
+        {% endcomment %}
         <h4 class="mb-3">No Orders Found</h4>
-        <p class="text-muted mb-4">You haven't placed any orders yet. When you do, they'll appear here.</p>
-        <a href="{% url 'paddy_stock_list' %}" class="btn btn-primary">
+        <p class="text-muted mb-4">
+          You haven't placed any orders yet. When you do, they'll appear here.
+        </p>
+        <a href="{% url 'marketplace_paddy_posts' %}" class="btn btn-primary">
           <i class="fas fa-seedling me-2"></i>Browse Paddy Stocks
         </a>
       </div>
@@ -164,35 +192,35 @@
     font-size: 0.875rem;
     font-weight: 600;
   }
-  
+
   .avatar span {
     line-height: 1;
   }
-  
+
   .bg-light-primary {
     background-color: #e3f2fd;
     color: #1976d2;
   }
-  
+
   .table-hover tbody tr {
     transition: all 0.2s ease;
   }
-  
+
   .table-hover tbody tr:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   }
-  
+
   .empty-state {
     max-width: 400px;
     margin: 0 auto;
   }
-  
+
   .badge {
     padding: 0.35em 0.65em;
     font-weight: 500;
   }
-  
+
   .dropdown-toggle::after {
     display: none;
   }

@@ -4,7 +4,7 @@ from .models import ManagerProfile, RicePost, Purchase_paddy,PurchaseRice,Paymen
 from dealer.models import PaddyStock
 from .forms import ManagerProfileForm, RicePostForm, Purchase_paddyForm, PurchaseRiceForm,PaymentForPaddyForm, PaymentForRiceForm
 from decimal import Decimal
-
+from django.db.models import Count, Sum, Avg
 
 import uuid
 
@@ -137,8 +137,33 @@ def manager_profile(request):
 @login_required(login_url="login")
 @user_passes_test(check_manager)
 def explore_paddy_post(request):
-    paddy_stocks = PaddyStock.objects.all().order_by('-stored_since')
-    return render(request, 'dealer/paddy_posts.html', {'posts': paddy_stocks})
+    
+    sort = request.GET.get('sort', 'recent')
+
+    posts = PaddyStock.objects.filter(is_available=True)
+
+    if sort == 'price_asc':
+        posts = posts.order_by('price_per_mon')
+    elif sort == 'price_desc':
+        posts = posts.order_by('-price_per_mon')
+    elif sort == 'moisture':
+        posts = posts.order_by('moisture_content')
+    else:  # ' By Default
+        posts = posts.order_by('-stored_since')
+
+    avg_price = posts.aggregate(avg=Avg('price_per_mon'))['avg']
+    total_quantity = posts.aggregate(total=Sum('quantity'))['total'] or 0
+    top_dealer = posts.values('dealer__user__username').annotate(post_count=Count('id')).order_by('-post_count').first()
+
+    return render(request, 'dealer/paddy_posts.html', {
+        'posts': posts,
+        'avg_price': avg_price,
+        'total_quantity': total_quantity,
+        'top_dealer': top_dealer['dealer__user__username'] if top_dealer else None,
+        'current_sort': sort,
+    })
+    # paddy_stocks = PaddyStock.objects.all().order_by('-stored_since')
+    # return render(request, 'dealer/paddy_posts.html', {'posts': paddy_stocks})
 #Here update by shanto. This explore paddy_post function is used to show all paddy posts in the manager dashboard. That comes from the dealer app template.
 
 
