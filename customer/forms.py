@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import CustomerProfile
+from .models import CustomerProfile, Purchase_Rice, Payment_For_Rice
 
 class CustomerProfileForm(forms.ModelForm):
     class Meta:
@@ -14,3 +14,15 @@ class CustomerProfileForm(forms.ModelForm):
         'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
 
+class PaymentForRiceForm(forms.ModelForm):
+    class Meta:
+        model = Payment_For_Rice
+        fields = ['amount']
+        widgets = {
+            'amount': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+
+class PurchaseRiceForm(forms.ModelForm):
+    class Meta:
+        model = Purchase_Rice
+        fields = ['quantity_purchased','delivery_cost']

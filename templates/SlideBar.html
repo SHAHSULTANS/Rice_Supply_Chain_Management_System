@@ -29,9 +29,6 @@
     </nav>
 </div>
 {% endif %}
-
-
-
 {% comment %} For admin section {% endcomment %}
 {% if request.user.is_authenticated and request.user.role == "admin" %}
 <div id="sidebar" class="bg-secondary text-white" style="min-width: 250px;">
@@ -61,8 +58,6 @@
     </nav>
 </div>
 {% endif %}
-
-
 {% comment %} For customer {% endcomment %}
 {% comment %} For customer section {% endcomment %}
 {% if request.user.is_authenticated and request.user.role == "customer" %}
@@ -84,6 +79,10 @@
         <a class="nav-link text-white {% if request.resolver_match.url_name == 'customer_profile' %}active{% endif %}" href="{% url 'customer_profile' %}">👤 View Profile</a>
         <a class="nav-link text-white {% if request.resolver_match.url_name == 'update_customer_profile' %}active{% endif %}" href="{% url "update_customer_profile" %}">✏️ Edit Profile</a>
         <a class="nav-link text-white {% if request.resolver_match.url_name == 'explore_all_rice_post' %}active{% endif %}" href="{% url "explore_all_rice_post" %}">📃 Explore Rice Posts</a>
+        <hr class="my-1">
+        <a class="nav-link text-light {% if request.resolver_match.url_name == 'rice_purchases_history' %}active{% endif %}" href="{% url 'rice_purchases_history' %}">🚪 Purchases History</a>
+
+
     </nav>
 </div>
 {% endif %}
