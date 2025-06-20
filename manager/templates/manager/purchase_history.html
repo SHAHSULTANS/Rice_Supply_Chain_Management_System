@@ -119,13 +119,6 @@
     {% endif %}
 
 
-
-    
-        {% if request.user.role == "admin" %}
-        <a href="{% url 'see_all_manager' %}" class="btn btn-success mt-4">Back</a>
-        {% else %}
-        <a href="{% url 'manager_dashboard' %}" class="btn btn-success mt-4">Back</a>
-        {% endif %}
 </div>
 
 
@@ -144,7 +137,12 @@
             <thead class="thead-dark">
                 <tr>
                     <th>Rice Name</th>
-                    <th>Manager</th>
+                    {% if  request.user.role == "manager" or request.user.role == "admin"%}
+                            <th>Customer</th>
+                        {% else %}
+                            <th>Manager</th>
+                        {% endif %}
+                    
                     <th>Quantity (kg)</th>
                     <th>Price/kg (৳)</th>
                     <th>Delivery Cost (৳)</th>
@@ -159,10 +157,18 @@
                     <td>{{ purchase.rice.rice_name }}</td>
                     {% comment %} <td>{{ purchase.rice.manager.managerprofile.full_name }}</td> {% endcomment %}
                     <td>
-                        {% if purchase.rice.manager.managerprofile %}
-                            {{ purchase.rice.manager.managerprofile.full_name }}
+                        {% if request.user.role == "manager" or request.user.role == "admin" %}
+                            {% if purchase.customer.customerprofile %}
+                                {{ purchase.customer.customerprofile.full_name }}
+                            {% else %}
+                                {{ purchase.customer.username }}
+                            {% endif %}
                         {% else %}
-                            {{ purchase.rice.manager.username }}
+                            {% if purchase.rice.manager.managerprofile %}
+                                {{ purchase.rice.manager.managerprofile.full_name }}
+                            {% else %}
+                                {{ purchase.rice.manager.username }}
+                            {% endif %}
                         {% endif %}
                     </td>
                     <td>{{ purchase.quantity_purchased }}</td>
