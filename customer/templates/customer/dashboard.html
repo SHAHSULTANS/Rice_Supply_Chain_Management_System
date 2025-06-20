@@ -19,8 +19,30 @@
             </div>
         </div>
 
+
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">📝 Explore rice post</h5>
+                    <p class="card-text">Let's see all marketpalce rice post</p>
+                    <a href="{% url 'explore_all_rice_post' %}" class="btn btn-primary">Explore</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">📝 Purchases history</h5>
+                    <p class="card-text">Let's see all my purchases history</p>
+                    <a href="{% url 'rice_purchases_history' %}" class="btn btn-primary">History</a>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
+
 {% endblock content %}
 
 {% comment %} 
