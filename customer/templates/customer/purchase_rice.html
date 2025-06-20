@@ -1,0 +1,38 @@
+<!-- templates/manager/purchase_paddy.html -->
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Purchase Rice</h2>
+
+    <div class="card mb-4">
+        <div class="row no-gutters">
+            <div class="col-md-4">
+                {% if rice.rice_image %}
+                    <img src="{{ rice.rice_image.url }}" class="card-img" alt="{{ rice.rice_name }}">
+                {% else %}
+                    <img src="{% static 'default_images/default_rice.jpg' %}" class="card-img" alt="Default rice">
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{ rice.rice_name }}</h5>
+                    <p class="card-text"><strong>Manager:</strong> {{ rice.manager.managerprofile.full_name }}</p>
+                    <p class="card-text"><strong>Quality:</strong> {{ rice.quality }}</p>
+                    <p class="card-text"><strong>Available Quantity:</strong> {{ rice.quantity_kg }} kg</p>
+                    <p class="card-text"><strong>Price per kg:</strong> ৳{{ rice.price_per_kg }}</p>
+                    <p class="card-text">{{ rice.description | linebreaksbr }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h4>Purchase Form</h4>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Purchase</button>
+        <a href="{% url 'explore_all_rice_post' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
