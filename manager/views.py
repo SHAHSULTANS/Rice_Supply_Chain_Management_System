@@ -5,6 +5,7 @@ from dealer.models import PaddyStock
 from .forms import ManagerProfileForm, RicePostForm, Purchase_paddyForm, PurchaseRiceForm,PaymentForPaddyForm, PaymentForRiceForm
 from decimal import Decimal
 from django.db.models import Count, Sum, Avg
+from customer.models import Purchase_Rice
 
 import uuid
 
@@ -12,8 +13,10 @@ import uuid
 
 def check_manager(user):
     return user.is_authenticated and user.role == 'manager'
+
 def check_manager_and_customer_and_admin(user):
     return user.is_authenticated and user.role in ['manager', 'customer','admin']
+
 def check_manager_and_admin(user):
     return user.is_authenticated and user.role in ['manager','admin']
 
@@ -229,12 +232,18 @@ def purchase_rice(request, id):
 def purchase_history(request):
     purchases_paddy = Purchase_paddy.objects.filter(manager=request.user).order_by("-purchase_date")
     purchases_rice = PurchaseRice.objects.filter(manager=request.user).order_by("-purchase_date")
+    seling_rice = Purchase_Rice.objects.filter(rice__manager=request.user).order_by("-purchase_date")
+
     context = {
-        "purchases_paddy" : purchases_paddy,
-        "purchases_rice" : purchases_rice
+        "purchases_paddy": purchases_paddy,
+        "purchases_rice": purchases_rice,
+        "seling_rice": seling_rice,
     }
-    
-    return render(request,"manager/purchase_history.html",context)
+
+    return render(request, "manager/purchase_history.html", context)
+
+
+
 
 @login_required(login_url="login")
 @user_passes_test(check_manager_and_admin)
