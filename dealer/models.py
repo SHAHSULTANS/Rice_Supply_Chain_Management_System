@@ -5,17 +5,21 @@ from accounts.models import CustomUser
 
 
 
-# class Location(models.Model):
-#     """For tracking geographical locations of all parties"""
-#     district = models.CharField(max_length=50)
-#     upazila = models.CharField(max_length=50)
-#     union = models.CharField(max_length=50, blank=True)
-#     address = models.TextField()
+class Location(models.Model):
+    """For tracking geographical locations of all parties"""
+    district = models.CharField(max_length=50,blank=True,null=True)
+    upazila = models.CharField(max_length=50,blank=True,null=True)
+    union = models.CharField(max_length=50, blank=True,null=True)
+    address = models.TextField(blank=True,null=True)
+    class Meta:
+        abstract = True  # <-- Make it abstract so no separate table is created
 
-class DealerProfile(models.Model):
+class DealerProfile(Location):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     license_number = models.CharField(max_length=50)
     storage_capacity = models.PositiveIntegerField()
+    def __str__(self):
+        return f"{self.user.username}"
     
     
     

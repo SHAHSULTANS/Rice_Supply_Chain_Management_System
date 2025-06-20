@@ -29,12 +29,25 @@ def update_customer_profile(request):
     else:
         form = CustomerProfileForm(instance=customer)
     return render(request,"customer/update_customer_profile.html",{'form':form})
+
+
+def update_customer_profile_by_admin(request,id):
+    customer = get_object_or_404(CustomerProfile, pk=id)
+    if request.method == "POST":
+        form = CustomerProfileForm(request.POST, request.FILES,instance=customer)
+        if form.is_valid():
+            form.save()
+            return redirect("see_all_customers")
+    else:
+        form = CustomerProfileForm(instance=customer)
+    return render(request,"customer/update_customer_profile.html",{'form':form})
+
+
         
-        
-def purchase_rice(request,id):
+def purchase_rice_from_manager(request,id):
     return HttpResponse("have to implement this part")
     
 
 
 def explore_rice_post(request):
-    return redirect("show_rice_post")
+    return redirect("explore_all_rice_post")

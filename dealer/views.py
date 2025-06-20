@@ -1,11 +1,14 @@
+from datetime import timezone
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse
-
+from django.db.models import Count, Sum, Avg
 from accounts.models import CustomUser
 from dealer.forms import DealerProfileForm, PaddyStockForm
 from dealer.models import DealerProfile, PaddyStock
-
+from manager.models import Purchase_paddy
+from django.utils import timezone
+from datetime import timedelta
 
 # Create your views here.
 
@@ -14,18 +17,41 @@ def check_dealer(user):
 
 @login_required(login_url='login')
 @user_passes_test(check_dealer)
+@login_required
 def dealer_dashboard(request):
     dealer = get_object_or_404(DealerProfile, user=request.user)
-    
+
+    # Get all posts by this dealer
     posts = PaddyStock.objects.filter(dealer=dealer).order_by('-stored_since')
-    return render(request, 'dealer/dashboard.html', {'dealer': dealer, 'posts': posts})
+
+    # Dashboard metrics
+    active_posts_count = posts.filter(is_available=True).count()
+    total_quantity = posts.aggregate(total=Sum('quantity'))['total'] or 0
+    avg_price = posts.aggregate(avg=Avg('price_per_mon'))['avg'] or 0
+
+    # Count of recent orders (last 30 days)
+    recent_orders_count = Purchase_paddy.objects.filter(
+        paddy__dealer=dealer,
+        purchase_date__gte=timezone.now() - timezone.timedelta(days=30)
+    ).count()
+
+    context = {
+        'dealer': dealer,
+        'posts': posts,
+        'active_posts_count': active_posts_count,
+        'total_quantity': total_quantity,
+        'avg_price': round(avg_price, 2),
+        'recent_orders_count': recent_orders_count,
+    }
+
+    return render(request, 'dealer/dashboard.html', context)
 
 
 def dealer_profile_create(request, user_id):
     user = CustomUser.objects.get(id=user_id)
 
     if request.method == "POST":
-        form = DealerProfileForm(request.POST)
+        form = DealerProfileForm(request.POST, request.FILES)
         if form.is_valid():
             dealer = form.save(commit=False)
             dealer.user = user
@@ -41,7 +67,7 @@ def dealer_profile_create(request, user_id):
 
 def add_paddy_post(request):
     if request.method == 'POST':
-        form = PaddyStockForm(request.POST)
+        form = PaddyStockForm(request.POST , request.FILES)
         if form.is_valid():
             paddy_post = form.save(commit=False)
             # Get dealer profile of logged-in user
@@ -57,15 +83,38 @@ def add_paddy_post(request):
 
 
 def see_all_paddy_posts(request):
-    posts = PaddyStock.objects.filter(is_available=True).order_by('-stored_since')
-    return render(request, 'dealer/paddy_posts.html', {'posts': posts})
+    sort = request.GET.get('sort', 'recent')
+
+    posts = PaddyStock.objects.filter(is_available=True)
+
+    if sort == 'price_asc':
+        posts = posts.order_by('price_per_mon')
+    elif sort == 'price_desc':
+        posts = posts.order_by('-price_per_mon')
+    elif sort == 'moisture':
+        posts = posts.order_by('moisture_content')
+    else:  # 'recent' বা By Default
+        posts = posts.order_by('-stored_since')
+
+    avg_price = posts.aggregate(avg=Avg('price_per_mon'))['avg']
+    total_quantity = posts.aggregate(total=Sum('quantity'))['total'] or 0
+    top_dealer = posts.values('dealer__user__username').annotate(post_count=Count('id')).order_by('-post_count').first()
+
+    return render(request, 'dealer/paddy_posts.html', {
+        'posts': posts,
+        'avg_price': avg_price,
+        'total_quantity': total_quantity,
+        'top_dealer': top_dealer['dealer__user__username'] if top_dealer else None,
+        'current_sort': sort,
+    })
+
 
 
 def edit_paddy_post(request, post_id):
     post = get_object_or_404(PaddyStock, id=post_id)
 
     if request.method == 'POST':
-        form = PaddyStockForm(request.POST, instance=post)
+        form = PaddyStockForm(request.POST, request.FILES, instance=post)
         if form.is_valid():
             form.save()
             return redirect('dealer_dashboard')
@@ -84,3 +133,180 @@ def delete_post(request, post_id):
         post.delete()
         messages.success(request, 'Post deleted successfully.')
     return redirect('dealer_dashboard')  
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import DealerProfile
+from .forms import DealerProfileEditForm
+
+def edit_dealer_profile(request):
+    dealer_profile = request.user.dealerprofile
+    print(dealer_profile)
+    
+    
+    if request.method == 'POST':
+        form = DealerProfileEditForm(request.POST, instance=dealer_profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('dealer_dashboard')
+    else:
+        form = DealerProfileEditForm(instance=dealer_profile)
+    
+    context = {
+        'form': form,
+        'dealer': dealer_profile
+    }
+    return render(request, 'dealer/edit_profile.html', context)
+
+
+
+#order list
+
+@login_required
+def dealer_order_list(request):
+    dealer = get_object_or_404(DealerProfile, user=request.user)
+    orders = Purchase_paddy.objects.filter(paddy__dealer=dealer).select_related('paddy', 'manager').order_by('-purchase_date')
+    
+    return render(request, 'dealer/order_list.html', {'orders': orders, 'dealer': dealer})
+
+
+
+
+
+
+#View State for Dealer
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum, Count, Avg, F, Q, Case, When, Value, FloatField
+from datetime import datetime, timedelta
+from django.utils import timezone
+# from .models import PaddyStock, Purchase_paddy
+
+@login_required
+def dealer_stats(request):
+    dealer = request.user.dealerprofile
+    
+    # Date ranges for statistics
+    today = timezone.now().date()
+    last_30_days = today - timedelta(days=30)
+    
+    recent_orders_count = Purchase_paddy.objects.filter(
+        paddy__dealer=dealer,
+        purchase_date__gte=timezone.now() - timezone.timedelta(days=30)
+    ).count()
+    # Sales data (from Purchase_paddy)
+    sales_data = Purchase_paddy.objects.filter(
+        paddy__dealer=dealer,
+        purchase_date__gte=last_30_days,
+        is_confirmed=True
+    ).extra({
+        'day': "date(purchase_date)"
+    }).values('day').annotate(
+        total=Sum('total_price'),
+        quantity=Sum('quantity_purchased')
+    ).order_by('day')
+    
+    sales_labels = [sale['day'].strftime('%b %d') for sale in sales_data]
+    sales_values = [float(sale['total']) for sale in sales_data]
+    quantity_sold = [float(sale['quantity']) for sale in sales_data]
+    
+    # Top selling paddy varieties
+    top_varieties = Purchase_paddy.objects.filter(
+        paddy__dealer=dealer,
+        is_confirmed=True
+    ).values(
+        'paddy__name'
+    ).annotate(
+        total_quantity=Sum('quantity_purchased'),
+        total_sales=Sum('total_price'),
+        count=Count('id')
+    ).order_by('-total_sales')[:5]
+    
+    total_sales_all = sum(variety['total_sales'] for variety in top_varieties) if top_varieties else 0
+    top_varieties_data = []
+    top_varieties_labels = []
+    
+    for variety in top_varieties:
+        percentage = round((variety['total_sales'] / total_sales_all) * 100) if total_sales_all > 0 else 0
+        top_varieties_data.append(percentage)
+        top_varieties_labels.append(variety['paddy__name'])
+    
+    # Purchase status breakdown
+    purchase_status = Purchase_paddy.objects.filter(
+        paddy__dealer=dealer
+    ).aggregate(
+        total=Count('id'),
+        confirmed=Count('id', filter=Q(is_confirmed=True)),
+        paid=Count('id', filter=Q(payment=True)),
+        pending=Count('id', filter=Q(is_confirmed=False))
+    )
+    
+    # Inventory status - simplified without Cast
+    inventory_status = []
+    for stock in PaddyStock.objects.filter(dealer=dealer):
+        days_in_stock = (timezone.now() - stock.stored_since).days
+        total_sold = Purchase_paddy.objects.filter(
+            paddy=stock,
+            is_confirmed=True
+        ).aggregate(total=Sum('quantity_purchased'))['total'] or 0
+        
+        turnover_rate = days_in_stock / total_sold if total_sold > 0 else 0
+        
+        inventory_status.append({
+            'name': stock.name,
+            'stock': stock.quantity,
+            'sold': total_sold,
+            'turnover': round(turnover_rate, 1),
+            'status': 'Low' if stock.quantity < 100 else 'Medium' if stock.quantity < 500 else 'Good',
+            'moisture': stock.moisture_content,
+            'price': stock.price_per_mon
+        })
+    
+    # Calculate conversion rate
+    total_stock = PaddyStock.objects.filter(dealer=dealer).aggregate(
+        total=Sum('quantity')
+    )['total'] or 0
+    
+    sold_stock = Purchase_paddy.objects.filter(
+        paddy__dealer=dealer,
+        is_confirmed=True
+    ).aggregate(
+        total=Sum('quantity_purchased')
+    )['total'] or 0
+    
+    conversion_rate = round((sold_stock / total_stock) * 100, 1) if total_stock > 0 else 0
+    
+    
+    print(( len(top_varieties_labels)))
+    print(len(top_varieties))
+    
+    context = {
+        'total_sales': recent_orders_count,
+        'total_quantity_sold': sum(quantity_sold) if quantity_sold else 0,
+        'completed_orders': purchase_status['confirmed'],
+        'pending_orders': purchase_status['pending'],
+        'paid_orders': purchase_status['paid'],
+        'conversion_rate': conversion_rate,
+        'avg_rating': dealer.average_rating() if hasattr(dealer, 'average_rating') else 4.8,
+        'sales_labels': sales_labels,
+        'sales_data': sales_values,
+        'quantity_sold': quantity_sold,
+        'top_varieties_labels': top_varieties_labels,
+        'top_varieties_data': top_varieties_data,
+        'top_varieties': zip(top_varieties_labels, top_varieties_data),
+        'order_status_data': [
+            purchase_status['confirmed'],
+            purchase_status['pending'],
+            purchase_status['paid'],
+            purchase_status['total'] - purchase_status['confirmed']  # cancelled/rejected
+        ],
+        'inventory_status': inventory_status,
+        'recent_purchases': Purchase_paddy.objects.filter(
+            paddy__dealer=dealer
+        ).select_related('manager', 'paddy').order_by('-purchase_date')[:5]
+    }
+    
+    return render(request, 'dealer/dealer_stats.html', context)

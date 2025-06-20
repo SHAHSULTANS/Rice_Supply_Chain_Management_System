@@ -10,6 +10,9 @@
             <form method="post" novalidate>
                 {% csrf_token %}
                 {{ form.as_p }}
+                <div class="text-end">
+                    <a href="{% url 'forgot_password' %}" class="text-danger fw-bold text-decoration-none">Forgot Password?</a>
+                </div>
                 <div class="d-grid gap-2 mt-3">
                     <button type="submit" class="btn btn-primary">Login</button>
                 </div>

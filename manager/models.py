@@ -4,7 +4,7 @@ from dealer.models import PaddyStock
 # Create your models here.
 
 class ManagerProfile(models.Model):
-    user = models.OneToOneField(CustomUser,on_delete=models.CASCADE,limit_choices_to={'role':'manager'})
+    user = models.OneToOneField(CustomUser,on_delete=models.CASCADE,limit_choices_to={'role':'manager'},related_name="managerprofile")
     full_name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=11)
     address = models.TextField()
@@ -20,7 +20,7 @@ class ManagerProfile(models.Model):
     
     
 class RicePost(models.Model):
-    manager = models.ForeignKey(CustomUser,on_delete=models.CASCADE, limit_choices_to={'role':'manager'})
+    manager = models.ForeignKey(CustomUser,on_delete=models.CASCADE, limit_choices_to={'role':'manager'},related_name="managerPost")
     rice_name = models.CharField(max_length=200, blank=True, null=True)
     quality = models.CharField(max_length=100)
     quantity_kg = models.FloatField()
@@ -33,15 +33,70 @@ class RicePost(models.Model):
     
 class Purchase_paddy(models.Model):
     manager = models.ForeignKey(CustomUser,on_delete=models.CASCADE,limit_choices_to={'role':'manager'})
-    paddy = models.ForeignKey(PaddyStock,on_delete=models.CASCADE)
+    paddy = models.ForeignKey(PaddyStock,on_delete=models.CASCADE,related_name="purchase_paddy")
     quantity_purchased = models.FloatField()
     total_price = models.DecimalField(max_digits=10,decimal_places=2)
     transport_cost = models.DecimalField(max_digits=6,decimal_places=2,default=0)
     is_confirmed = models.BooleanField(default=False)
+    payment = models.BooleanField(default=False)
     purchase_date = models.DateTimeField(auto_now_add=True)
         
     def __str__(self):
-        return f"Purchases By f{self.manager.full_name} from {self.paddy.dealer.username}"
+        return f"Purchases By {self.manager.full_name} from {self.paddy.dealer.username}"
         
+
+class PurchaseRice(models.Model):
+    manager = models.ForeignKey(CustomUser,on_delete=models.CASCADE)
+    rice = models.ForeignKey(RicePost,on_delete=models.CASCADE,related_name="PurchaseRice")
+    quantity_purchased = models.FloatField()
+    total_price = models.DecimalField(max_digits=10,decimal_places=2)
+    delivery_cost = models.DecimalField(max_digits=6,decimal_places=2,default=0)
+    is_confirmed = models.BooleanField(default=False)
+    payment = models.BooleanField(default=False)
+    purchase_date = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Rice Purchase by {self.manager.username} - {self.rice.rice_name}"
+
+class PaymentForPaddy(models.Model):
+    PAYMENT_STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Processing', 'Processing'),
+        ('Success', 'Success'),
+        ('Failed', 'Failed'),
+    ]
+
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    paddy = models.ForeignKey(PaddyStock, on_delete=models.CASCADE)
+    transaction_id = models.CharField(max_length=100, unique=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    is_paid = models.BooleanField(default=False)
+    status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='Pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.transaction_id} - {self.status}"
+    
+    
+class PaymentForRice(models.Model):
+    PAYMENT_STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Processing', 'Processing'),
+        ('Success', 'Success'),
+        ('Failed', 'Failed'),
+    ]
+
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    rice = models.ForeignKey(RicePost, on_delete=models.CASCADE)
+    transaction_id = models.CharField(max_length=100, unique=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    is_paid = models.BooleanField(default=False)
+    status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='Pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.transaction_id} - {self.status}"
         
-        
+
+    
+    

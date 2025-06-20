@@ -1,14 +1,22 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}My Rice Posts{% endblock %}
+{% block title %}
+
+{% if check == 1 %}
+    Explore all rice post
+{% elif check == 2%}
+    My Rice Post
+{% endif %}
+
+{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
     <h2 class="mb-4 text-primary">
-        {% if request.user.role == "customer" %}
+        {% if check == 1 %}
         <i class="fas fa-seedling me-2"></i>Explore Rice Posts
-        {% else %}
+        {% elif check == 2 %}
         <i class="fas fa-seedling me-2"></i>My Rice Posts
 
         {% endif %}
@@ -26,10 +34,11 @@
                         {% endif %}
 
                         <div class="card-body">
-                            <h4 class="card-title mb-2">Rice Name: {{ post.rice_name }}</h4>
+                            <h4 class="card-title mb-2">Rice Name: <span style="color: red;">{{ post.rice_name }}</span></h4>
+                            <h5 class="card-title mb-2">Owner's Name: {{ post.manager.managerprofile.full_name }}</h5>
                             <h5 class="card-title mb-2">Quality: {{ post.quality }}</h5>
                             <p class="card-text mb-1"><strong>Quantity:</strong> {{ post.quantity_kg }} kg</p>
-                            <p class="card-text mb-1"><strong>Price/kg:</strong> ${{ post.price_per_kg }}</p>
+                            <p class="card-text mb-1"><strong>Price/kg:</strong> <span style="color: red;">${{ post.price_per_kg }}</span></p>
                             <!-- <p class="card-text mb-1"><strong>Stored Since:</strong> {{ post.created_at|date:"M d, Y, h:i A" }}</p> -->
                             <p class="card-text mb-3"><strong>Description:</strong> {{ post.description|truncatechars:100 }}</p>
 
@@ -38,7 +47,7 @@
                                     {% if post.is_sold %}Sold{% else %}Available{% endif %}
                                 </span></span>
                                 {% if request.user.role == "customer" %}
-                                {% else %}
+                                {% elif request.user.role == "manager" and request.user == post.manager %}
                                 <div class="d-flex gap-2">
                                     <a href="{% url 'update_rice_post' post.id %}" class="btn btn-outline-primary btn-sm">
                                         <i class="fas fa-edit"></i> Edit
@@ -50,13 +59,28 @@
                                         </button>
                                     </form>
                                 </div>
+                                
+
                                 {% endif %}
 
                                
                             </div>
-                            {% if request.user.role == "customer" %}
-                            <a href="{% url "purchase_rice" post.id %}" class="btn btn-primary my-3">Order Now</a>
-                            {% endif %}
+                            
+                            <div class="d-grid gap-2 my-3">
+                                {% if request.user.role == "customer" %}
+                                    <a href="{% url 'purchase_rice_from_manager' post.id %}" class="btn btn-primary w-100 d-flex justify-content-center align-items-center gap-2">
+                                        <i class="fas fa-shopping-cart"></i> Order Now
+                                    </a>
+                                {% elif request.user.role == "manager" and request.user != post.manager %}
+                                    <a href="{% url 'purchase_rice' post.id %}" class="btn btn-primary w-100 d-flex justify-content-center align-items-center gap-2">
+                                        <i class="fas fa-shopping-cart"></i> Order Now
+                                    </a>
+                                {% endif %}
+                                
+                                <a href="{% url 'individual_rice_post_detail' post.id %}" class="btn btn-outline-secondary w-100 d-flex justify-content-center align-items-center gap-2">
+                                    <i class="fas fa-info-circle"></i> View Details
+                                </a>
+                            </div>
                         </div>
 
                         <div class="card-footer text-muted small">
