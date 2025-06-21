@@ -8,6 +8,7 @@ from django.db.models import Count, Sum, Avg
 from customer.models import Purchase_Rice
 
 import uuid
+from django.db.models import Q
 
 
 
@@ -351,17 +352,43 @@ def mock_rice_payment_fail(request):
     return render(request,"manager/payment/mock_rice_payment_fail.html")
 
 
+# Search method
+@login_required
+def search(request):
+    query = request.GET.get('query')  # Matches the form field name
+    rice_results = []
+    paddy_results = []
 
-# @login_required
-# def Mock_Payment_UI(request):
-#     if request.method == 'POST':
-#         amount = request.POST.get('total_amount')
-#         purchase_id = request.POST.get('purchase_id')
-#         purchase = get_object_or_404(Purchase_paddy, id=purchase_id)
+    user = request.user
 
-#         return render(request, 'manager/payment/Mock_Payment_UI.html', {
-#             'amount': amount,
-#             'purchase': purchase,
-#         })
+    if user.is_authenticated:
+        if user.role in ["manager", "admin"]:
+            if query:
+                rice_results = RicePost.objects.filter(
+                    Q(rice_name__icontains=query) |
+                    Q(description__icontains=query)
+                )
+                paddy_results = PaddyStock.objects.filter(
+                    Q(name__icontains=query)
+                )
 
-#     return redirect('some_error_page')
+        elif user.role == "dealer":
+            if query:
+                paddy_results = PaddyStock.objects.filter(
+                    Q(name__icontains=query)
+                )
+
+        elif user.role == "customer":
+            if query:
+                rice_results = RicePost.objects.filter(
+                    Q(rice_name__icontains=query)
+                )
+
+    context = {
+        'query': query,
+        'rice_results': rice_results,
+        'paddy_results': paddy_results,
+    }
+
+    return render(request, 'manager/search_results.html', context)
+

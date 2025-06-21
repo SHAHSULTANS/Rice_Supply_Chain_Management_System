@@ -38,5 +38,8 @@ urlpatterns = [
     path('mock_rice_payment_success/', views.mock_rice_payment_success, name='mock_rice_payment_success'),
     path('mock_rice_payment_fail/', views.mock_rice_payment_fail, name='mock_rice_payment_fail'),
     
+    # Search url
+    path('search/',views.search, name="search")
+    
     
 ]
