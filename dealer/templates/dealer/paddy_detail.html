@@ -4,7 +4,7 @@
 <div class="container py-4">
   <!-- Breadcrumb -->
   <nav aria-label="breadcrumb" class="mb-4">
-    <ol class="breadcrumb bg-light p-3 rounded-3">
+    {% comment %} <ol class="breadcrumb bg-light p-3 rounded-3">
       <li class="breadcrumb-item">
         <a href="{% url 'dealer_dashboard' %}" class="text-decoration-none">
           <i class="fas fa-home me-1"></i> Dashboard
@@ -14,7 +14,7 @@
         <a href="{% url 'marketplace_paddy_posts' %}" class="text-decoration-none">Marketplace</a>
       </li>
       <li class="breadcrumb-item active" aria-current="page">{{ post.name }}</li>
-    </ol>
+    </ol> {% endcomment %}
   </nav>
 
   <div class="row g-4">
