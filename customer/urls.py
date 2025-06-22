@@ -17,5 +17,8 @@ urlpatterns = [
     path("mock_customer_rice_payment_success/", views.mock_customer_rice_payment_success, name="mock_customer_rice_payment_success"),
     path("mock_customer_rice_payment_fail/", views.mock_customer_rice_payment_fail, name="mock_customer_rice_payment_fail"),
 
+    # Oder track
+    path('my_rice_orders/', views.my_order_page, name='my_order_page'),
+    path('confirm_delivery/<int:id>/', views.confirm_delivery, name='confirm_delivery'),
 
 ]

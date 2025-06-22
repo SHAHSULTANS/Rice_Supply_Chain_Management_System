@@ -39,7 +39,12 @@ urlpatterns = [
     path('mock_rice_payment_fail/', views.mock_rice_payment_fail, name='mock_rice_payment_fail'),
     
     # Search url
-    path('search/',views.search, name="search")
+    path('search/',views.search, name="search"),
+    
+    # Rice order review page for Manager
+    path('rice_orders/', views.order_page, name='order_page'),
+    path('accept_rice_order/<int:id>/', views.accept_rice_order, name='accept_rice_order'),
+    path('update_order_status/<int:id>/', views.update_order_status, name='update_order_status'),
     
     
 ]

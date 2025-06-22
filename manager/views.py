@@ -352,7 +352,7 @@ def mock_rice_payment_fail(request):
     return render(request,"manager/payment/mock_rice_payment_fail.html")
 
 
-# Search method
+# Search functionality
 @login_required
 def search(request):
     query = request.GET.get('query')  # Matches the form field name
@@ -392,3 +392,37 @@ def search(request):
 
     return render(request, 'manager/search_results.html', context)
 
+
+
+# Oder track
+
+@login_required
+@user_passes_test(lambda u: u.role == 'manager')
+def order_page(request):
+    orders = Purchase_Rice.objects.filter(rice__manager=request.user).order_by("-purchase_date")
+    return render(request, 'manager/order_page.html', {'orders': orders})
+
+@login_required
+# @require_POST
+@user_passes_test(lambda u: u.role == 'manager')
+def accept_rice_order(request, id):
+    order = get_object_or_404(Purchase_Rice, id=id, rice__manager=request.user)
+    if order.status == "Pending":
+        order.status = "Accepted"
+        order.save()
+    return redirect('order_page')
+
+@login_required
+# @require_POST
+@user_passes_test(lambda u: u.role == 'manager')
+def update_order_status(request, id):
+    order = get_object_or_404(Purchase_Rice, id=id, rice__manager=request.user)
+    new_status = request.POST.get('new_status')
+    if order.status == "Accepted" and new_status in ["Shipping", "Delivered"]:
+        order.status = new_status
+        order.save()
+
+    if order.status == "Shipping" and new_status in [ "Delivered"]:
+        order.status = new_status
+        order.save()
+    return redirect('order_page')

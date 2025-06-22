@@ -13,6 +13,15 @@ class CustomerProfile(models.Model):
 
 
 class Purchase_Rice(models.Model):
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Accepted', 'Accepted'),
+        ('Cancel', 'Cancel'),
+        ('Shipping', 'Shipping'),
+        ('Delivered', 'Delivered'),
+        ('Successful', 'Successful'),
+    ]
+
     customer = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='customer_rice_purchases')
     rice = models.ForeignKey(RicePost, on_delete=models.CASCADE, related_name='customer_rice_orders')
     quantity_purchased = models.FloatField()
@@ -20,6 +29,7 @@ class Purchase_Rice(models.Model):
     delivery_cost = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     is_confirmed = models.BooleanField(default=False)
     payment = models.BooleanField(default=False)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')  # ✅ New field
     purchase_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

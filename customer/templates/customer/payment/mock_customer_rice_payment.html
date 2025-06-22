@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load widget_tweaks %}
 {% block content %}
 <div class="container mt-5 mb-5">
   <div class="card shadow-lg">
@@ -8,20 +8,29 @@
     </div>
     <div class="card-body">
       <p><strong>Rice Name:</strong> {{ purchase.rice.rice_name }}</p>
+      <p><strong>Quantity:</strong> {{ purchase.quantity_purchased }} kg</p>
       <p><strong>Total Amount to Pay:</strong> <span class="text-success">৳{{ purchase.total_price }}</span></p>
+      <p><strong>Status:</strong> 
+        {% if purchase.status == "Delivered" %}
+          <span class="badge bg-warning text-dark">Awaiting Payment</span>
+        {% elif purchase.status == "Successful" %}
+          <span class="badge bg-success">Paid & Received</span>
+        {% else %}
+          <span class="badge bg-secondary">{{ purchase.status }}</span>
+        {% endif %}
+      </p>
 
       <form method="post" class="mt-4">
         {% csrf_token %}
+        <input type="hidden" name="transaction_id" value="autofilled">
+        
         <div class="mb-3">
-          {{ form.transaction_id.label_tag }}  
-          {{ form.transaction_id }}
+          <label for="id_amount" class="form-label">Amount</label>
+          {{ form.amount|add_class:"form-control" }}
         </div>
-        <div class="mb-3">
-          {{ form.amount.label_tag }}  
-          {{ form.amount }}
-        </div>
+
         <button type="submit" class="btn btn-success">Make Payment</button>
-        <a href="{% url 'rice_purchases_history' %}" class="btn btn-secondary ms-2">Pay Later</a>
+        <a href="{% url 'my_order_page' %}" class="btn btn-secondary ms-2">Pay Later</a>
       </form>
     </div>
   </div>

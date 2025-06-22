@@ -5,6 +5,8 @@ from manager.models import RicePost
 from .forms import PaymentForRiceForm
 from decimal import Decimal
 from .forms import CustomerProfileForm, PurchaseRiceForm
+from django.contrib import messages
+
 
 import uuid
 
@@ -81,6 +83,7 @@ def purchase_rice_from_manager(request, id):
 
 def rice_purchases_history(request):
     purchases_rice = Purchase_Rice.objects.filter(customer=request.user).order_by("-purchase_date")
+    # print(purchases_rice.payment)
     context = {
         "purchases_rice": purchases_rice
     }
@@ -90,6 +93,13 @@ def rice_purchases_history(request):
 @user_passes_test(check_customer)
 def mock_customer_rice_payment(request, purchase_id):
     purchase = get_object_or_404(Purchase_Rice, pk=purchase_id, customer=request.user)
+
+    # # Only allow payment if the order is Delivered and not already paid
+    # print(purchase.payment)
+    # if purchase.status != "Delivered" or  purchase.payment == True:
+    #     messages.warning(request, "Payment not allowed. Order must be delivered and unpaid.")
+    #     return redirect("my_order_page")
+
     if request.method == "POST":
         form = PaymentForRiceForm(request.POST)
         if form.is_valid():
@@ -97,21 +107,29 @@ def mock_customer_rice_payment(request, purchase_id):
             payment.user = request.user
             payment.rice = purchase.rice
             payment.transaction_id = f"CUSTMOCK-{uuid.uuid4().hex[:8]}"
+            payment.amount = form.cleaned_data['amount']
+
             if payment.amount == purchase.total_price:
                 payment.is_paid = True
                 payment.status = "Success"
                 purchase.payment = True
+                purchase.status = "Successful"  # ✅ Update status after payment
                 payment.save()
                 purchase.save()
-                return redirect("mock_customer_rice_payment_success")
+                messages.success(request, "Payment successful and order marked as received.")
+                return redirect("my_order_page")
             else:
                 payment.status = "Failed"
                 payment.save()
+                messages.error(request, "Payment failed. Amount mismatch.")
                 return redirect("mock_customer_rice_payment_fail")
     else:
-        form = PaymentForRiceForm()
+        form = PaymentForRiceForm(initial={'amount': purchase.total_price})
 
-    return render(request, "customer/payment/mock_customer_rice_payment.html", {"form": form, "purchase": purchase})
+    return render(request, "customer/payment/mock_customer_rice_payment.html", {
+        "form": form,
+        "purchase": purchase
+    })
 
 
 @login_required
@@ -124,3 +142,23 @@ def mock_customer_rice_payment_fail(request):
 
 def explore_rice_post(request):
     return redirect("explore_all_rice_post")
+
+# Oder track
+@login_required
+@user_passes_test(lambda u: u.role == 'customer')
+def my_order_page(request):
+    orders = Purchase_Rice.objects.filter(customer=request.user).order_by("-purchase_date")
+    return render(request, 'customer/my_order_page.html', {'orders': orders})
+
+@login_required
+# @require_POST
+@user_passes_test(lambda u: u.role == 'customer')
+def confirm_delivery(request, id):
+    order = get_object_or_404(Purchase_Rice, id=id, customer=request.user)
+    if order.status == "Delivered":
+        if order.payment:
+            order.status = "Successful"
+            order.save()
+            return redirect('my_order_page')
+        else:
+            return redirect('make_payment_for_rice', id=order.id)
