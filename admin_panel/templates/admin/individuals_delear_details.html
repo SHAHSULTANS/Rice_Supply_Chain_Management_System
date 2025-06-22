@@ -66,7 +66,7 @@
                             {% if request.user == dealer.user or request.user.role == "admin" %}
                             <div class="d-flex gap-2">
                                 {% comment %} {% url 'update_paddy_stock' stock.id %} {% endcomment %}
-                                <a href="" class="btn btn-outline-primary btn-sm">
+                                <a href="{% url 'edit_paddy_post' stock.id %}" class="btn btn-outline-primary btn-sm">
                                     <i class="fas fa-edit"></i> Edit
                                 </a>
                                 {% comment %} {% url 'delete_paddy_stock' stock.id %} {% endcomment %}

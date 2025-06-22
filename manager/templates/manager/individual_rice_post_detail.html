@@ -24,7 +24,7 @@
                     <!-- Action Buttons -->
                     <div class="d-grid gap-3 mt-4">
                         {% if request.user.role == "customer" %}
-                            <a href="{% url 'purchase_rice' post.id %}" class="btn btn-success w-100 d-flex align-items-center justify-content-center gap-2">
+                            <a href="{% url 'purchase_rice_from_manager' post.id %}" class="btn btn-success w-100 d-flex align-items-center justify-content-center gap-2">
                                 <i class="fas fa-shopping-cart"></i> Order Now
                             </a>
                             {% elif request.user.role == "manager" and request.user != post.manager %}
