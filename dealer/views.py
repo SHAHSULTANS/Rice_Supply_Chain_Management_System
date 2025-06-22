@@ -1,5 +1,5 @@
 from datetime import timezone
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect, render,HttpResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse
 from django.db.models import Count, Sum, Avg
@@ -310,3 +310,21 @@ def dealer_stats(request):
     }
     
     return render(request, 'dealer/dealer_stats.html', context)
+
+
+from dealer.models import DealerProfile
+
+@login_required
+@user_passes_test(lambda u: u.role == 'dealer')
+def selling_paddy_history(request):
+    try:
+        dealer_profile = DealerProfile.objects.get(user=request.user)
+    except DealerProfile.DoesNotExist:
+        return HttpResponse("Dealer profile not found", status=404)
+
+    selling_paddy = Purchase_paddy.objects.filter(paddy__dealer=dealer_profile).order_by("-purchase_date")
+
+    context = {
+        "selling_paddy": selling_paddy,
+    }
+    return render(request, "dealer/paddy_selling_history.html", context)

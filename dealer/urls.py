@@ -12,5 +12,8 @@ urlpatterns = [
     path('profile/edit/',views.edit_dealer_profile, name='edit_dealer_profile'),
     path('orders/', views.dealer_order_list, name='dealer_order_list'),
     path('dealer-stats/', views.dealer_stats, name='dealer_stats'),
+    
+    # selling history
+    path('selling_paddy_history/', views.selling_paddy_history, name='selling_paddy_history'),
 
 ]
