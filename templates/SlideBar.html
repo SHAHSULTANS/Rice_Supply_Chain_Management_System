@@ -1,7 +1,7 @@
 {% load static %}
 {% comment %} For manager section {% endcomment %}
 {% if request.user.is_authenticated and request.user.role == "manager" %}
-<div id="sidebar" class="bg-secondary text-white" style="min-width: 250px;">
+<div class="bg-secondary text-white d-flex flex-column" style="min-width: 250px; height: 100vh;" >
 <!-- Profile Picture -->
 <div class="text-center my-2">
     {% if manager and manager.profile_image %}
@@ -33,7 +33,7 @@
 {% endif %}
 {% comment %} For admin section {% endcomment %}
 {% if request.user.is_authenticated and request.user.role == "admin" %}
-<div id="sidebar" class="bg-secondary text-white" style="min-width: 250px;">
+<div class="bg-secondary text-white d-flex flex-column" style="min-width: 250px; height: 100vh;" >
 <!-- Profile Picture -->
 <div class="text-center my-2">
     {% if admin and admin.profile_image %}
@@ -63,7 +63,7 @@
 {% comment %} For customer {% endcomment %}
 {% comment %} For customer section {% endcomment %}
 {% if request.user.is_authenticated and request.user.role == "customer" %}
-<div id="sidebar" class="bg-secondary text-white" style="min-width: 250px;">
+<div class="bg-secondary text-white d-flex flex-column" style="min-width: 250px; height: 100vh;" >
 <!-- Profile Picture -->
 <div class="text-center my-2">
     {% if customer and customer.image %}
