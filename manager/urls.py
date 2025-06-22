@@ -38,5 +38,18 @@ urlpatterns = [
     path('mock_rice_payment_success/', views.mock_rice_payment_success, name='mock_rice_payment_success'),
     path('mock_rice_payment_fail/', views.mock_rice_payment_fail, name='mock_rice_payment_fail'),
     
+    # Search url
+    path('search/',views.search, name="search"),
+    
+    # Rice order review page for Manager
+    path('rice_orders/', views.order_page, name='order_page'),
+    path('accept_rice_order/<int:id>/', views.accept_rice_order, name='accept_rice_order'),
+    path('update_order_status/<int:id>/', views.update_order_status, name='update_order_status'),
+    
+    
+    # order and delivery track
+    path('my_paddy_order/', views.my_paddy_order, name='my_paddy_order'),
+    path('confirm_paddy_delivery/<int:id>/', views.confirm_paddy_delivery, name='confirm_paddy_delivery'),
+    
     
 ]

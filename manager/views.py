@@ -4,16 +4,20 @@ from .models import ManagerProfile, RicePost, Purchase_paddy,PurchaseRice,Paymen
 from dealer.models import PaddyStock
 from .forms import ManagerProfileForm, RicePostForm, Purchase_paddyForm, PurchaseRiceForm,PaymentForPaddyForm, PaymentForRiceForm
 from decimal import Decimal
-
+from django.db.models import Count, Sum, Avg
+from customer.models import Purchase_Rice
 
 import uuid
+from django.db.models import Q
 
 
 
 def check_manager(user):
     return user.is_authenticated and user.role == 'manager'
+
 def check_manager_and_customer_and_admin(user):
     return user.is_authenticated and user.role in ['manager', 'customer','admin']
+
 def check_manager_and_admin(user):
     return user.is_authenticated and user.role in ['manager','admin']
 
@@ -137,8 +141,33 @@ def manager_profile(request):
 @login_required(login_url="login")
 @user_passes_test(check_manager)
 def explore_paddy_post(request):
-    paddy_stocks = PaddyStock.objects.all().order_by('-stored_since')
-    return render(request, 'dealer/paddy_posts.html', {'posts': paddy_stocks})
+    
+    sort = request.GET.get('sort', 'recent')
+
+    posts = PaddyStock.objects.filter(is_available=True)
+
+    if sort == 'price_asc':
+        posts = posts.order_by('price_per_mon')
+    elif sort == 'price_desc':
+        posts = posts.order_by('-price_per_mon')
+    elif sort == 'moisture':
+        posts = posts.order_by('moisture_content')
+    else:  # ' By Default
+        posts = posts.order_by('-stored_since')
+
+    avg_price = posts.aggregate(avg=Avg('price_per_mon'))['avg']
+    total_quantity = posts.aggregate(total=Sum('quantity'))['total'] or 0
+    top_dealer = posts.values('dealer__user__username').annotate(post_count=Count('id')).order_by('-post_count').first()
+
+    return render(request, 'dealer/paddy_posts.html', {
+        'posts': posts,
+        'avg_price': avg_price,
+        'total_quantity': total_quantity,
+        'top_dealer': top_dealer['dealer__user__username'] if top_dealer else None,
+        'current_sort': sort,
+    })
+    # paddy_stocks = PaddyStock.objects.all().order_by('-stored_since')
+    # return render(request, 'dealer/paddy_posts.html', {'posts': paddy_stocks})
 #Here update by shanto. This explore paddy_post function is used to show all paddy posts in the manager dashboard. That comes from the dealer app template.
 
 
@@ -204,12 +233,18 @@ def purchase_rice(request, id):
 def purchase_history(request):
     purchases_paddy = Purchase_paddy.objects.filter(manager=request.user).order_by("-purchase_date")
     purchases_rice = PurchaseRice.objects.filter(manager=request.user).order_by("-purchase_date")
+    seling_rice = Purchase_Rice.objects.filter(rice__manager=request.user).order_by("-purchase_date")
+
     context = {
-        "purchases_paddy" : purchases_paddy,
-        "purchases_rice" : purchases_rice
+        "purchases_paddy": purchases_paddy,
+        "purchases_rice": purchases_rice,
+        "seling_rice": seling_rice,
     }
-    
-    return render(request,"manager/purchase_history.html",context)
+
+    return render(request, "manager/purchase_history.html", context)
+
+
+
 
 @login_required(login_url="login")
 @user_passes_test(check_manager_and_admin)
@@ -317,17 +352,99 @@ def mock_rice_payment_fail(request):
     return render(request,"manager/payment/mock_rice_payment_fail.html")
 
 
+# Search functionality
+@login_required
+def search(request):
+    query = request.GET.get('query')  # Matches the form field name
+    rice_results = []
+    paddy_results = []
 
-# @login_required
-# def Mock_Payment_UI(request):
-#     if request.method == 'POST':
-#         amount = request.POST.get('total_amount')
-#         purchase_id = request.POST.get('purchase_id')
-#         purchase = get_object_or_404(Purchase_paddy, id=purchase_id)
+    user = request.user
 
-#         return render(request, 'manager/payment/Mock_Payment_UI.html', {
-#             'amount': amount,
-#             'purchase': purchase,
-#         })
+    if user.is_authenticated:
+        if user.role in ["manager", "admin"]:
+            if query:
+                rice_results = RicePost.objects.filter(
+                    Q(rice_name__icontains=query) |
+                    Q(description__icontains=query)
+                )
+                paddy_results = PaddyStock.objects.filter(
+                    Q(name__icontains=query)
+                )
 
-#     return redirect('some_error_page')
+        elif user.role == "dealer":
+            if query:
+                paddy_results = PaddyStock.objects.filter(
+                    Q(name__icontains=query)
+                )
+
+        elif user.role == "customer":
+            if query:
+                rice_results = RicePost.objects.filter(
+                    Q(rice_name__icontains=query)
+                )
+
+    context = {
+        'query': query,
+        'rice_results': rice_results,
+        'paddy_results': paddy_results,
+    }
+
+    return render(request, 'manager/search_results.html', context)
+
+
+
+# Oder track for rice
+
+@login_required
+@user_passes_test(lambda u: u.role == 'manager')
+def order_page(request):
+    orders = Purchase_Rice.objects.filter(rice__manager=request.user).order_by("-purchase_date")
+    return render(request, 'manager/order_page.html', {'orders': orders})
+
+@login_required
+# @require_POST
+@user_passes_test(lambda u: u.role == 'manager')
+def accept_rice_order(request, id):
+    order = get_object_or_404(Purchase_Rice, id=id, rice__manager=request.user)
+    if order.status == "Pending":
+        order.status = "Accepted"
+        order.save()
+    return redirect('order_page')
+
+@login_required
+# @require_POST
+@user_passes_test(lambda u: u.role == 'manager')
+def update_order_status(request, id):
+    order = get_object_or_404(Purchase_Rice, id=id, rice__manager=request.user)
+    new_status = request.POST.get('new_status')
+    if order.status == "Accepted" and new_status in ["Shipping", "Delivered"]:
+        order.status = new_status
+        order.save()
+
+    if order.status == "Shipping" and new_status in [ "Delivered"]:
+        order.status = new_status
+        order.save()
+    return redirect('order_page')
+
+
+
+# Order and delivery track
+@login_required
+@user_passes_test(lambda u: u.role == 'manager')
+def my_paddy_order(request):
+    orders = Purchase_paddy.objects.filter(manager=request.user).order_by("-purchase_date")
+    return render(request, 'manager/my_paddy_order.html', {'orders': orders})
+
+@login_required
+# @require_POST
+@user_passes_test(lambda u: u.role == 'manager')
+def confirm_paddy_delivery(request, id):
+    order = get_object_or_404(Purchase_paddy, id=id, manager=request.user)
+    if order.status == "Delivered":
+        if order.payment:
+            order.status = "Successful"
+            order.save()
+            return redirect('my_paddy_order')
+        else:
+            return redirect('mock_paddy_payment', id=order.id)

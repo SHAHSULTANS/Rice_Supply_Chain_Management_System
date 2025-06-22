@@ -10,7 +10,15 @@ urlpatterns = [
 
     path("purchase_rice_from_manager/<int:id>/",views.purchase_rice_from_manager,name="purchase_rice_from_manager"),
     path("explore_rice_post/",views.explore_rice_post,name="explore_rice_post"),
+    path('rice_purchases_history/', views.rice_purchases_history, name='rice_purchases_history'),
 
+    path("purchase_rice_from_manager/<int:id>/", views.purchase_rice_from_manager, name="purchase_rice_from_manager"),
+    path("mock_customer_rice_payment/<int:purchase_id>/", views.mock_customer_rice_payment, name="mock_customer_rice_payment"),
+    path("mock_customer_rice_payment_success/", views.mock_customer_rice_payment_success, name="mock_customer_rice_payment_success"),
+    path("mock_customer_rice_payment_fail/", views.mock_customer_rice_payment_fail, name="mock_customer_rice_payment_fail"),
+
+    # Oder track
+    path('my_rice_orders/', views.my_order_page, name='my_order_page'),
+    path('confirm_delivery/<int:id>/', views.confirm_delivery, name='confirm_delivery'),
 
 ]
-

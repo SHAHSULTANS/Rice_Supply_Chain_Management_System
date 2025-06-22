@@ -1,0 +1,11 @@
+#for manager account
+Username : manager
+password : 1234
+
+#for customer account
+Username: tawhid
+password: TInishat2002
+
+# for delear
+username : hasan
+password : 1234hhhh

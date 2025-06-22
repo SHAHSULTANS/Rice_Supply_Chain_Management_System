@@ -18,11 +18,11 @@
       <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
         <i class="fas fa-filter"></i> Filters
       </button>
-      <ul class="dropdown-menu dropdown-menu-end">
-        <li><a class="dropdown-item" href="#">Price: Low to High</a></li>
-        <li><a class="dropdown-item" href="#">Price: High to Low</a></li>
-        <li><a class="dropdown-item" href="#">Moisture Content</a></li>
-        <li><a class="dropdown-item" href="#">Recently Added</a></li>
+      <ul class="dropdown-menu dropdown-menu-end">d
+        <li><a class="dropdown-item {% if current_sort == 'price_asc' %}active{% endif %}" href="?sort=price_asc">Price: Low to High</a></li>
+        <li><a class="dropdown-item {% if current_sort == 'price_desc' %}active{% endif %}" href="?sort=price_desc">Price: High to Low</a></li>
+        <li><a class="dropdown-item {% if current_sort == 'moisture' %}active{% endif %}" href="?sort=moisture">Moisture Content</a></li>
+        <li><a class="dropdown-item {% if current_sort == 'recent' or not current_sort %}active{% endif %}" href="?sort=recent">Recently Added</a></li>
       </ul>
     </div>
   </div>
@@ -141,7 +141,7 @@
                 <a href="{% url "purchase_paddy" post.id %}" class="btn btn-success">
                   <i class="fas fa-shopping-cart me-2"></i>Order Now
                 </a>
-                <a href="#" class="btn btn-outline-secondary">
+                <a href="{% url "paddy_detail" post.id %}" class="btn btn-outline-secondary">
                   <i class="fas fa-info-circle me-2"></i>Details
                 </a>
               {% else %}

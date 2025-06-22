@@ -18,23 +18,25 @@
     {% block extra_head %}{% endblock %}
 </head>
 <!-- <body class="d-flex flex-column min-vh-100"> -->
-<body class="d-flex flex-column min-vh-100" style="overflow: hidden;">
+<body class="d-flex flex-column min-vh-100">
 
     <!-- ✅ Navbar -->
     {% include 'navbar.html' %}
 
+    <!-- ✅ Sidebar Toggle Button for Mobile (add inside main layout, outside sidebar) -->
+    <button id="sidebarToggle" class="btn btn-outline-primary d-md-none m-2 ms-3">
+        <i class="fas fa-bars"></i>
+    </button>
+
     <!-- ✅ Main Layout -->
-    <!-- <div class="d-flex flex-grow-1" style="min-height: 0;"> -->
-   <!-- ✅ Main Layout -->
-<div class="d-flex flex-grow-1 overflow-hidden" style="min-height: 0;">
-
-        <!-- ✅ Sidebar for Manager -->
-
-        {% include 'SlideBar.html' %}   
+   <div class="d-flex flex-grow-1 overflow-hidden" style="height: 100vh;">
         
+        <!-- ✅ Sidebar (wrapped for toggle) -->
+        <div id="sidebarWrapper" class="d-none d-md-block">
+            {% include 'SlideBar.html' %}
+        </div>
 
         <!-- ✅ Main Content Area -->
-        <!-- <div id="content" class="flex-grow-1 p-3"> -->
         <div id="content" class="flex-grow-1 p-3 overflow-auto" style="max-height: calc(100vh - 56px - 56px);">
             <div class="container">
                 {% if messages %}
@@ -45,17 +47,30 @@
                         </div>
                     {% endfor %}
                 {% endif %}
-
                 {% block content %}{% endblock %}
             </div>
         </div>
     </div>
-    <!-- Footer -->
+
+    <!-- ✅ Footer -->
     <footer class="bg-dark text-white text-center py-3">
-        <p class="mb-0">&copy; 2025 <strong style="color: rgb(35, 234, 48);">Rice Supply Chain Management System</strong> | Developed by <span style="color: red; font-weight:bold">Abdullah</span>, <span style="color: rgb(244, 13, 209);  font-weight:bold">Shanto</span>, <span style="color: rgb(29, 220, 61);  font-weight:bold">Khaled</span>, <span style="color: rgb(212, 247, 18);  font-weight:bold">Tawhid</span> | CSE, JU</p>
+        <p class="mb-0">&copy; 2025 <strong style="color: rgb(35, 234, 48);">Rice Supply Chain Management System</strong> | Developed by <span style="color: red; font-weight:bold">Abdullah</span>, <span style="color: rgb(244, 13, 209); font-weight:bold">Shanto</span>, <span style="color: rgb(29, 220, 61); font-weight:bold">Khaled</span>, <span style="color: rgb(212, 247, 18); font-weight:bold">Tawhid</span> | CSE, JU</p>
     </footer>
-    <!-- ✅ Bootstrap JS Bundle -->
+
+    <!-- ✅ Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- ✅ Sidebar Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebarWrapper = document.getElementById('sidebarWrapper');
+
+            sidebarToggle.addEventListener('click', function () {
+                sidebarWrapper.classList.toggle('d-none');
+            });
+        });
+    </script>
     {% block extra_scripts %}{% endblock %}
 </body>
 </html>
