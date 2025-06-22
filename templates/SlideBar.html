@@ -26,6 +26,7 @@
         <a class="nav-link text-info {% if request.resolver_match.url_name == 'explore_paddy_post' %}active{% endif %}" href="{% url 'explore_paddy_post' %}">🚪 Explore All Paddy Post</a>
         <hr class="my-1">
         <a class="nav-link text-light {% if request.resolver_match.url_name == 'order_page' %}active{% endif %}" href="{% url 'order_page' %}">🚪 Incoming Order</a>
+        <a class="nav-link text-light {% if request.resolver_match.url_name == 'my_paddy_order' %}active{% endif %}" href="{% url 'my_paddy_order' %}">🚪 My paddy Order</a>
         <a class="nav-link text-light {% if request.resolver_match.url_name == 'purchase_history' %}active{% endif %}" href="{% url 'purchase_history' %}">🚪 Purchases History</a>
     </nav>
 </div>

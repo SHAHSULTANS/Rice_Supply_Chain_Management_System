@@ -394,7 +394,7 @@ def search(request):
 
 
 
-# Oder track
+# Oder track for rice
 
 @login_required
 @user_passes_test(lambda u: u.role == 'manager')
@@ -426,3 +426,25 @@ def update_order_status(request, id):
         order.status = new_status
         order.save()
     return redirect('order_page')
+
+
+
+# Order and delivery track
+@login_required
+@user_passes_test(lambda u: u.role == 'manager')
+def my_paddy_order(request):
+    orders = Purchase_paddy.objects.filter(manager=request.user).order_by("-purchase_date")
+    return render(request, 'manager/my_paddy_order.html', {'orders': orders})
+
+@login_required
+# @require_POST
+@user_passes_test(lambda u: u.role == 'manager')
+def confirm_paddy_delivery(request, id):
+    order = get_object_or_404(Purchase_paddy, id=id, manager=request.user)
+    if order.status == "Delivered":
+        if order.payment:
+            order.status = "Successful"
+            order.save()
+            return redirect('my_paddy_order')
+        else:
+            return redirect('mock_paddy_payment', id=order.id)

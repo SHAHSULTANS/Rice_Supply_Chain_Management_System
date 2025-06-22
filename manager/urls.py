@@ -47,4 +47,9 @@ urlpatterns = [
     path('update_order_status/<int:id>/', views.update_order_status, name='update_order_status'),
     
     
+    # order and delivery track
+    path('my_paddy_order/', views.my_paddy_order, name='my_paddy_order'),
+    path('confirm_paddy_delivery/<int:id>/', views.confirm_paddy_delivery, name='confirm_paddy_delivery'),
+    
+    
 ]

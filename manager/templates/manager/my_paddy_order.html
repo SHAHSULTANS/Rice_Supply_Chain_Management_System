@@ -8,6 +8,7 @@
         <table class="table table-hover">
             <thead class="table-dark">
                 <tr>
+                    <th>Dealer</th>
                     <th>Paddy</th>
                     <th>Quantity (kg)</th>
                     <th>Total Price</th>
@@ -20,29 +21,31 @@
             <tbody>
                 {% for order in orders %}
                     <tr>
-                        <td>{{ order.rice.rice_name }}</td>
+                        <td>{{ order.paddy.dealer.user.username }}</td>
+                        <td>{{ order.paddy.name }}</td>
                         <td>{{ order.quantity_purchased }}</td>
                         <td>৳{{ order.total_price }}</td>
                         <td>
-                            <span class="badge bg-info">{{ order.status }}</span>
+                            <span class="badge bg-warning">{{ order.status }}</span>
                         </td>
                         <td>{{ order.purchase_date|date:"Y-m-d H:i" }}</td>
                          <td class="text-center">
                             {% if order.payment %}
+                                
                                 <span class="btn btn-success">Paid</span>
                             {% else %}
-                                <a href="{% url 'mock_customer_rice_payment' order.id %}" class="btn btn-sm btn-primary">Mock Pay</a>
+                                <a href="{% url 'mock_paddy_payment' order.id %}" class="btn btn-sm btn-primary">Mock Pay</a>
                             {% endif %}
                         </td>
                         <td>
                             {% if order.status == "Delivered" %}
                                 {% if order.payment %}
-                                <form method="post" action="{% url 'confirm_delivery' order.id %}">
+                                <form method="post" action="{% url 'confirm_paddy_delivery' order.id %}">
                                     {% csrf_token %}
                                     <button class="btn btn-sm btn-primary">Confirm Delivery</button>
                                 </form>
                                 {% else %}
-                                <a href="{% url 'mock_customer_rice_payment' order.id %}" class="btn btn-sm btn-warning">Make Payment</a>
+                                <a href="{% url 'mock_paddy_payment' order.id %}" class="btn btn-sm btn-warning">Make Payment</a>
                                 {% endif %}
 
                             {% elif order.status == "Successful" %}

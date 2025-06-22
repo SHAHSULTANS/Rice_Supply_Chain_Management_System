@@ -161,4 +161,4 @@ def confirm_delivery(request, id):
             order.save()
             return redirect('my_order_page')
         else:
-            return redirect('make_payment_for_rice', id=order.id)
+            return redirect('mock_rice_payment', id=order.id)
