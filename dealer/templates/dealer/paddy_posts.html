@@ -141,7 +141,7 @@
                 <a href="{% url "purchase_paddy" post.id %}" class="btn btn-success">
                   <i class="fas fa-shopping-cart me-2"></i>Order Now
                 </a>
-                <a href="#" class="btn btn-outline-secondary">
+                <a href="{% url "paddy_detail" post.id %}" class="btn btn-outline-secondary">
                   <i class="fas fa-info-circle me-2"></i>Details
                 </a>
               {% else %}
