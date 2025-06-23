@@ -28,7 +28,7 @@
         <ul class="list-group">
             {% for paddy in paddy_results %}
                 <li class="list-group-item">
-                    {{ paddy.name }} - ৳{{ paddy.price_per_mon }} per mon
+                    <a href="{% url 'paddy_detail' paddy.id  %}">{{ paddy.name }} - ৳{{ paddy.price_per_mon }} per mon</a>
                 </li>
             {% endfor %}
         </ul>
