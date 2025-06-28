@@ -18,13 +18,17 @@ http://192.168.1.107:8000
 
 
 
-#########
+# have to be implement
 1. rating
 2. feedback
 3. receipt
+5. cart
+6. report (indentify froud)
+
+
+
+# implemented
 4. mock payment
     1. phone number
     2. otp
     3. security key
-5. cart
-6. report (indentify froud)
