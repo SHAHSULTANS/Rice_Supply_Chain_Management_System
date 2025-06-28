@@ -7,6 +7,7 @@ class ManagerProfile(models.Model):
     user = models.OneToOneField(CustomUser,on_delete=models.CASCADE,limit_choices_to={'role':'manager'},related_name="managerprofile")
     full_name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=11)
+    transaction_password = models.CharField(blank=True)
     address = models.TextField()
     mill_name = models.CharField(max_length=100)
     mill_location = models.TextField()

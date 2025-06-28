@@ -34,6 +34,13 @@ urlpatterns = [
     path('mock_paddy_payment_fail/', views.mock_paddy_payment_fail, name='mock_paddy_payment_fail'),
 
     
+    path('insert-phone-number/<int:purchase_id>/', views.insert_phone_number, name='insert_phone_number'),
+    path('insert-otp/<int:purchase_id>/<str:email>/', views.insert_otp, name='insert_otp'),
+    path('insert-password/<int:purchase_id>/<str:email>', views.insert_password, name='insert_password'),
+    
+    path("verify_purchases_otp/<str:email>/<int:purchase_id>/<int:otp>/",views.verify_purchases_otp,name="verify_purchases_otp"),
+    path("send_purchases_otp/<str:email>/<int:purchase_id>/",views.send_purchases_otp,name="send_purchases_otp"),
+    
     path('mock_rice_payment/<int:rice_id>/', views.mock_rice_payment, name='mock_rice_payment'),
     path('mock_rice_payment_success/', views.mock_rice_payment_success, name='mock_rice_payment_success'),
     path('mock_rice_payment_fail/', views.mock_rice_payment_fail, name='mock_rice_payment_fail'),

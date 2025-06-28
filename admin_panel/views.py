@@ -123,7 +123,7 @@ def send_otp(email):
         'timestamp': datetime.now()
     }
 
-    subject = "Password Reset OTP - EduLearn"
+    subject = "Password Reset OTP - RSCMS"
     message = f"Hello,\n\nYour OTP for password reset is: {otp}\n\nDo not share this OTP with anyone."
     send_mail(subject, message, settings.EMAIL_HOST_USER, [email])
 

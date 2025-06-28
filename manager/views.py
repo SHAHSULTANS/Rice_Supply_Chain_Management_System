@@ -6,8 +6,13 @@ from .forms import ManagerProfileForm, RicePostForm, Purchase_paddyForm, Purchas
 from decimal import Decimal
 from django.db.models import Count, Sum, Avg
 from customer.models import Purchase_Rice
+from django.contrib import messages
 
 import uuid
+import random
+from datetime import datetime, timedelta
+from django.core.mail import send_mail
+from django.conf import settings
 from django.db.models import Q
 
 
@@ -271,27 +276,17 @@ def mock_paddy_payment(request, purchase_id):
     purchase = get_object_or_404(Purchase_paddy, pk=purchase_id, manager=request.user)
 
     if request.method == 'POST':
+        print("post")
         form = PaymentForPaddyForm(request.POST)
-        paddy = purchase.paddy  # Already related through ForeignKey
-        
         if form.is_valid():
-            payment = form.save(commit=False)
-            payment.user = request.user
-            payment.paddy = paddy
-            payment.transaction_id = f'MOCK-{uuid.uuid4().hex[:8]}'
-
-            # Simulated payment logic
-            if payment.amount == purchase.total_price:
-                payment.is_paid = True
-                payment.status = "Success"
-                purchase.payment = True
-                purchase.save()
-                payment.save()
-                return redirect('mock_paddy_payment_success')
+            amount = form.cleaned_data['amount']
+            if amount == purchase.total_price:
+                # ✅ Store amount in session temporarily
+                request.session['payment_amount'] = float(amount)
+                return redirect('insert_phone_number', purchase_id=purchase_id)
             else:
-                payment.status = "Failed"
-                payment.save()
-                return redirect('mock_paddy_payment_fail')
+                messages.error(request, "Amount does not match the total price.")
+                return redirect('mock_paddy_payment', purchase_id=purchase_id)
     else:
         form = PaymentForPaddyForm()
 
@@ -300,6 +295,103 @@ def mock_paddy_payment(request, purchase_id):
         'form': form,
     }
     return render(request, 'manager/payment/mock_paddy_payment.html', context)
+
+def insert_phone_number(request,purchase_id):
+    paddy = get_object_or_404(Purchase_paddy,pk=purchase_id,manager=request.user)
+    # print(paddy.manager.managerprofile.phone_number)
+    if request.method == 'POST':
+        phone_number = request.POST.get('phone')
+        if phone_number == paddy.manager.managerprofile.phone_number:
+            return redirect("send_purchases_otp",email=paddy.manager.managerprofile.user.email,purchase_id=purchase_id)
+        else:
+            messages.error(request,"Wrong phone number, insert the correct number")
+            return redirect("insert_phone_number",purchase_id=purchase_id)
+    return render(request,"manager/payment/insert_phone_number.html")
+
+
+otp_storage = {}
+def send_purchases_otp(request,email,purchase_id):
+    otp = random.randint(100000,999999)
+    otp_storage[email] = {
+        'otp' : otp,
+        'timestamp' : datetime.now()
+    }
+    subject = "Transaction OTP - RSCMS"
+    message = f"Assalamu Alaikum\n\nYour OTP for transaction is: {otp}\n\nNever share your Code and PIN with anyone.\n\nRSCMS never ask for this.\n\nExpiry: within 300 seconds"
+    send_mail(subject,message,settings.EMAIL_HOST_USER, [email])
+    
+    return redirect("insert_otp",purchase_id=purchase_id,email=email)
+    
+    
+    
+def verify_purchases_otp(request, email, purchase_id, otp):
+    data = otp_storage.get(email)
+    if data:
+        otp_valid = data['otp'] == otp
+        otp_expired = datetime.now() > data['timestamp'] + timedelta(minutes=5)
+
+        if otp_valid and not otp_expired:
+            del otp_storage[email]
+            messages.success(request, "OTP verified successfully.")
+            return redirect("insert_password", purchase_id=purchase_id,email=email)
+        elif otp_expired:
+            del otp_storage[email]
+            messages.error(request, "OTP has expired. Please request a new one.")
+            return redirect('insert_phone_number', purchase_id=purchase_id)
+        else:
+            messages.error(request, "Invalid OTP. Please try again.")
+            return redirect('insert_otp', purchase_id=purchase_id, email=email)
+    else:
+        messages.error(request, "No OTP found for this email.")
+        return redirect('insert_phone_number', purchase_id=purchase_id)
+
+
+            
+    # return HttpResponse("OTP")
+
+def insert_otp(request,purchase_id,email):
+    paddy = get_object_or_404(Purchase_paddy,pk=purchase_id,manager=request.user)
+    if request.method == "POST":
+        otp = request.POST.get("otp")
+        return redirect("verify_purchases_otp",email=email,purchase_id=purchase_id,otp=otp)
+    return render(request,"manager/payment/insert_otp.html",{'purchase_id':purchase_id})
+    
+@login_required
+def insert_password(request, purchase_id, email):
+    purchase = get_object_or_404(Purchase_paddy, pk=purchase_id, manager=request.user)
+    paddy = purchase.paddy
+    amount = request.session.get('payment_amount')  # Get from session
+
+    if not amount:
+        messages.error(request, "Payment session expired.")
+        return redirect('mock_paddy_payment', purchase_id=purchase_id)
+
+    if request.method == "POST":
+        password = request.POST.get('password')
+        if password == purchase.manager.managerprofile.transaction_password:
+            # ✅ Now process payment
+            payment = PaymentForPaddy.objects.create(
+                user=request.user,
+                paddy=paddy,
+                amount=amount,
+                transaction_id=f'MOCK-{uuid.uuid4().hex[:8]}',
+                is_paid=True,
+                status="Success"
+            )
+            purchase.payment = True
+            purchase.save()
+
+            del request.session['payment_amount']  # ✅ Clean up session
+            messages.success(request, "Payment successful.")
+            return redirect('mock_paddy_payment_success')
+        else:
+            messages.error(request, "Incorrect password.")
+            return redirect("insert_password", purchase_id=purchase_id, email=email)
+
+    return render(request, "manager/payment/insert_password.html", {
+        'purchase_id': purchase_id,
+        'email': email
+    })
 
 
 @login_required
