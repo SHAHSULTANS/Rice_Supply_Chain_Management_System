@@ -44,6 +44,12 @@ urlpatterns = [
     path('mock_rice_payment/<int:rice_id>/', views.mock_rice_payment, name='mock_rice_payment'),
     path('mock_rice_payment_success/', views.mock_rice_payment_success, name='mock_rice_payment_success'),
     path('mock_rice_payment_fail/', views.mock_rice_payment_fail, name='mock_rice_payment_fail'),
+    path('insert_phone_number_for_rice/<int:purchase_id>', views.insert_phone_number_for_rice, name='insert_phone_number_for_rice'),
+    path('insert-otp-for-rice/<int:purchase_id>/<str:email>/', views.insert_otp_for_rice, name='insert_otp_for_rice'),
+    path('insert-password-for-rice/<int:purchase_id>/<str:email>', views.insert_password_for_rice, name='insert_password_for_rice'),
+    
+    path("verify_purchases_otp_for_rice/<str:email>/<int:purchase_id>/<int:otp>/",views.verify_purchases_otp_for_rice,name="verify_purchases_otp_for_rice"),
+    path("send_purchases_otp_for_rice/<str:email>/<int:purchase_id>/",views.send_purchases_otp_for_rice,name="send_purchases_otp_for_rice"),
     
     # Search url
     path('search/',views.search, name="search"),

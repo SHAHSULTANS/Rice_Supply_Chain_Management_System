@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render,redirect,get_object_or_404,HttpResponse
-from .models import ManagerProfile, RicePost, Purchase_paddy,PurchaseRice,PaymentForPaddy
+from .models import ManagerProfile, RicePost, Purchase_paddy,PurchaseRice,PaymentForPaddy,PaymentForRice
 from dealer.models import PaddyStock
 from .forms import ManagerProfileForm, RicePostForm, Purchase_paddyForm, PurchaseRiceForm,PaymentForPaddyForm, PaymentForRiceForm
 from decimal import Decimal
@@ -276,7 +276,6 @@ def mock_paddy_payment(request, purchase_id):
     purchase = get_object_or_404(Purchase_paddy, pk=purchase_id, manager=request.user)
 
     if request.method == 'POST':
-        print("post")
         form = PaymentForPaddyForm(request.POST)
         if form.is_valid():
             amount = form.cleaned_data['amount']
@@ -296,6 +295,7 @@ def mock_paddy_payment(request, purchase_id):
     }
     return render(request, 'manager/payment/mock_paddy_payment.html', context)
 
+@login_required
 def insert_phone_number(request,purchase_id):
     paddy = get_object_or_404(Purchase_paddy,pk=purchase_id,manager=request.user)
     # print(paddy.manager.managerprofile.phone_number)
@@ -310,6 +310,7 @@ def insert_phone_number(request,purchase_id):
 
 
 otp_storage = {}
+@login_required
 def send_purchases_otp(request,email,purchase_id):
     otp = random.randint(100000,999999)
     otp_storage[email] = {
@@ -323,7 +324,7 @@ def send_purchases_otp(request,email,purchase_id):
     return redirect("insert_otp",purchase_id=purchase_id,email=email)
     
     
-    
+@login_required
 def verify_purchases_otp(request, email, purchase_id, otp):
     data = otp_storage.get(email)
     if data:
@@ -346,11 +347,8 @@ def verify_purchases_otp(request, email, purchase_id, otp):
         return redirect('insert_phone_number', purchase_id=purchase_id)
 
 
-            
-    # return HttpResponse("OTP")
-
+@login_required
 def insert_otp(request,purchase_id,email):
-    paddy = get_object_or_404(Purchase_paddy,pk=purchase_id,manager=request.user)
     if request.method == "POST":
         otp = request.POST.get("otp")
         return redirect("verify_purchases_otp",email=email,purchase_id=purchase_id,otp=otp)
@@ -403,32 +401,22 @@ def mock_paddy_payment_fail(request):
 
 
 
-# Mock payment Getaway for paddy
+# Mock payment Getaway for rice
 @login_required
 def mock_rice_payment(request,rice_id):
     purchase =get_object_or_404(PurchaseRice,pk=rice_id, manager=request.user)
     if request.method == "POST":
         form = PaymentForRiceForm(request.POST)
-        rice = purchase.rice
         
         if form.is_valid():
-            payment= form.save(commit=False)
-            payment.user = request.user
-            payment.rice = rice
-            payment.transaction_id = f'MOCK-{uuid.uuid4().hex[:8]}'
-            if payment.amount == purchase.total_price:
-                payment.is_paid = True
-                payment.status = "success"
-                purchase.payment = True
-                payment.save()
-                purchase.save()
-                return redirect("mock_rice_payment_success")
-            else:
-                payment.status = "Failed"
-                payment.save()
-                return redirect("mock_rice_payment_fail")
-            
-        
+           amount = form.cleaned_data['amount']
+           if amount == purchase.total_price:
+               request.session['payment_amount'] = float(amount)
+               return redirect('insert_phone_number_for_rice',purchase_id=rice_id)
+        else:
+            messages.error(request,"Amount does not match the total price")
+            return redirect('mock_rice_payment',purchase_id=rice_id)
+                
     else:
         form = PaymentForRiceForm()
     context = {
@@ -436,6 +424,102 @@ def mock_rice_payment(request,rice_id):
         'purchase' : purchase
     }
     return render(request,"manager/payment/mock_rice_payment.html",context)
+@login_required
+def insert_phone_number_for_rice(request,purchase_id):
+    rice = get_object_or_404(PurchaseRice,pk=purchase_id,manager=request.user)
+    # print(rice.manager.managerprofile.phone_number)
+    if request.method == 'POST':
+        phone_number = request.POST.get('phone')
+        if phone_number == rice.manager.managerprofile.phone_number:
+            return redirect("send_purchases_otp_for_rice",email=rice.manager.managerprofile.user.email,purchase_id=purchase_id)
+        else:
+            messages.error(request,"Wrong phone number, insert the correct number")
+            return redirect("insert_phone_number_for_rice",purchase_id=purchase_id)
+    return render(request,"manager/payment/insert_phone_number.html")
+
+
+otp_storage_for_rice = {}
+@login_required
+def send_purchases_otp_for_rice(request,email,purchase_id):
+    otp = random.randint(100000,999999)
+    otp_storage_for_rice[email] = {
+        'otp' : otp,
+        'timestamp' : datetime.now()
+    }
+    subject = "Transaction OTP - RSCMS"
+    message = f"Assalamu Alaikum\n\nYour OTP for transaction is: {otp}\n\nNever share your Code and PIN with anyone.\n\nRSCMS never ask for this.\n\nExpiry: within 300 seconds"
+    send_mail(subject,message,settings.EMAIL_HOST_USER, [email])
+    
+    return redirect("insert_otp_for_rice",purchase_id=purchase_id,email=email)
+    
+    
+@login_required
+def verify_purchases_otp_for_rice(request, email, purchase_id, otp):
+    data = otp_storage_for_rice.get(email)
+    if data:
+        otp_valid = data['otp'] == otp
+        otp_expired = datetime.now() > data['timestamp'] + timedelta(minutes=5)
+
+        if otp_valid and not otp_expired:
+            del otp_storage_for_rice[email]
+            messages.success(request, "OTP verified successfully.")
+            return redirect("insert_password_for_rice", purchase_id=purchase_id,email=email)
+        elif otp_expired:
+            del otp_storage_for_rice[email]
+            messages.error(request, "OTP has expired. Please request a new one.")
+            return redirect('insert_phone_number_for_rice', purchase_id=purchase_id)
+        else:
+            messages.error(request, "Invalid OTP. Please try again.")
+            return redirect('insert_otp_for_rice', purchase_id=purchase_id, email=email)
+    else:
+        messages.error(request, "No OTP found for this email.")
+        return redirect('insert_phone_number_for_rice', purchase_id=purchase_id)
+
+
+@login_required
+def insert_otp_for_rice(request,purchase_id,email):
+    if request.method == "POST":
+        otp = request.POST.get("otp")
+        return redirect("verify_purchases_otp_for_rice",email=email,purchase_id=purchase_id,otp=otp)
+    return render(request,"manager/payment/insert_otp.html",{'purchase_id':purchase_id})
+    
+@login_required
+def insert_password_for_rice(request, purchase_id, email):
+    purchase = get_object_or_404(PurchaseRice, pk=purchase_id, manager=request.user)
+    rice = purchase.rice
+    amount = request.session.get('payment_amount')  # Get from session
+
+    if not amount:
+        messages.error(request, "Payment session expired.")
+        return redirect('mock_rice_payment', purchase_id=purchase_id)
+
+    if request.method == "POST":
+        password = request.POST.get('password')
+        if password == purchase.manager.managerprofile.transaction_password:
+            # ✅ Now process payment
+            payment = PaymentForRice.objects.create(
+                user=request.user,
+                rice=rice,
+                amount=amount,
+                transaction_id=f'MOCK-{uuid.uuid4().hex[:8]}',
+                is_paid=True,
+                status="Success"
+            )
+            purchase.payment = True
+            purchase.save()
+
+            del request.session['payment_amount']  # ✅ Clean up session
+            messages.success(request, "Payment successful.")
+            return redirect('mock_rice_payment_success')
+        else:
+            messages.error(request, "Incorrect password.")
+            return redirect("insert_password_for_rice", purchase_id=purchase_id, email=email)
+
+    return render(request, "manager/payment/insert_password.html", {
+        'purchase_id': purchase_id,
+        'email': email
+    })
+
 
 @login_required
 def mock_rice_payment_success(request):
