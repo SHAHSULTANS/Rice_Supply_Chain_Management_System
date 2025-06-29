@@ -581,28 +581,33 @@ def order_page(request):
     return render(request, 'manager/order_page.html', {'orders': orders})
 
 @login_required
-# @require_POST
 @user_passes_test(lambda u: u.role == 'manager')
 def accept_rice_order(request, id):
-    order = get_object_or_404(Purchase_Rice, id=id, rice__manager=request.user)
-    if order.status == "Pending":
-        order.status = "Accepted"
-        order.save()
+    if request.method == "POST":
+        order = get_object_or_404(Purchase_Rice, id=id, rice__manager=request.user)
+        new_status = request.POST.get("new_status")
+        if new_status in ["Accepted", "Cancel"] and order.status == "Pending":
+            order.status = new_status
+            order.save()
     return redirect('order_page')
 
+
 @login_required
-# @require_POST
 @user_passes_test(lambda u: u.role == 'manager')
 def update_order_status(request, id):
     order = get_object_or_404(Purchase_Rice, id=id, rice__manager=request.user)
-    new_status = request.POST.get('new_status')
-    if order.status == "Accepted" and new_status in ["Shipping", "Delivered"]:
-        order.status = new_status
-        order.save()
 
-    if order.status == "Shipping" and new_status in [ "Delivered"]:
-        order.status = new_status
-        order.save()
+    if request.method == "POST":
+        new_status = request.POST.get("new_status")
+        valid_transitions = {
+            "Accepted": ["Shipping", "Cancel"],
+            "Shipping": ["Delivered"],
+        }
+
+        if new_status in valid_transitions.get(order.status, []):
+            order.status = new_status
+            order.save()
+
     return redirect('order_page')
 
 

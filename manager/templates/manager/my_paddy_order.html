@@ -20,6 +20,11 @@
             </thead>
             <tbody>
                 {% for order in orders %}
+                
+                {% if order.status != "Successful" %}
+                    
+               
+                    
                     <tr>
                         <td>{{ order.paddy.dealer.user.username }}</td>
                         <td>{{ order.paddy.name }}</td>
@@ -55,6 +60,7 @@
                             {% endif %}
                         </td>
                     </tr>
+                     {% endif %}
                 {% endfor %}
             </tbody>
         </table>

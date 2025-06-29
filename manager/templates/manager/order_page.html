@@ -19,43 +19,45 @@
             </thead>
             <tbody>
                 {% for order in orders %}
+                    {% if order.status != "Successful" %}
                     <tr>
                         <td>{{ order.customer.username }}</td>
                         <td>{{ order.rice.rice_name }}</td>
                         <td>{{ order.quantity_purchased }}</td>
                         <td>৳{{ order.total_price }}</td>
-                        <td>
-                            <span class="badge bg-info">{{ order.status }}</span>
-                        </td>
+                        <td><span class="badge bg-info">{{ order.status }}</span></td>
                         <td>{{ order.purchase_date|date:"Y-m-d H:i" }}</td>
                         <td>
                             {% if order.status == "Pending" %}
-                            <form method="post" action="{% url 'accept_rice_order' order.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-sm btn-success">Accept</button>
-                            </form>
-
-                            {% elif order.status == "Accepted" or order.status == "Shipping" %}
-                            <form method="post" action="{% url 'update_order_status' order.id %}">
-                                {% csrf_token %}
-                                <select name="new_status" class="form-select form-select-sm" onchange="this.form.submit()">
-                                    <option value="" disabled selected>Update Status</option>
-                                    {% if order.status == "Accepted" %}
-                                        <option value="Shipping">Mark as Shipping</option>
+                                <form method="post" action="{% url 'accept_rice_order' order.id %}">
+                                    {% csrf_token %}
+                                    <select name="new_status" class="form-select form-select-sm" onchange="this.form.submit()">
+                                        <option disabled selected>Update Status</option>
+                                        <option value="Accepted">Accept</option>
                                         <option value="Cancel">Cancel</option>
-                                    {% elif order.status == "Shipping" %}
-                                        <option value="Delivered">Mark as Delivered</option>
-                                    {% endif %}
-                                </select>
-                            </form>
+                                    </select>
+                                </form>
 
-                            {% elif order.status == "Successful" %}
-                                <span class="badge bg-success">Completed</span>
+                            {% elif order.status in "Accepted Shipping" %}
+                                <form method="post" action="{% url 'update_order_status' order.id %}">
+                                    {% csrf_token %}
+                                    <select name="new_status" class="form-select form-select-sm" onchange="this.form.submit()">
+                                        <option disabled selected>Update Status</option>
+                                        {% if order.status == "Accepted" %}
+                                            <option value="Shipping">Mark as Shipping</option>
+                                            <option value="Cancel">Cancel</option>
+                                        {% elif order.status == "Shipping" %}
+                                            <option value="Delivered">Mark as Delivered</option>
+                                        {% endif %}
+                                    </select>
+                                </form>
+
                             {% else %}
                                 <span class="badge bg-secondary">{{ order.status }}</span>
                             {% endif %}
                         </td>
                     </tr>
+                    {% endif %}
                 {% endfor %}
             </tbody>
         </table>

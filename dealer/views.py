@@ -357,7 +357,6 @@ def incoming_order(request):
     return render(request, 'dealer/incoming_order.html', {'orders': orders})
 
 @login_required
-# @require_POST
 @user_passes_test(lambda u: u.role == 'dealer')
 def accept_paddy_order(request, id):
     try:
@@ -366,30 +365,35 @@ def accept_paddy_order(request, id):
         return HttpResponse("Dealer profile not found", status=404)
     
     order = get_object_or_404(Purchase_paddy, id=id, paddy__dealer=dealer_profile)
-    if order.status == "Pending":
-        order.status = "Accepted"
-        order.save()
+
+    if request.method == "POST":
+        new_status = request.POST.get("new_status")
+        if new_status in ["Accepted", "Cancel"]:
+            order.status = new_status
+            order.save()
+    
     return redirect('order_page')
 
 @login_required
-# @require_POST
 @user_passes_test(lambda u: u.role == 'dealer')
 def update_order_status_for_paddy(request, id):
-    
     try:
         dealer_profile = DealerProfile.objects.get(user=request.user)
     except DealerProfile.DoesNotExist:
         return HttpResponse("Dealer profile not found", status=404)
     
     order = get_object_or_404(Purchase_paddy, id=id, paddy__dealer=dealer_profile)
-    new_status = request.POST.get('new_status')
-    if order.status == "Accepted" and new_status in ["Shipping", "Delivered"]:
-        order.status = new_status
-        order.save()
 
-    if order.status == "Shipping" and new_status in [ "Delivered"]:
-        order.status = new_status
-        order.save()
+    if request.method == "POST":
+        new_status = request.POST.get('new_status')
+        valid_transitions = {
+            "Accepted": ["Shipping", "Cancel"],
+            "Shipping": ["Delivered"],
+        }
+        if new_status in valid_transitions.get(order.status, []):
+            order.status = new_status
+            order.save()
+
     return redirect('incoming_order')
 
 
