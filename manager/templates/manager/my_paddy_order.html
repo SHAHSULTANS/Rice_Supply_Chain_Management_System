@@ -31,7 +31,14 @@
                         <td>{{ order.quantity_purchased }}</td>
                         <td>৳{{ order.total_price }}</td>
                         <td>
-                            <span class="badge bg-warning">{{ order.status }}</span>
+                            
+                            {% if order.status == 'Cancel' %}
+                            <span class="badge bg-danger">{{ order.status }}</span>
+                            {% else %}
+                            <span class="badge bg-primary">{{ order.status }}</span>
+
+                            {% endif %}
+                                
                         </td>
                         <td>{{ order.purchase_date|date:"Y-m-d H:i" }}</td>
                          <td class="text-center">
@@ -55,6 +62,13 @@
 
                             {% elif order.status == "Successful" %}
                                 <span class="badge bg-success">Received</span>
+                            {% elif order.status == "Cancel" %}
+                            {% if order.payment %}
+                            <button class="btn btn-secondary">Refunding</button>
+                            
+                            {% else %}
+                            <span class="text-muted">N/A</span>
+                            {% endif %}
                             {% else %}
                                 <span class="text-muted">N/A</span>
                             {% endif %}
