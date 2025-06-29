@@ -227,7 +227,7 @@ def purchase_rice(request, id):
             if rice.quantity_kg <= 0:
                 rice.is_sold = True  
             rice.save() 
-            return redirect("purchase_history")
+            return redirect("my_rice_order")
     else:
         form = PurchaseRiceForm() 
     return render(request, "manager/purchase_rice.html",{'form':form , 'rice':rice})
@@ -239,11 +239,13 @@ def purchase_history(request):
     purchases_paddy = Purchase_paddy.objects.filter(manager=request.user,status="Successful").order_by("-purchase_date")
     purchases_rice = PurchaseRice.objects.filter(manager=request.user,status="Successful").order_by("-purchase_date")
     seling_rice = Purchase_Rice.objects.filter(rice__manager=request.user,status="Successful").order_by("-purchase_date")
+    seling_rice_to_managers = PurchaseRice.objects.filter(rice__manager=request.user,status="Successful").order_by("-purchase_date")
 
     context = {
         "purchases_paddy": purchases_paddy,
         "purchases_rice": purchases_rice,
         "seling_rice": seling_rice,
+        "seling_rice_to_managers": seling_rice_to_managers,
     }
 
     return render(request, "manager/purchase_history.html", context)
@@ -571,12 +573,13 @@ def search(request):
     return render(request, 'manager/search_results.html', context)
 
 
-# My rice order and tack
+# My rice order and track that i order to another manager
 def my_rice_order(request):
     orders = PurchaseRice.objects.filter(manager=request.user).order_by("-purchase_date")
     return render(request,"manager/my_rice_order.html",{"orders":orders})
 
-def confirm_rice_delivery(request,id):
+# after delivery rice order from another manager i have to update status as confirm
+def confirm_rice_delivery_done_by_other_manager(request,id):
     order = get_object_or_404(PurchaseRice, id=id, manager=request.user)
     if order.status == "Delivered":
         if order.payment:
@@ -588,29 +591,32 @@ def confirm_rice_delivery(request,id):
 
 
 
-# Oder track for rice
+# Oder track for rice that comes from customer and others manager
 
 @login_required
 @user_passes_test(lambda u: u.role == 'manager')
-def order_page(request):
+def incoming_order(request):
     orders = Purchase_Rice.objects.filter(rice__manager=request.user).order_by("-purchase_date")
-    return render(request, 'manager/order_page.html', {'orders': orders})
+    rice_orders = PurchaseRice.objects.filter(rice__manager=request.user).order_by("-purchase_date")
+    return render(request, 'manager/incoming_order.html', {'orders': orders,'rice_orders':rice_orders})
 
+# rice order from customer that i have to accept
 @login_required
 @user_passes_test(lambda u: u.role == 'manager')
-def accept_rice_order(request, id):
+def accept_rice_order_from_customer(request, id):
     if request.method == "POST":
         order = get_object_or_404(Purchase_Rice, id=id, rice__manager=request.user)
         new_status = request.POST.get("new_status")
         if new_status in ["Accepted", "Cancel"] and order.status == "Pending":
             order.status = new_status
             order.save()
-    return redirect('order_page')
+    return redirect('incoming_order')
 
 
+# after accepting order update oder transaction status
 @login_required
 @user_passes_test(lambda u: u.role == 'manager')
-def update_order_status(request, id):
+def update_order_status_for_customer(request, id):
     order = get_object_or_404(Purchase_Rice, id=id, rice__manager=request.user)
 
     if request.method == "POST":
@@ -618,25 +624,26 @@ def update_order_status(request, id):
         valid_transitions = {
             "Accepted": ["Shipping", "Cancel"],
             "Shipping": ["Delivered"],
+            "Delivered": ["Successful"],  # 👈 added this
         }
 
         if new_status in valid_transitions.get(order.status, []):
             order.status = new_status
             order.save()
 
-    return redirect('order_page')
+    return redirect('incoming_order')
 
 
 
-# Order and delivery track for paddy
+# Order and delivery track for paddy that i order to dealer
 @login_required
 @user_passes_test(lambda u: u.role == 'manager')
 def my_paddy_order(request):
     orders = Purchase_paddy.objects.filter(manager=request.user).order_by("-purchase_date")
     return render(request, 'manager/my_paddy_order.html', {'orders': orders})
 
+# after receiving order from dealer i have to update status of delivery as confirm
 @login_required
-# @require_POST
 @user_passes_test(lambda u: u.role == 'manager')
 def confirm_paddy_delivery(request, id):
     order = get_object_or_404(Purchase_paddy, id=id, manager=request.user)
@@ -647,3 +654,38 @@ def confirm_paddy_delivery(request, id):
             return redirect('my_paddy_order')
         else:
             return redirect('mock_paddy_payment', id=order.id)
+        
+        
+        
+# rice order from manager that i have to accept
+@login_required
+@user_passes_test(lambda u: u.role == 'manager')
+def accept_rice_order_from_manager(request, id):
+    if request.method == "POST":
+        order = get_object_or_404(PurchaseRice, id=id, rice__manager=request.user)
+        new_status = request.POST.get("new_status")
+        if new_status in ["Accepted", "Cancel"] and order.status == "Pending":
+            order.status = new_status
+            order.save()
+    return redirect('incoming_order')
+
+
+# after accepting order update oder transaction status
+@login_required
+@user_passes_test(lambda u: u.role == 'manager')
+def update_order_status_for_manager(request, id):
+    order = get_object_or_404(PurchaseRice, id=id, rice__manager=request.user)
+
+    if request.method == "POST":
+        new_status = request.POST.get("new_status")
+        valid_transitions = {
+            "Accepted": ["Shipping", "Cancel"],
+            "Shipping": ["Delivered"],
+            "Delivered": ["Successful"],  # 👈 added this
+        }
+
+        if new_status in valid_transitions.get(order.status, []):
+            order.status = new_status
+            order.save()
+
+    return redirect('incoming_order')

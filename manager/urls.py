@@ -55,12 +55,14 @@ urlpatterns = [
     path('search/',views.search, name="search"),
     
     # Rice order review page for Manager
-    path('order_page/', views.order_page, name='order_page'),
+    path('incoming_order/', views.incoming_order, name='incoming_order'),
     path('my_rice_orders/', views.my_rice_order, name='my_rice_order'),
-    path('accept_rice_order/<int:id>/', views.accept_rice_order, name='accept_rice_order'),
-    path('update_order_status/<int:id>/', views.update_order_status, name='update_order_status'),
-    path('confirm_rice_delivery/<int:id>/', views.confirm_rice_delivery, name='confirm_rice_delivery'),
+    path('accept_rice_order_from_customer/<int:id>/', views.accept_rice_order_from_customer, name='accept_rice_order_from_customer'),
+    path('update_order_status_for_customer/<int:id>/', views.update_order_status_for_customer, name='update_order_status_for_customer'),
+    path('confirm_rice_delivery_done_by_other_manager/<int:id>/', views.confirm_rice_delivery_done_by_other_manager, name='confirm_rice_delivery_done_by_other_manager'),
     
+    path('accept_rice_order_from_manager/<int:id>/', views.accept_rice_order_from_manager, name='accept_rice_order_from_manager'),
+    path('update_order_status_for_manager/<int:id>/', views.update_order_status_for_manager, name='update_order_status_for_manager'),
     
     # order and delivery track
     path('my_paddy_order/', views.my_paddy_order, name='my_paddy_order'),

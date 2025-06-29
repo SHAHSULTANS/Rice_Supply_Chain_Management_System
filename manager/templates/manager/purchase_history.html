@@ -6,7 +6,7 @@
     {% if check == 1 %}
     <h2 class="mb-4"><span class="text-danger fw-bold">{{manager.full_name}}'s </span>Purchase History For Paddy</h2>
     {% else %}
-    <h2 class="mb-4">Your Purchase History For Paddy</h2>
+    <h2 class="mb-4">Your Purchase History For Paddy from <span class="text-danger">Dealers</span></h2>
     {% endif %}
 
     {% if purchases_paddy %}
@@ -72,7 +72,7 @@
     {% if check == 1 %}
     <h2 class="mb-4"><span class="text-danger fw-bold">{{manager.full_name}}'s </span>Purchase History For Rice</h2>
     {% else %}
-    <h2 class="mb-4">Your Purchase History For Rice</h2>
+    <h2 class="mb-4">Your Purchase History For Rice from other <span class="text-danger">Manager's</span></h2>
     {% endif %}
 
     {% if purchases_rice %}
@@ -136,12 +136,12 @@
 
 <hr>
 
-<!-- Rice selling Section -->
+<!-- Rice selling Section to customer-->
 <div class="container mt-5">
     {% if check == 1 %}
     <h2 class="mb-4"><span class="text-danger fw-bold">{{manager.full_name}}'s </span>Selling History For Rice</h2>
     {% else %}
-    <h2 class="mb-4">Your Selling History For Rice</h2>
+    <h2 class="mb-4">Your Selling History For Rice to <span class="text-danger">Customer's</span></h2>
     {% endif %}
 
     {% if seling_rice %}
@@ -180,6 +180,84 @@
                             {% else %}
                                 {{ purchase.customer.username }}
                             {% endif %}
+                        {% else %}
+                            {% if purchase.rice.manager.managerprofile %}
+                                {{ purchase.rice.manager.managerprofile.full_name }}
+                            {% else %}
+                                {{ purchase.rice.manager.username }}
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    <td>{{ purchase.quantity_purchased }}</td>
+                    <td>{{ purchase.rice.price_per_kg }}</td>
+                    <td>{{ purchase.delivery_cost }}</td>
+                    <td>{{ purchase.total_price }}</td>
+                    <td>{{ purchase.purchase_date|date:"M d, Y h:i A" }}</td>
+                    <td >
+                        <div class="d-flex justify-content-center">
+                            {% if request.user.role == "admin" %}
+                                {% if purchase.payment %}
+                                    <span class="btn btn-success">Paid</span>
+                                {% else %}
+                                    <a href="#" class="btn btn-sm btn-primary">Unpaid</a>
+                                {% endif %}
+                            {% elif request.user.role == "manager" %}
+                                {% if purchase.payment %}
+                                    <span class="btn btn-success">Paid</span>
+                                {% else %}
+                                    <a href="#" class="btn btn-sm btn-primary">Unpaid</a>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+               
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No rice has been sold yet.</p> <!-- in selling_rice -->
+    {% endif %}
+
+</div>
+
+<hr>
+
+<!-- Rice selling Section to manager-->
+<div class="container mt-5">
+    {% if check == 1 %}
+    <h2 class="mb-4"><span class="text-danger fw-bold">{{manager.full_name}}'s </span>Selling History For Rice</h2>
+    {% else %}
+    <h2 class="mb-4">Your Selling History For Rice to <span class="text-danger">Manager</span></h2>
+    {% endif %}
+
+    {% if seling_rice_to_managers %}
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Rice Name</th>
+                    <th>Manager</th>
+                    <th>Quantity (kg)</th>
+                    <th>Price/kg (৳)</th>
+                    <th>Delivery Cost (৳)</th>
+                    <th>Total Price (৳)</th>
+                    <th>Date</th>
+                    <th>Payment</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for purchase in seling_rice_to_managers %}
+                <tr>
+                    <td>{{ purchase.rice.rice_name }}</td>
+                    {% comment %} <td>{{ purchase.rice.manager.managerprofile.full_name }}</td> {% endcomment %}
+                    <td>
+                        {% if request.user.role == "manager" or request.user.role == "admin" %}
+                            {% comment %} {% if purchase.customer.customerprofile %}
+                                {{ purchase.customer.customerprofile.full_name }}
+                            {% else %}
+                                {{ purchase.customer.username }}
+                            {% endif %} {% endcomment %}
+                            {{purchase.manager.managerprofile.full_name}}
                         {% else %}
                             {% if purchase.rice.manager.managerprofile %}
                                 {{ purchase.rice.manager.managerprofile.full_name }}

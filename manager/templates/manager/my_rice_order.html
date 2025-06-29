@@ -52,7 +52,7 @@
                         <td>
                             {% if order.status == "Delivered" %}
                                 {% if order.payment %}
-                                <form method="post" action="{% url 'confirm_rice_delivery' order.id %}">
+                                <form method="post" action="{% url 'confirm_rice_delivery_done_by_other_manager' order.id %}">
                                     {% csrf_token %}
                                     <button class="btn btn-sm btn-primary">Confirm Delivery</button>
                                 </form>

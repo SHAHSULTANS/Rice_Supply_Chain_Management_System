@@ -2,13 +2,22 @@
 Username : manager
 password : 1234
 
+Username : abdullah
+password : 1234
+
+
+
 #for customer account
 Username: tawhid
 password: TInishat2002
 
+
+
 # for delear
 username : hasan
 password : 1234hhhh
+
+
 
 #for Admin
 Username = khaledmahmud
@@ -22,6 +31,7 @@ http://192.168.1.107:8000
 1. rating
 2. feedback
 3. receipt
+4.refunding
 5. cart
 6. report (indentify froud)
 
