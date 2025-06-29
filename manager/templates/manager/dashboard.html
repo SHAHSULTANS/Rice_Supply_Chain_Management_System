@@ -1,81 +1,149 @@
 {% extends 'base.html' %}
-
 {% block title %}Manager Dashboard{% endblock title %}
+{% load static %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2 class="mb-4">👨‍🏭 Welcome to the Manager Dashboard</h2>
+<!-- AOS CSS -->
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+<style>
+    .dashboard-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .dashboard-icon {
+        font-size: 1.4rem;
+        margin-right: 6px;
+        vertical-align: middle;
+    }
+
+    .dashboard-btn:hover {
+        opacity: 0.9;
+    }
+
+    .text-small {
+        font-size: 0.95rem;
+        color: #6c757d;
+    }
+</style>
+
+<div class="container mt-5">
+    <h2 class="mb-4" data-aos="fade-down">👨‍🏭 Welcome to the <strong>Manager Dashboard</strong></h2>
 
     <div class="row g-4">
-        <!-- Profile Section -->
-        <div class="col-md-6">
-            <div class="card shadow-sm h-100">
+        <!-- Profile -->
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="card dashboard-card shadow-sm h-100">
                 <div class="card-body">
-                    <h5 class="card-title">📝 Profile</h5>
-                    <p class="card-text">View or update your manager profile details.</p>
-                    <a href="{% url 'manager_profile' %}" class="btn btn-primary">View Profile</a>
-                    <a href="{% url 'update_manager_profile' %}" class="btn btn-outline-secondary">Edit Profile</a>
+                    <h5 class="card-title"><span class="dashboard-icon">📝</span>Profile</h5>
+                    <p class="text-small">View or update your profile details.</p>
+                    <a href="{% url 'manager_profile' %}" class="btn btn-primary btn-sm dashboard-btn me-2">View</a>
+                    <a href="{% url 'update_manager_profile' %}" class="btn btn-outline-secondary btn-sm dashboard-btn">Edit</a>
                 </div>
             </div>
         </div>
 
-        <!-- Create Post -->
-        <div class="col-md-6">
-            <div class="card shadow-sm h-100">
+        <!-- Create Rice Post -->
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="card dashboard-card shadow-sm h-100">
                 <div class="card-body">
-                    <h5 class="card-title">📦 Create Rice Post</h5>
-                    <p class="card-text">Post processed rice for customers to view and buy.</p>
-                    <a href="{% url 'create_rice_post' %}" class="btn btn-success">Create New Post</a>
+                    <h5 class="card-title"><span class="dashboard-icon">📦</span>Create Rice Post</h5>
+                    <p class="text-small">Post processed rice for sale.</p>
+                    <a href="{% url 'create_rice_post' %}" class="btn btn-success btn-sm dashboard-btn">Create</a>
                 </div>
             </div>
         </div>
 
-        <!-- Manage Posts -->
-        <div class="col-md-6">
-            <div class="card shadow-sm h-100">
+        <!-- My Rice Posts -->
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="card dashboard-card shadow-sm h-100">
                 <div class="card-body">
-                    <h5 class="card-title">📃 My Rice Posts</h5>
-                    <p class="card-text">View, update, or delete your existing rice posts.</p>
-                    <a href="{% url 'show_my_rice_post' %}" class="btn btn-info">See and Manage Posts</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <h5 class="card-title">📃 Explore All Rice Posts</h5>
-                    <p class="card-text">View, update, or delete your existing rice posts.</p>
-                    <a href="{% url 'explore_all_rice_post' %}" class="btn btn-secondary">Explore Rice Posts</a>
+                    <h5 class="card-title"><span class="dashboard-icon">📃</span>My Rice Posts</h5>
+                    <p class="text-small">Manage your published rice posts.</p>
+                    <a href="{% url 'show_my_rice_post' %}" class="btn btn-info btn-sm dashboard-btn">Manage Posts</a>
                 </div>
             </div>
         </div>
 
-        <!--see paddy post  -->
-        <div class="col-md-6">
-            <div class="card shadow-sm h-100 border-danger">
+        <!-- Explore All Rice Posts -->
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="400">
+            <div class="card dashboard-card shadow-sm h-100">
                 <div class="card-body">
-                    <h5 class="card-title text-danger">🚪 Explore Paddy Post</h5>
-                    <p class="card-text">See all delears paddy post.</p>
-                    <a href="{% url 'explore_paddy_post' %}" class="btn btn-danger">Explore</a>
+                    <h5 class="card-title"><span class="dashboard-icon">🌾</span>Explore All Rice Posts</h5>
+                    <p class="text-small">Browse available rice posts in the market.</p>
+                    <a href="{% url 'explore_all_rice_post' %}" class="btn btn-secondary btn-sm dashboard-btn">Explore</a>
                 </div>
             </div>
         </div>
 
-        <!--see purchases History  -->
-        <div class="col-md-6">
-            <div class="card shadow-sm h-100 border-success">
+        <!-- Explore Paddy Post -->
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="500">
+            <div class="card dashboard-card shadow-sm h-100 border-danger">
                 <div class="card-body">
-                    <h5 class="card-title text-info">🚪 See Purchases History</h5>
-                    <p class="card-text">See all parchases history of paddy,rice, and selling rice.</p>
-                    <a href="{% url 'explore_paddy_post' %}" class="btn btn-warning">See History</a>
+                    <h5 class="card-title text-danger"><span class="dashboard-icon">🌾</span>Explore Paddy Posts</h5>
+                    <p class="text-small">See all paddy posts by dealers.</p>
+                    <a href="{% url 'explore_paddy_post' %}" class="btn btn-danger btn-sm dashboard-btn">Explore</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Incoming Orders -->
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="600">
+            <div class="card dashboard-card shadow-sm h-100 border-success">
+                <div class="card-body">
+                    <h5 class="card-title"><span class="dashboard-icon">📬</span>Incoming Orders</h5>
+                    <p class="text-small">View all orders from customers or dealers.</p>
+                    <a href="{% url 'order_page' %}" class="btn btn-warning btn-sm dashboard-btn">View Orders</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Paddy Orders -->
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="700">
+            <div class="card dashboard-card shadow-sm h-100 border-info">
+                <div class="card-body">
+                    <h5 class="card-title text-info"><span class="dashboard-icon">🛒</span>My Paddy Orders</h5>
+                    <p class="text-small">Check your paddy purchase records.</p>
+                    <a href="{% url 'my_paddy_order' %}" class="btn btn-info btn-sm dashboard-btn">View History</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Rice Orders -->
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="800">
+            <div class="card dashboard-card shadow-sm h-100 border-info">
+                <div class="card-body">
+                    <h5 class="card-title text-info"><span class="dashboard-icon">🛒</span>My Rice Orders</h5>
+                    <p class="text-small">Check your rice purchase records.</p>
+                    <a href="{% url 'my_rice_order' %}" class="btn btn-info btn-sm dashboard-btn">View History</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Purchase History -->
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="900">
+            <div class="card dashboard-card shadow-sm h-100 border-info">
+                <div class="card-body">
+                    <h5 class="card-title text-info"><span class="dashboard-icon">📊</span>Purchase History</h5>
+                    <p class="text-small">Overview of paddy, rice purchases, and sales.</p>
+                    <a href="{% url 'purchase_history' %}" class="btn btn-info btn-sm dashboard-btn">Full History</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endblock content %}
 
-{% comment %} 
-username : manager
-password : sakib@1234
-{% endcomment %}
+<!-- AOS JS -->
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 800,
+    once: true
+  });
+</script>
+{% endblock content %}
