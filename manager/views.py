@@ -236,9 +236,9 @@ def purchase_rice(request, id):
 @login_required(login_url="login")
 @user_passes_test(check_manager_and_admin)
 def purchase_history(request):
-    purchases_paddy = Purchase_paddy.objects.filter(manager=request.user).order_by("-purchase_date")
-    purchases_rice = PurchaseRice.objects.filter(manager=request.user).order_by("-purchase_date")
-    seling_rice = Purchase_Rice.objects.filter(rice__manager=request.user).order_by("-purchase_date")
+    purchases_paddy = Purchase_paddy.objects.filter(manager=request.user,status="Successful").order_by("-purchase_date")
+    purchases_rice = PurchaseRice.objects.filter(manager=request.user,status="Successful").order_by("-purchase_date")
+    seling_rice = Purchase_Rice.objects.filter(rice__manager=request.user,status="Successful").order_by("-purchase_date")
 
     context = {
         "purchases_paddy": purchases_paddy,
@@ -571,6 +571,22 @@ def search(request):
     return render(request, 'manager/search_results.html', context)
 
 
+# My rice order and tack
+def my_rice_order(request):
+    orders = PurchaseRice.objects.filter(manager=request.user).order_by("-purchase_date")
+    return render(request,"manager/my_rice_order.html",{"orders":orders})
+
+def confirm_rice_delivery(request,id):
+    order = get_object_or_404(PurchaseRice, id=id, manager=request.user)
+    if order.status == "Delivered":
+        if order.payment:
+            order.status = "Successful"
+            order.save()
+            return redirect("my_rice_order")
+        else:
+            return redirect("mock_rice_payment",id=order.id)
+
+
 
 # Oder track for rice
 
@@ -612,7 +628,7 @@ def update_order_status(request, id):
 
 
 
-# Order and delivery track
+# Order and delivery track for paddy
 @login_required
 @user_passes_test(lambda u: u.role == 'manager')
 def my_paddy_order(request):

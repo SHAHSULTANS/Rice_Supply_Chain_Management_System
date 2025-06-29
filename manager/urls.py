@@ -55,9 +55,11 @@ urlpatterns = [
     path('search/',views.search, name="search"),
     
     # Rice order review page for Manager
-    path('rice_orders/', views.order_page, name='order_page'),
+    path('order_page/', views.order_page, name='order_page'),
+    path('my_rice_orders/', views.my_rice_order, name='my_rice_order'),
     path('accept_rice_order/<int:id>/', views.accept_rice_order, name='accept_rice_order'),
     path('update_order_status/<int:id>/', views.update_order_status, name='update_order_status'),
+    path('confirm_rice_delivery/<int:id>/', views.confirm_rice_delivery, name='confirm_rice_delivery'),
     
     
     # order and delivery track

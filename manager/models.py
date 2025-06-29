@@ -56,17 +56,24 @@ class Purchase_paddy(models.Model):
         
 
 class PurchaseRice(models.Model):
-    manager = models.ForeignKey(CustomUser,on_delete=models.CASCADE)
-    rice = models.ForeignKey(RicePost,on_delete=models.CASCADE,related_name="PurchaseRice")
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Accepted', 'Accepted'),
+        ('Shipping', 'Shipping'),
+        ('Delivered', 'Delivered'),
+        ('Successful', 'Successful'),
+        ('Cancelled', 'Cancelled'),
+    ]
+
+    manager = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    rice = models.ForeignKey(RicePost, on_delete=models.CASCADE, related_name="PurchaseRice")
     quantity_purchased = models.FloatField()
-    total_price = models.DecimalField(max_digits=10,decimal_places=2)
-    delivery_cost = models.DecimalField(max_digits=6,decimal_places=2,default=0)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    delivery_cost = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     is_confirmed = models.BooleanField(default=False)
     payment = models.BooleanField(default=False)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')  # ✅ Add this line
     purchase_date = models.DateTimeField(auto_now_add=True)
-    
-    def __str__(self):
-        return f"Rice Purchase by {self.manager.username} - {self.rice.rice_name}"
 
 class PaymentForPaddy(models.Model):
     PAYMENT_STATUS_CHOICES = [
