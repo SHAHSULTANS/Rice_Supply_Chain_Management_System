@@ -256,9 +256,9 @@ def purchase_history(request):
 def purchase_history_seen_admin(request, id):
     manager_profile = get_object_or_404(ManagerProfile, id=id)
 
-    purchases_paddy = Purchase_paddy.objects.filter(manager=manager_profile.user).order_by("-purchase_date")
-    purchases_rice = PurchaseRice.objects.filter(manager=manager_profile.user).order_by("-purchase_date")
-    seling_rice = Purchase_Rice.objects.filter(rice__manager=request.user).order_by("-purchase_date")
+    purchases_paddy = Purchase_paddy.objects.filter(manager=manager_profile.user,status="Successful").order_by("-purchase_date")
+    purchases_rice = PurchaseRice.objects.filter(manager=manager_profile.user,status="Successful").order_by("-purchase_date")
+    seling_rice = Purchase_Rice.objects.filter(rice__manager=manager_profile.user,status="Successful").order_by("-purchase_date")
 
     context = {
         'check':1,
