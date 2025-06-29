@@ -261,13 +261,15 @@ def purchase_history_seen_admin(request, id):
     purchases_paddy = Purchase_paddy.objects.filter(manager=manager_profile.user,status="Successful").order_by("-purchase_date")
     purchases_rice = PurchaseRice.objects.filter(manager=manager_profile.user,status="Successful").order_by("-purchase_date")
     seling_rice = Purchase_Rice.objects.filter(rice__manager=manager_profile.user,status="Successful").order_by("-purchase_date")
-
+    seling_rice_to_managers = PurchaseRice.objects.filter(rice__manager=manager_profile.user,status="Successful").order_by("-purchase_date")
+    # print(seling_rice_to_managers)
     context = {
         'check':1,
         "manager": manager_profile,
         "purchases_paddy": purchases_paddy,
         "purchases_rice": purchases_rice,
         "seling_rice": seling_rice,
+        "seling_rice_to_managers": seling_rice_to_managers,
     }
 
     return render(request, "manager/purchase_history.html", context)
