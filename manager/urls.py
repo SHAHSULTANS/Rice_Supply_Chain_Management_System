@@ -69,4 +69,8 @@ urlpatterns = [
     path('confirm_paddy_delivery/<int:id>/', views.confirm_paddy_delivery, name='confirm_paddy_delivery'),
     
     
+    # Paddy quantity report
+    path('padd_quantity_report/', views.padd_quantity_report, name='padd_quantity_report'),
+    
+    
 ]

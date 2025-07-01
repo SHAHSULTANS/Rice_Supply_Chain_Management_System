@@ -336,7 +336,7 @@ def selling_paddy_history(request):
     except DealerProfile.DoesNotExist:
         return HttpResponse("Dealer profile not found", status=404)
 
-    selling_paddy = Purchase_paddy.objects.filter(paddy__dealer=dealer_profile).order_by("-purchase_date")
+    selling_paddy = Purchase_paddy.objects.filter(paddy__dealer=dealer_profile,status="Successful").order_by("-purchase_date")
 
     context = {
         "selling_paddy": selling_paddy,
@@ -347,7 +347,7 @@ def selling_paddy_history(request):
 
 @login_required
 @user_passes_test(lambda u: u.role == 'dealer')
-def incoming_order(request):
+def incoming_order_for_paddy(request):
     try:
         dealer_profile = DealerProfile.objects.get(user=request.user)
     except DealerProfile.DoesNotExist:
@@ -372,7 +372,7 @@ def accept_paddy_order(request, id):
             order.status = new_status
             order.save()
     
-    return redirect('order_page')
+    return redirect('incoming_order_for_paddy')
 
 @login_required
 @user_passes_test(lambda u: u.role == 'dealer')
@@ -394,6 +394,6 @@ def update_order_status_for_paddy(request, id):
             order.status = new_status
             order.save()
 
-    return redirect('incoming_order')
+    return redirect('incoming_order_for_paddy')
 
 

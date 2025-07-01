@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Paddy Name</th>
+            <th>Total Quantity Purchased (kg)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for paddy in total_paddy %}
+            <tr>
+                <td>{{ paddy.paddy__name }}</td>
+                <td>{{ paddy.total_quantity }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

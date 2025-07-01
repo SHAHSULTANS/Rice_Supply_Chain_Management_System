@@ -19,7 +19,7 @@ urlpatterns = [
     path('selling_paddy_history/', views.selling_paddy_history, name='selling_paddy_history'),
     
     # paddy order review page for dealer
-    path('incoming_order/', views.incoming_order, name='incoming_order'),
+    path('incoming_order_for_paddy/', views.incoming_order_for_paddy, name='incoming_order_for_paddy'),
     path('accept_paddy_order/<int:id>/', views.accept_paddy_order, name='accept_paddy_order'),
     path('update_order_status_for_paddy/<int:id>/', views.update_order_status_for_paddy, name='update_order_status_for_paddy'),
 

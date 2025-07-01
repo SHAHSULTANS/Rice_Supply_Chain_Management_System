@@ -199,7 +199,7 @@ def purchase_paddy(request,id):
             if paddy.quantity <= 0:
                 paddy.is_available = False
             paddy.save()
-            return redirect("purchase_history")
+            return redirect("my_paddy_order")
     else:
         form = Purchase_paddyForm()
     return render(request, "manager/purchase_paddy.html",{'form':form , 'paddy':paddy})
@@ -691,3 +691,22 @@ def update_order_status_for_manager(request, id):
             order.save()
 
     return redirect('incoming_order')
+
+from django.db.models import Sum
+# Paddy Quantity calculation
+def padd_quantity_report(request):
+    total_paddy= Purchase_paddy.objects.filter(status="Successful").values('paddy__id', 'paddy__name').annotate(
+        total_quantity = Sum('quantity_purchased')
+    ).order_by("-total_quantity")
+    print(total_paddy)
+    context ={
+        'total_paddy':total_paddy,
+    }
+    
+    return render(request,"manager/stock_management.html",context)
+
+
+# Purchase_paddy.objects.filter(status="Successful")\
+#     .values('paddy__id', 'paddy__name')\
+#     .annotate(total_quantity=Sum('quantity_purchased'))\
+#     .order_by('-total_quantity')
