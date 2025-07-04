@@ -70,7 +70,9 @@ urlpatterns = [
     
     
     # Paddy quantity report
-    path('padd_quantity_report/', views.padd_quantity_report, name='padd_quantity_report'),
+    path('padd_stock_report/', views.padd_stock_report, name='padd_stock_report'),
+    path("manager_stock_management/",views.manager_stock_management,name="manager_stock_management"),
+    path("process_paddy_to_rice/",views.process_paddy_to_rice,name="process_paddy_to_rice"),
     
     
 ]

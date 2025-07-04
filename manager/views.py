@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render,redirect,get_object_or_404,HttpResponse
-from .models import ManagerProfile, RicePost, Purchase_paddy,PurchaseRice,PaymentForPaddy,PaymentForRice
+from .models import ManagerProfile, RicePost, Purchase_paddy,PurchaseRice,PaymentForPaddy,PaymentForRice, PaddyStockOfManager
 from dealer.models import PaddyStock
 from .forms import ManagerProfileForm, RicePostForm, Purchase_paddyForm, PurchaseRiceForm,PaymentForPaddyForm, PaymentForRiceForm
 from decimal import Decimal
@@ -692,21 +692,29 @@ def update_order_status_for_manager(request, id):
 
     return redirect('incoming_order')
 
+
+
+
+
+
+
+
 from django.db.models import Sum
 # Paddy Quantity calculation
-def padd_quantity_report(request):
-    total_paddy= Purchase_paddy.objects.filter(status="Successful").values('paddy__id', 'paddy__name').annotate(
-        total_quantity = Sum('quantity_purchased')
-    ).order_by("-total_quantity")
-    print(total_paddy)
-    context ={
-        'total_paddy':total_paddy,
+@login_required
+@user_passes_test(lambda u: u.role == "manager")
+def padd_stock_report(request):
+    paddy_stocks = PaddyStockOfManager.objects.filter(manager=request.user).order_by('-updated_at')
+    context = {
+        'paddy_stocks':paddy_stocks,
     }
-    
-    return render(request,"manager/stock_management.html",context)
+    return render(request,"manager/stock/paddy_stock_report.html",context)
 
+def manager_stock_management(request):
+    return render(request,"manager/stock/stock_management.html")
 
-# Purchase_paddy.objects.filter(status="Successful")\
-#     .values('paddy__id', 'paddy__name')\
-#     .annotate(total_quantity=Sum('quantity_purchased'))\
-#     .order_by('-total_quantity')
+def estimate_rice_from_paddy(paddy_kg,yield_percentage = 65):
+    return round((paddy_kg*yield_percentage)/100,2)
+
+def process_paddy_to_rice(request):
+    pass

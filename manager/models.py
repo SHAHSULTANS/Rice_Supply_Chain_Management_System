@@ -1,6 +1,8 @@
 from django.db import models
+
 from accounts.models import CustomUser
 from dealer.models import PaddyStock
+
 # Create your models here.
 
 class ManagerProfile(models.Model):
@@ -44,6 +46,7 @@ class Purchase_paddy(models.Model):
     manager = models.ForeignKey(CustomUser,on_delete=models.CASCADE,limit_choices_to={'role':'manager'})
     paddy = models.ForeignKey(PaddyStock,on_delete=models.CASCADE,related_name="purchase_paddy")
     quantity_purchased = models.FloatField()
+    moisture_content = models.DecimalField(max_digits=4, decimal_places=1, help_text="Moisture content (%)", null=True,blank=True)
     total_price = models.DecimalField(max_digits=10,decimal_places=2)
     transport_cost = models.DecimalField(max_digits=6,decimal_places=2,default=0)
     is_confirmed = models.BooleanField(default=False)
@@ -114,6 +117,31 @@ class PaymentForRice(models.Model):
     def __str__(self):
         return f"{self.transaction_id} - {self.status}"
         
+class PaddyStockOfManager(models.Model):
+    # one manager can be owner of multiple paddy stock
+    manager = models.ForeignKey(
+        CustomUser,on_delete=models.CASCADE,
+        limit_choices_to={"role":"manager"},
+        related_name="paddy_stock"
+        )
+    paddy_name = models.CharField(max_length=100)
+    moisture_content = models.DecimalField(max_digits=4, decimal_places=1, help_text="Moisture content (%)",null=True,blank=True)
 
+    rice_type = models.CharField(max_length=100,blank=True,null=True)
     
+    total_quantity = models.FloatField(help_text="In kg")
+    total_price = models.DecimalField(max_digits=10,decimal_places=2)
+    average_price_per_kg = models.DecimalField(max_digits=6,decimal_places=2)
+    description = models.TextField(blank=True,null=True)
+    
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = "Manager's Paddy Stock"
+        verbose_name_plural = "Manager's Paddy Stocks"
+
+    def __str__(self):
+        return f"{self.paddy_name} - {self.manager.managerprofile.full_name} ({self.total_quantity} kg)"
     

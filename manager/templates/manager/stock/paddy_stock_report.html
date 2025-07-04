@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">📦 Your Paddy Stock Overview</h2>
+
+    {% if paddy_stocks %}
+        <table class="table table-bordered table-hover table-striped shadow">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>Paddy Name</th>
+                    <th>Moisture_content</th>
+                    {% comment %} <th>Type</th> {% endcomment %}
+                    <th>Total Quantity (kg)</th>
+                    <th>Total Price (৳)</th>
+                    <th>Average Price/kg (৳)</th>
+                    <th>Last Updated</th>
+                </tr>
+            </thead>
+            <tbody class="text-center">
+                {% for stock in paddy_stocks %}
+                <tr>
+                    <td>{{ stock.paddy_name }}</td>
+                    <td>{{ stock.moisture_content }}</td>
+                    {% comment %} <td>{{ stock.rice_type }}</td> {% endcomment %}
+                    <td>{{ stock.total_quantity }}</td>
+                    <td>৳{{ stock.total_price }}</td>
+                    <td>৳{{ stock.average_price_per_kg }}</td>
+                    <td>{{ stock.updated_at|date:"M d, Y h:i A" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-warning">You do not have any paddy stock yet.</div>
+    {% endif %}
+</div>
+{% endblock %}
