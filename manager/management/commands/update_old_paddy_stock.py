@@ -11,7 +11,7 @@ class Command(BaseCommand):
         count = 0
         for purchase in successful_purchases:
             manager = purchase.manager
-            paddy = purchase.paddy
+            paddy = purchase.paddy  
 
             stock, created = PaddyStockOfManager.objects.get_or_create(
                 manager=manager,

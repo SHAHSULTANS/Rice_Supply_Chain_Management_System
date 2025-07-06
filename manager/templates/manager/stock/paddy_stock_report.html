@@ -1,6 +1,7 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
+
 <div class="container mt-5">
     <h2 class="mb-4">📦 Your Paddy Stock Overview</h2>
 
@@ -9,12 +10,12 @@
             <thead class="table-dark text-center">
                 <tr>
                     <th>Paddy Name</th>
-                    <th>Moisture_content</th>
-                    {% comment %} <th>Type</th> {% endcomment %}
+                    <th>Moisture Content</th>
                     <th>Total Quantity (kg)</th>
                     <th>Total Price (৳)</th>
-                    <th>Average Price/kg (৳)</th>
+                    <th>Avg Price/kg (৳)</th>
                     <th>Last Updated</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody class="text-center">
@@ -22,11 +23,41 @@
                 <tr>
                     <td>{{ stock.paddy_name }}</td>
                     <td>{{ stock.moisture_content }}</td>
-                    {% comment %} <td>{{ stock.rice_type }}</td> {% endcomment %}
                     <td>{{ stock.total_quantity }}</td>
                     <td>৳{{ stock.total_price }}</td>
                     <td>৳{{ stock.average_price_per_kg }}</td>
                     <td>{{ stock.updated_at|date:"M d, Y h:i A" }}</td>
+                    <td>
+                        <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#processModal{{ stock.id }}">
+                            Process to Rice
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="processModal{{ stock.id }}" tabindex="-1" aria-labelledby="processModalLabel{{ stock.id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <form method="post" action="{% url 'process_paddy_to_rice' stock.id %}">
+                                        {% csrf_token %}
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="processModalLabel{{ stock.id }}">Process {{ stock.paddy_name }} to Rice</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label for="quantity{{ stock.id }}" class="form-label">Enter Quantity (kg) to Process:</label>
+                                                <input type="number" step="0.1" min="1" max="{{ stock.total_quantity }}" class="form-control" name="process_quantity" id="quantity{{ stock.id }}" required>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary">Process</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -35,4 +66,5 @@
         <div class="alert alert-warning">You do not have any paddy stock yet.</div>
     {% endif %}
 </div>
+
 {% endblock %}

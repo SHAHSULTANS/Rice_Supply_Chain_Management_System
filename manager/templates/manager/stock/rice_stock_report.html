@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">🌾 Your Rice Stock Overview</h2>
+
+    {% if rice_stocks %}
+        <table class="table table-bordered table-hover table-striped shadow">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>Rice Name</th>
+                    <th>Quality</th>
+                    <th>Type</th>
+                    <th>Quantity (kg)</th>
+                    <th>Avg Price/kg (৳)</th>
+                    <th>Last Updated</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody class="text-center">
+                {% for stock in rice_stocks %}
+                <tr>
+                    <td>{{ stock.rice_name }}</td>
+                    <td>{{ stock.quality }}</td>
+                    <td>{{ stock.rice_type }}</td>
+                    <td>{{ stock.stock_quantity }}</td>
+                    <td>৳{{ stock.average_price_per_kg }}</td>
+                    <td>{{ stock.updated_at|date:"M d, Y h:i A" }}</td>
+                    <td>
+                        <form action="#" method="get">
+                            <button type="submit" class="btn btn-primary btn-sm">Post to Marketplace</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-warning">No rice stock available.</div>
+    {% endif %}
+</div>
+{% endblock %}

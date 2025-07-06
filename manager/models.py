@@ -145,3 +145,41 @@ class PaddyStockOfManager(models.Model):
     def __str__(self):
         return f"{self.paddy_name} - {self.manager.managerprofile.full_name} ({self.total_quantity} kg)"
     
+    
+class RiceStock(models.Model):
+    manager = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        limit_choices_to={'role': 'manager'},
+        related_name='rice_stock'
+    )
+    
+    rice_name = models.CharField(max_length=100)
+    quality = models.CharField(max_length=100, blank=True, null=True)
+    rice_type = models.CharField(max_length=100, blank=True, null=True)
+    
+    stock_quantity = models.FloatField(help_text='In kg')
+    total_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        help_text="Total value of current stock"
+    )
+    average_price_per_kg = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        default=0.00
+    )
+    
+    description = models.TextField(blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = "Rice Stock"
+        verbose_name_plural = "Rice Stocks"
+
+    def __str__(self):
+        return f"{self.rice_name} - {self.manager.managerprofile.full_name} ({self.stock_quantity} kg)"

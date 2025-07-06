@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render,redirect,get_object_or_404,HttpResponse
-from .models import ManagerProfile, RicePost, Purchase_paddy,PurchaseRice,PaymentForPaddy,PaymentForRice, PaddyStockOfManager
+from .models import ManagerProfile, RicePost, Purchase_paddy,PurchaseRice,PaymentForPaddy,PaymentForRice, PaddyStockOfManager,RiceStock
 from dealer.models import PaddyStock
 from .forms import ManagerProfileForm, RicePostForm, Purchase_paddyForm, PurchaseRiceForm,PaymentForPaddyForm, PaymentForRiceForm
 from decimal import Decimal
@@ -703,7 +703,7 @@ from django.db.models import Sum
 # Paddy Quantity calculation
 @login_required
 @user_passes_test(lambda u: u.role == "manager")
-def padd_stock_report(request):
+def paddy_stock_report(request):
     paddy_stocks = PaddyStockOfManager.objects.filter(manager=request.user).order_by('-updated_at')
     context = {
         'paddy_stocks':paddy_stocks,
@@ -716,5 +716,48 @@ def manager_stock_management(request):
 def estimate_rice_from_paddy(paddy_kg,yield_percentage = 65):
     return round((paddy_kg*yield_percentage)/100,2)
 
-def process_paddy_to_rice(request):
-    pass
+def process_paddy_to_rice(request,stock_id):
+    stock = get_object_or_404(PaddyStockOfManager, id=stock_id, manager=request.user)
+    
+    if request.method == "POST":
+        try:
+            process_qty = float(request.POST.get('process_quantity'))
+        except (ValueError, TypeError):
+            messages.error(request, "Invalid quantity")
+            return redirect('paddy_stock_report')
+        if process_qty <= 0 or process_qty > stock.total_quantity:
+            messages.error(request,"Invalid or insufficient quantity")
+            return redirect('paddy_stock_report')
+        
+        processed_rice = round(process_qty * 0.65, 2)
+        
+        stock.total_quantity -= process_qty
+        if stock.total_quantity <= 0:
+            stock.total_quantity = 0
+            stock.is_active = False
+        stock.total_price -= Decimal(process_qty* float(stock.average_price_per_kg))
+        stock.save()
+        
+        rice_stock , created = RiceStock.objects.get_or_create(
+            manager = request.user,
+            rice_name = stock.paddy_name,
+            defaults={
+                'stock_quantity':0,
+                'average_price_per_kg':0,
+            }
+        )
+        
+        total_rice_qty = rice_stock.stock_quantity + processed_rice
+        rice_stock.total_price = (rice_stock.stock_quantity * float(rice_stock.average_price_per_kg)) + (process_qty * float(stock.average_price_per_kg))
+        rice_stock.stock_quantity = total_rice_qty
+        rice_stock.average_price_per_kg = round(Decimal(rice_stock.total_price)/Decimal(total_rice_qty),2)
+        rice_stock.save()
+            
+    return redirect("rice_stock_report")
+
+def rice_stock_report(request):
+    rice_stocks = RiceStock.objects.filter(manager=request.user).order_by('-updated_at')
+    context = {
+        'rice_stocks':rice_stocks,
+    }
+    return render(request, "manager/stock/rice_stock_report.html",context)
