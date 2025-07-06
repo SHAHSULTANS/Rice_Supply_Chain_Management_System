@@ -832,6 +832,37 @@ def edit_rice_stock(request,id):
         form = RiceStockForm(instance=stock)
     return render(request,"manager/stock/edit_rice_stock.html",{'form':form})
 
+@login_required
+@user_passes_test(check_manager)
+def rice_stock_update(request):
+    if request.method == "POST":
+        form = RiceStockForm(request.POST,request.FILES)
+        if form.is_valid():
+            update_rice_stock = form.save(commit=False)
+            update_rice_stock.manager = request.user
+            update_rice_stock.save()
+            messages.success(request,"Rice stock updated successfully")
+            return redirect(rice_stock_report)
+        else:
+            messages.error(request,"Rice stock update failed")
+            return redirect("rice_stock_update")
+            
+    else:
+        form = RiceStockForm()
+    return render(request,"manager/stock/edit_rice_stock.html",{'form':form})
+
+@login_required(login_url="login")
+@user_passes_test(check_manager)
+def delete_rice_stock(request, id):
+    rice_stock = get_object_or_404(RiceStock, id=id, manager=request.user)
+    
+    if request.method == "POST":
+        rice_stock.delete()
+        messages.success(request, "Rice stock deleted successfully!")
+        return redirect("rice_stock_report")
+    
+    # Optional: If someone tries to access via GET, redirect back
+    return redirect("rice_stock_report")
 
 
 @login_required
@@ -851,3 +882,24 @@ def edit_paddy_stock(request, id):
         form = PaddyStockForm(instance=stock)
 
     return render(request, 'manager/stock/edit_paddy_stock.html', {'form': form})
+
+
+@login_required
+@user_passes_test(check_manager)
+def paddy_stock_update(request):
+    if request.method == "POST":
+        form = PaddyStockForm(request.POST,request.FILES)
+        if form.is_valid():
+            update_paddy_stock = form.save(commit=False)
+            update_paddy_stock.manager = request.user
+            update_paddy_stock.save()
+            messages.success(request,"Paddy stock updated successfully")
+            return redirect(paddy_stock_report)
+        else:
+            messages.error(request,"Paddy stock update failed, Please Try again")
+            return redirect("paddy_stock_update")
+            
+            
+    else:
+        form = PaddyStockForm()
+    return render(request,"manager/stock/edit_paddy_stock.html",{'form':form})

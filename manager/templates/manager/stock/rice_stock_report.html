@@ -33,6 +33,10 @@
                         <a href="{% url 'edit_rice_stock' stock.id %}" class="btn btn-sm btn-warning">
                             ✏️ Edit
                         </a>
+                        <form action="{% url 'delete_rice_stock' stock.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger">🗑️ Delete</button>
+                        </form>
                     </td>
                 </tr>
                 {% endfor %}
@@ -44,6 +48,7 @@
 
     <div class="mt-4 d-flex justify-content-between">
         <a href="{% url 'manager_stock_management' %}" class="btn btn-primary my-1">🔙 Back</a>
+        <a href="{% url 'rice_stock_update' %}" class="btn btn-warning my-1">Rice Stock Update</a>
         <form action="{% url 'download_rice_stock_report' %}" method="get" class="mb-3">
             <button type="submit" class="btn btn-danger">
                 🧾 Download Rice Stock Report (PDF)
