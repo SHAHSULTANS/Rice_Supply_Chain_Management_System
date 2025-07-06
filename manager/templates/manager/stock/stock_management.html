@@ -2,7 +2,67 @@
 {% load static %}
 
 {% block content %}
-    
-<a href="{% url 'paddy_stock_report' %}" class="btn btn-primary">Paddy Stock Report</a>
-<a href="{% url 'rice_stock_report' %}" class="btn btn-primary">Rice Stock Report</a>
+<!-- AOS CSS -->
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+<style>
+    .btn-hover-effect {
+        transition: all 0.3s ease-in-out;
+    }
+    .btn-hover-effect:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+</style>
+
+<div class="container mt-5">
+    <h2 class="mb-5 text-center" data-aos="zoom-in">📊 Manager Panel Overview</h2>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+            <a href="{% url 'paddy_stock_report' %}" class="btn btn-outline-primary w-100 shadow btn-hover-effect">
+                🌾 Paddy Stock Report
+            </a>
+        </div>
+
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+            <a href="{% url 'rice_stock_report' %}" class="btn btn-outline-success w-100 shadow btn-hover-effect">
+                🍚 Rice Stock Report
+            </a>
+        </div>
+
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+            <a href="{% url 'rice_stock_report' %}" class="btn btn-outline-warning w-100 shadow btn-hover-effect">
+                📤 Post Rice to Marketplace
+            </a>
+        </div>
+
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="400">
+            <a href="{% url 'show_my_rice_post' %}" class="btn btn-outline-info w-100 shadow btn-hover-effect">
+                🧾 My Rice Posts
+            </a>
+        </div>
+
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="500">
+            <a href="{% url 'profit_loss_report' %}" class="btn btn-outline-dark w-100 shadow btn-hover-effect">
+                💹 Profit & Loss Report
+            </a>
+        </div>
+
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="600">
+            <a href="{% url 'manager_dashboard' %}" class="btn btn-outline-secondary w-100 shadow btn-hover-effect">
+                🔙 Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- AOS JS -->
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 800,
+    once: true
+  });
+</script>
 {% endblock %}

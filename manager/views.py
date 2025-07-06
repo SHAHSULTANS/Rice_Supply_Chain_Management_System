@@ -773,3 +773,7 @@ def rice_stock_report(request):
         'rice_stocks':rice_stocks,
     }
     return render(request, "manager/stock/rice_stock_report.html",context)
+
+
+def profit_loss_report(request):
+    return HttpResponse("Have to be implemented")

@@ -75,6 +75,7 @@ urlpatterns = [
 
     path("process_paddy_to_rice/<int:stock_id>/",views.process_paddy_to_rice,name="process_paddy_to_rice"),
     path("rice_stock_report/",views.rice_stock_report,name="rice_stock_report"),
+    path("profit_loss_report/",views.profit_loss_report,name="profit_loss_report"),
     
     
 ]
