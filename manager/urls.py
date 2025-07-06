@@ -82,6 +82,8 @@ urlpatterns = [
     path("download_paddy_stock_report/",views.download_paddy_stock_report,name="download_paddy_stock_report"),
     
     
+    path("edit_rice_stock/<int:id>",views.edit_rice_stock,name="edit_rice_stock"),
+    path("edit_paddy_stock/<int:id>",views.edit_paddy_stock,name="edit_paddy_stock"),
     
     
 ]

@@ -28,9 +28,13 @@
                     <td>৳{{ stock.average_price_per_kg }}</td>
                     <td>{{ stock.updated_at|date:"M d, Y h:i A" }}</td>
                     <td>
+                        <!-- Process Button -->
                         <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#processModal{{ stock.id }}">
                             Process to Rice
                         </button>
+
+                        <!-- Edit Button -->
+                        <a href="{% url 'edit_paddy_stock' stock.id %}" class="btn btn-warning btn-sm mt-1">✏️ Edit</a>
 
                         <!-- Modal -->
                         <div class="modal fade" id="processModal{{ stock.id }}" tabindex="-1" aria-labelledby="processModalLabel{{ stock.id }}" aria-hidden="true">
@@ -65,12 +69,12 @@
     {% else %}
         <div class="alert alert-warning">You do not have any paddy stock yet.</div>
     {% endif %}
-    <div class="mt-4 d-flex justify-content-between">
 
+    <div class="mt-4 d-flex justify-content-between">
         <a href="{% url 'manager_stock_management' %}" class="btn btn-primary my-1">Back</a>
         <form action="{% url 'download_paddy_stock_report' %}" method="get" class="mb-3">
             <button type="submit" class="btn btn-danger">
-                🧾 Download Rice Stock Report (PDF)
+                🧾 Download Paddy Stock Report (PDF)
             </button>
         </form>
     </div>

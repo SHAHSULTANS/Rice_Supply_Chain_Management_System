@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render,redirect,get_object_or_404,HttpResponse
 from .models import ManagerProfile, RicePost, Purchase_paddy,PurchaseRice,PaymentForPaddy,PaymentForRice, PaddyStockOfManager,RiceStock
 from dealer.models import PaddyStock
-from .forms import ManagerProfileForm, RicePostForm, Purchase_paddyForm, PurchaseRiceForm,PaymentForPaddyForm, PaymentForRiceForm
+from .forms import ManagerProfileForm, RicePostForm, Purchase_paddyForm, PurchaseRiceForm,PaymentForPaddyForm, PaymentForRiceForm,RiceStockForm,PaddyStockForm
 from decimal import Decimal
 from django.db.models import Count, Sum, Avg
 from customer.models import Purchase_Rice
@@ -815,3 +815,39 @@ def download_paddy_stock_report(request):
         response['Content-Disposition'] = 'attachment; filename="paddy_stock_report.pdf"'
         return response
     
+@login_required
+@user_passes_test(check_manager)    
+def edit_rice_stock(request,id):
+    stock = get_object_or_404(RiceStock,id=id, manager=request.user)
+    if request.method == "POST":
+        form = RiceStockForm(request.POST, instance=stock)
+        if form.is_valid():
+            form.save()
+            messages.success(request,"Rice stock updated successfully!")
+            return redirect('rice_stock_report')
+        else:
+            messages.error(request,"There is something error, please try again")
+            return redirect('edit_rice_stock',id)
+    else:
+        form = RiceStockForm(instance=stock)
+    return render(request,"manager/stock/edit_rice_stock.html",{'form':form})
+
+
+
+@login_required
+@user_passes_test(check_manager)
+def edit_paddy_stock(request, id):
+    stock = get_object_or_404(PaddyStockOfManager, id=id, manager=request.user)
+    
+    if request.method == 'POST':
+        form = PaddyStockForm(request.POST, instance=stock)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Paddy stock updated successfully!")
+            return redirect('paddy_stock_report')  # Update this name to your correct URL name
+        else:
+            messages.error(request, "There was an error in the form. Please correct it.")
+    else:
+        form = PaddyStockForm(instance=stock)
+
+    return render(request, 'manager/stock/edit_paddy_stock.html', {'form': form})

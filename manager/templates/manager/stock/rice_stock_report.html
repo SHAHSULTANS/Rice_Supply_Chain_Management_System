@@ -14,7 +14,7 @@
                     <th>Quantity (kg)</th>
                     <th>Avg Price/kg (৳)</th>
                     <th>Last Updated</th>
-                    <th>Action</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody class="text-center">
@@ -26,10 +26,13 @@
                     <td>{{ stock.stock_quantity }}</td>
                     <td>৳{{ stock.average_price_per_kg }}</td>
                     <td>{{ stock.updated_at|date:"M d, Y h:i A" }}</td>
-                    <td>
+                    <td class="d-flex justify-content-center gap-2">
                         <form action="{% url 'create_rice_post' stock.id %}" method="get">
-                            <button type="submit" class="btn btn-primary btn-sm">Post to Marketplace</button>
+                            <button type="submit" class="btn btn-sm btn-primary">📤 Post to marketplace</button>
                         </form>
+                        <a href="{% url 'edit_rice_stock' stock.id %}" class="btn btn-sm btn-warning">
+                            ✏️ Edit
+                        </a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -38,15 +41,14 @@
     {% else %}
         <div class="alert alert-warning">No rice stock available.</div>
     {% endif %}
-    <div class="mt-4 d-flex justify-content-between">
 
-        <a href="{% url 'manager_stock_management' %}" class="btn btn-primary my-1">Back</a>
+    <div class="mt-4 d-flex justify-content-between">
+        <a href="{% url 'manager_stock_management' %}" class="btn btn-primary my-1">🔙 Back</a>
         <form action="{% url 'download_rice_stock_report' %}" method="get" class="mb-3">
             <button type="submit" class="btn btn-danger">
                 🧾 Download Rice Stock Report (PDF)
             </button>
         </form>
     </div>
-
 </div>
 {% endblock %}
