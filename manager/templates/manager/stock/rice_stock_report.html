@@ -27,7 +27,7 @@
                     <td>৳{{ stock.average_price_per_kg }}</td>
                     <td>{{ stock.updated_at|date:"M d, Y h:i A" }}</td>
                     <td>
-                        <form action="#" method="get">
+                        <form action="{% url 'create_rice_post' stock.id %}" method="get">
                             <button type="submit" class="btn btn-primary btn-sm">Post to Marketplace</button>
                         </form>
                     </td>
@@ -38,5 +38,7 @@
     {% else %}
         <div class="alert alert-warning">No rice stock available.</div>
     {% endif %}
+    <a href="{% url 'manager_stock_management' %}" class="btn btn-primary">Back</a>
+
 </div>
 {% endblock %}

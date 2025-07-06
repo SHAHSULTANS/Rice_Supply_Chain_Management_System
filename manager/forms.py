@@ -24,7 +24,7 @@ class RicePostForm(forms.ModelForm):
         widgets = {
             'rice_name': forms.TextInput(attrs={'class': 'form-control'}),
             'quality': forms.TextInput(attrs={'class': 'form-control'}),
-            'quantity_kg': forms.NumberInput(attrs={'class': 'form-control'}),
+            'quantity_kg': forms.NumberInput(attrs={'class': 'form-control','name':'quantity_kg'}),
             'price_per_kg': forms.NumberInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'rice_image': forms.ClearableFileInput(attrs={'class': 'form-control'}),

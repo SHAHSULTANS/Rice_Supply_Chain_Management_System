@@ -13,7 +13,7 @@ urlpatterns = [
     path('individual_rice_post_detail/<int:id>',views.individual_rice_post_detail, name='individual_rice_post_detail'),
     
     
-    path('create_rice_post/',views.create_rice_post, name='create_rice_post'),
+    path('create_rice_post/<int:id>',views.create_rice_post, name='create_rice_post'),
     path('update_rice_post/<int:id>',views.update_rice_post, name='update_rice_post'),
     path('delete_rice_post/<int:id>',views.delete_rice_post, name='delete_rice_post'),
     

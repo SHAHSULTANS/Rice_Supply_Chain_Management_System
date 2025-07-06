@@ -33,15 +33,27 @@ def manager_dashboard(request):
 
 @login_required(login_url="login")
 @user_passes_test(check_manager)
-def create_rice_post(request):
+def create_rice_post(request,id):
+    rice_stock = get_object_or_404(RiceStock,id=id,manager=request.user)
     if request.method == "POST":
         form = RicePostForm(request.POST, request.FILES)
         if form.is_valid():
             rice_post = form.save(commit=False)
             rice_post.manager = request.user  # 👈 Assign the manager here
+            try:
+                rice_qty = float(request.POST.get('quantity_kg'))
+            except (ValueError, TypeError):
+                messages.error(request, "Invalid quantity format.")
+                return redirect('rice_stock_report')
+            if rice_qty>0 and rice_qty<=rice_stock.stock_quantity:
+                rice_stock.stock_quantity -= rice_qty
+                rice_stock.total_price -= Decimal(rice_qty*float(rice_stock.average_price_per_kg))
+                rice_stock.save()
+            else:
+                messages.error(request,"Invalid Quantity or insufficient stock")
+                return redirect('rice_stock_report')
+            
             rice_post.save()
-            print("User:", request.user.username)
-            print("Role:", request.user.role)
             return redirect("show_my_rice_post")
     else:
         form = RicePostForm()
