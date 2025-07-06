@@ -78,4 +78,10 @@ urlpatterns = [
     path("profit_loss_report/",views.profit_loss_report,name="profit_loss_report"),
     
     
+    path("download_rice_stock_report/",views.download_rice_stock_report,name="download_rice_stock_report"),
+    path("download_paddy_stock_report/",views.download_paddy_stock_report,name="download_paddy_stock_report"),
+    
+    
+    
+    
 ]

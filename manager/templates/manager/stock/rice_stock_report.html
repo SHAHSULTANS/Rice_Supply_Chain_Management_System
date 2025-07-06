@@ -38,7 +38,15 @@
     {% else %}
         <div class="alert alert-warning">No rice stock available.</div>
     {% endif %}
-    <a href="{% url 'manager_stock_management' %}" class="btn btn-primary">Back</a>
+    <div class="mt-4 d-flex justify-content-between">
+
+        <a href="{% url 'manager_stock_management' %}" class="btn btn-primary my-1">Back</a>
+        <form action="{% url 'download_rice_stock_report' %}" method="get" class="mb-3">
+            <button type="submit" class="btn btn-danger">
+                🧾 Download Rice Stock Report (PDF)
+            </button>
+        </form>
+    </div>
 
 </div>
 {% endblock %}

@@ -16,6 +16,14 @@ from django.conf import settings
 from django.db.models import Q
 
 
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from weasyprint import HTML
+
+from django.template.loader import get_template
+import tempfile
+
+
 
 def check_manager(user):
     return user.is_authenticated and user.role == 'manager'
@@ -777,3 +785,33 @@ def rice_stock_report(request):
 
 def profit_loss_report(request):
     return HttpResponse("Have to be implemented")
+
+@login_required
+@user_passes_test(check_manager)
+def download_rice_stock_report(request):
+    rice_stocks = RiceStock.objects.filter(manager=request.user)
+    
+    html_string = render_to_string("manager/stock/rice_stock_pdf.html",{'rice_stocks':rice_stocks,'manager':request.user})
+    response = HttpResponse(content_type = 'application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="rice_stock_report.pdf"'
+    
+    HTML(string=html_string).write_pdf(response)
+    return response
+
+
+@login_required
+@user_passes_test(check_manager)
+def download_paddy_stock_report(request):
+    manager = request.user
+    paddy_stocks = PaddyStockOfManager.objects.filter(manager=manager)
+
+    template = get_template("manager/stock/paddy_stock_report_pdf.html")
+    html_content = template.render({"manager": manager, "paddy_stocks": paddy_stocks})
+
+    with tempfile.NamedTemporaryFile(delete=True, suffix=".pdf") as output:
+        HTML(string=html_content).write_pdf(target=output.name)
+        output.seek(0)
+        response = HttpResponse(output.read(), content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="paddy_stock_report.pdf"'
+        return response
+    
