@@ -48,7 +48,7 @@
             </div>
         </div>
 
-        <!-- Create Rice Post -->
+        {% comment %} <!-- Create Rice Post -->
         <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
             <div class="card dashboard-card shadow-sm h-100">
                 <div class="card-body">
@@ -57,7 +57,7 @@
                     <a href="{% url 'rice_stock_report' %}" class="btn btn-success btn-sm dashboard-btn">Create</a>
                 </div>
             </div>
-        </div>
+        </div> {% endcomment %}
 
         <!-- My Rice Posts -->
         <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
@@ -135,6 +135,18 @@
                 </div>
             </div>
         </div>
+
+
+        <!-- Manager Stock Management -->
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="1000">
+            <div class="card dashboard-card shadow-sm h-100 border-primary">
+                <div class="card-body">
+                    <h5 class="card-title text-primary"><span class="dashboard-icon">📊</span>My Stock</h5>
+                    <p class="text-small">Overview of paddy, rice stock, and profit and loss.</p>
+                    <a href="{% url 'manager_stock_management' %}" class="btn btn-primary btn-sm dashboard-btn">Full History</a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -142,7 +154,7 @@
 <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 <script>
   AOS.init({
-    duration: 800,
+    duration: 1000,
     once: true
   });
 </script>

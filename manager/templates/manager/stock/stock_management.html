@@ -6,53 +6,87 @@
 <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
 <style>
-    .btn-hover-effect {
-        transition: all 0.3s ease-in-out;
+    .card-hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    .btn-hover-effect:hover {
-        transform: scale(1.05);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+
+    .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .dashboard-title {
+        font-weight: bold;
+        letter-spacing: 0.5px;
+    }
+
+    .card-icon {
+        font-size: 2rem;
     }
 </style>
 
 <div class="container mt-5">
-    <h2 class="mb-5 text-center" data-aos="zoom-in">📊 Manager Panel Overview</h2>
+    <h2 class="mb-5 text-center dashboard-title">📊 Manager Stock Management</h2>
 
     <div class="row g-4 justify-content-center">
-        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-            <a href="{% url 'paddy_stock_report' %}" class="btn btn-outline-primary w-100 shadow btn-hover-effect">
-                🌾 Paddy Stock Report
-            </a>
+        <div class="col-md-4" data-aos="fade-up">
+            <div class="card card-hover shadow border-primary">
+                <div class="card-body text-center">
+                    <div class="card-icon text-primary">🌾</div>
+                    <h5 class="card-title mt-2">Paddy Stock Report</h5>
+                    <a href="{% url 'paddy_stock_report' %}" class="stretched-link"></a>
+                </div>
+            </div>
         </div>
 
-        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-            <a href="{% url 'rice_stock_report' %}" class="btn btn-outline-success w-100 shadow btn-hover-effect">
-                🍚 Rice Stock Report
-            </a>
+        <div class="col-md-4" data-aos="fade-up">
+            <div class="card card-hover shadow border-success">
+                <div class="card-body text-center">
+                    <div class="card-icon text-success">🍚</div>
+                    <h5 class="card-title mt-2">Rice Stock Report</h5>
+                    <a href="{% url 'rice_stock_report' %}" class="stretched-link"></a>
+                </div>
+            </div>
         </div>
 
-        <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
-            <a href="{% url 'rice_stock_report' %}" class="btn btn-outline-warning w-100 shadow btn-hover-effect">
-                📤 Post Rice to Marketplace
-            </a>
+        <div class="col-md-4" data-aos="fade-up">
+            <div class="card card-hover shadow border-warning">
+                <div class="card-body text-center">
+                    <div class="card-icon text-warning">📤</div>
+                    <h5 class="card-title mt-2">Post Rice to Marketplace</h5>
+                    <a href="{% url 'rice_stock_report' %}" class="stretched-link"></a>
+                </div>
+            </div>
         </div>
 
-        <div class="col-md-4" data-aos="fade-up" data-aos-delay="400">
-            <a href="{% url 'show_my_rice_post' %}" class="btn btn-outline-info w-100 shadow btn-hover-effect">
-                🧾 My Rice Posts
-            </a>
+        <div class="col-md-4" data-aos="fade-up">
+            <div class="card card-hover shadow border-info">
+                <div class="card-body text-center">
+                    <div class="card-icon text-info">🧾</div>
+                    <h5 class="card-title mt-2">My Rice Posts</h5>
+                    <a href="{% url 'show_my_rice_post' %}" class="stretched-link"></a>
+                </div>
+            </div>
         </div>
 
-        <div class="col-md-4" data-aos="fade-up" data-aos-delay="500">
-            <a href="{% url 'profit_loss_report' %}" class="btn btn-outline-dark w-100 shadow btn-hover-effect">
-                💹 Profit & Loss Report
-            </a>
+        <div class="col-md-4" data-aos="fade-up">
+            <div class="card card-hover shadow border-dark">
+                <div class="card-body text-center">
+                    <div class="card-icon text-dark">💹</div>
+                    <h5 class="card-title mt-2">Profit & Loss Report</h5>
+                    <a href="{% url 'profit_loss_report' %}" class="stretched-link"></a>
+                </div>
+            </div>
         </div>
 
-        <div class="col-md-4" data-aos="fade-up" data-aos-delay="600">
-            <a href="{% url 'manager_dashboard' %}" class="btn btn-outline-secondary w-100 shadow btn-hover-effect">
-                🔙 Back to Dashboard
-            </a>
+        <div class="col-md-4" data-aos="fade-up">
+            <div class="card card-hover shadow border-secondary">
+                <div class="card-body text-center">
+                    <div class="card-icon text-secondary">🔙</div>
+                    <h5 class="card-title mt-2">Back to Dashboard</h5>
+                    <a href="{% url 'manager_dashboard' %}" class="stretched-link"></a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -60,9 +94,9 @@
 <!-- AOS JS -->
 <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 <script>
-  AOS.init({
-    duration: 800,
-    once: true
-  });
+    AOS.init({
+        duration: 800,
+        once: true
+    });
 </script>
 {% endblock %}
