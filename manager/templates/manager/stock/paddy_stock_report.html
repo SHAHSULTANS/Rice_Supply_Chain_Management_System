@@ -33,27 +33,95 @@
                             Process to Rice
                         </button>
 
-                        <!-- Edit Button -->
-                        <a href="{% url 'edit_paddy_stock' stock.id %}" class="btn btn-warning btn-sm mt-1">✏️ Edit</a>
+                        <!-- Edit Button (Triggers Modal) -->
+                        <button class="btn btn-warning btn-sm mt-1" data-bs-toggle="modal" data-bs-target="#editModal{{ stock.id }}">✏️ Edit</button>
 
-                        <!-- Modal -->
-                        <div class="modal fade" id="processModal{{ stock.id }}" tabindex="-1" aria-labelledby="processModalLabel{{ stock.id }}" aria-hidden="true">
+                        <!-- Delete Button -->
+                        <button class="btn btn-danger btn-sm mt-1" data-bs-toggle="modal" data-bs-target="#deleteModal{{ stock.id }}">🗑️ Delete</button>
+
+                        <!-- Process Modal -->
+                        <div class="modal fade" id="processModal{{ stock.id }}" tabindex="-1">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <form method="post" action="{% url 'process_paddy_to_rice' stock.id %}">
                                         {% csrf_token %}
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="processModalLabel{{ stock.id }}">Process {{ stock.paddy_name }} to Rice</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            <h5 class="modal-title">Process {{ stock.paddy_name }} to Rice</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <div class="mb-3">
-                                                <label for="quantity{{ stock.id }}" class="form-label">Enter Quantity (kg) to Process:</label>
-                                                <input type="number" step="0.1" min="1" max="{{ stock.total_quantity }}" class="form-control" name="process_quantity" id="quantity{{ stock.id }}" required>
-                                            </div>
+                                            <label class="form-label">Enter Quantity (kg):</label>
+                                            <input type="number" step="0.1" min="1" max="{{ stock.total_quantity }}" class="form-control" name="process_quantity" required>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="submit" class="btn btn-primary">Process</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Edit Modal -->
+                        <div class="modal fade" id="editModal{{ stock.id }}" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <form method="post" action="{% url 'edit_paddy_stock' stock.id %}">
+                                        {% csrf_token %}
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Edit {{ stock.paddy_name }} Stock</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="mb-2">
+                                                <label class="form-label">Paddy Name</label>
+                                                <input type="text" name="paddy_name" value="{{ stock.paddy_name }}" class="form-control" required>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label">Moisture Content (%)</label>
+                                                <input type="number" step="0.1" name="moisture_content" value="{{ stock.moisture_content }}" class="form-control">
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label">Rice Type</label>
+                                                <input type="text" name="rice_type" value="{{ stock.rice_type }}" class="form-control">
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label">Total Quantity (kg)</label>
+                                                <input type="number" step="0.1" name="total_quantity" value="{{ stock.total_quantity }}" class="form-control" required>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label">Total Price (৳)</label>
+                                                <input type="number" step="0.01" name="total_price" value="{{ stock.total_price }}" class="form-control" required>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label">Avg Price per kg (৳)</label>
+                                                <input type="number" step="0.01" name="average_price_per_kg" value="{{ stock.average_price_per_kg }}" class="form-control" required>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-success">Save Changes</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Delete Modal -->
+                        <div class="modal fade" id="deleteModal{{ stock.id }}" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <form method="post" action="{% url 'delete_paddy_stock' stock.id %}">
+                                        {% csrf_token %}
+                                        <div class="modal-header">
+                                            <h5 class="modal-title text-danger">⚠️ Confirm Deletion</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to delete <strong>{{ stock.paddy_name }}</strong>?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-danger">Yes, Delete</button>
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                         </div>
                                     </form>
@@ -71,12 +139,65 @@
     {% endif %}
 
     <div class="mt-4 d-flex justify-content-between">
-        <a href="{% url 'manager_stock_management' %}" class="btn btn-primary my-1">Back</a>
+        <a href="{% url 'manager_stock_management' %}" class="btn btn-primary my-1">🔙 Back</a>
+
+        <button class="btn btn-warning my-1" data-bs-toggle="modal" data-bs-target="#addPaddyModal">
+            ➕ Paddy Stock Update
+        </button>
+
         <form action="{% url 'download_paddy_stock_report' %}" method="get" class="mb-3">
             <button type="submit" class="btn btn-danger">
                 🧾 Download Paddy Stock Report (PDF)
             </button>
         </form>
+
+        <!-- Add Paddy Stock Modal -->
+<div class="modal fade" id="addPaddyModal" tabindex="-1" aria-labelledby="addPaddyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" action="{% url 'paddy_stock_update' %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addPaddyModalLabel">➕ Add New Paddy Stock</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <label class="form-label">Paddy Name</label>
+                        <input type="text" name="paddy_name" class="form-control" required>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Moisture Content (%)</label>
+                        <input type="number" step="0.1" name="moisture_content" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Rice Type</label>
+                        <input type="text" name="rice_type" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Total Quantity (kg)</label>
+                        <input type="number" step="0.1" name="total_quantity" class="form-control" required>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Total Price (৳)</label>
+                        <input type="number" step="0.01" name="total_price" class="form-control" required>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Average Price/kg (৳)</label>
+                        <input type="number" step="0.01" name="average_price_per_kg" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">✅ Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
     </div>
 </div>
 

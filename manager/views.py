@@ -903,3 +903,15 @@ def paddy_stock_update(request):
     else:
         form = PaddyStockForm()
     return render(request,"manager/stock/edit_paddy_stock.html",{'form':form})
+
+
+
+@login_required
+@user_passes_test(check_manager)
+def delete_paddy_stock(request,id):
+    paddy_stock = get_object_or_404(PaddyStockOfManager,id=id, manager=request.user)
+    if request.method == "POST":
+        paddy_stock.delete()
+        messages.warning(request,"Paddy stock deleted successfully!")
+        return redirect("paddy_stock_report")
+    return redirect("paddy_stock_report")

@@ -83,9 +83,13 @@ urlpatterns = [
     
     
     path("edit_rice_stock/<int:id>",views.edit_rice_stock,name="edit_rice_stock"),
-    path("delete_rice_stock/<int:id>",views.delete_rice_stock,name="delete_rice_stock"),
     path("rice_stock_update/",views.rice_stock_update,name="rice_stock_update"),
+    path("delete_rice_stock/<int:id>",views.delete_rice_stock,name="delete_rice_stock"),
+    
+    
     path("edit_paddy_stock/<int:id>",views.edit_paddy_stock,name="edit_paddy_stock"),
+    path("paddy_stock_update/",views.paddy_stock_update,name="paddy_stock_update"),
+    path("delete_paddy_stock/<int:id>",views.delete_paddy_stock,name="delete_paddy_stock"),
     
     
 ]
