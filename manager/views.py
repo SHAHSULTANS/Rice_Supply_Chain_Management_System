@@ -257,15 +257,16 @@ def purchase_rice(request, id):
 @user_passes_test(check_manager_and_admin)
 def purchase_history(request):
     purchases_paddy = Purchase_paddy.objects.filter(manager=request.user,status="Successful").order_by("-purchase_date")
-    purchases_rice = PurchaseRice.objects.filter(manager=request.user,status="Successful").order_by("-purchase_date")
-    seling_rice = Purchase_Rice.objects.filter(rice__manager=request.user,status="Successful").order_by("-purchase_date")
-    seling_rice_to_managers = PurchaseRice.objects.filter(rice__manager=request.user,status="Successful").order_by("-purchase_date")
+    selling_rice = Purchase_Rice.objects.filter(rice__manager=request.user,status="Successful").order_by("-purchase_date")
+    
+    purchases_rice_from_others_manager = PurchaseRice.objects.filter(manager=request.user,status="Successful").order_by("-purchase_date")
+    selling_rice_to_managers = PurchaseRice.objects.filter(rice__manager=request.user,status="Successful").order_by("-purchase_date")
 
     context = {
         "purchases_paddy": purchases_paddy,
-        "purchases_rice": purchases_rice,
-        "seling_rice": seling_rice,
-        "seling_rice_to_managers": seling_rice_to_managers,
+        "purchases_rice": purchases_rice_from_others_manager,
+        "seling_rice": selling_rice,
+        "seling_rice_to_managers": selling_rice_to_managers,
     }
 
     return render(request, "manager/purchase_history.html", context)
