@@ -117,7 +117,8 @@ def mock_customer_rice_payment(request, purchase_id):
                 payment.save()
                 purchase.save()
                 messages.success(request, "Payment successful and order marked as received.")
-                return redirect("my_order_page")
+                
+                return redirect("mock_customer_rice_payment_success")  # ✅ Use your new success page
             else:
                 payment.status = "Failed"
                 payment.save()

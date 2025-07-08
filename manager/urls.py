@@ -75,7 +75,6 @@ urlpatterns = [
 
     path("process_paddy_to_rice/<int:stock_id>/",views.process_paddy_to_rice,name="process_paddy_to_rice"),
     path("rice_stock_report/",views.rice_stock_report,name="rice_stock_report"),
-    path("profit_loss_report/",views.profit_loss_report,name="profit_loss_report"),
     
     
     path("download_rice_stock_report/",views.download_rice_stock_report,name="download_rice_stock_report"),
@@ -91,5 +90,6 @@ urlpatterns = [
     path("paddy_stock_update/",views.paddy_stock_update,name="paddy_stock_update"),
     path("delete_paddy_stock/<int:id>",views.delete_paddy_stock,name="delete_paddy_stock"),
     
+    path("profit_loss_report/",views.profit_loss_report,name="profit_loss_report"),
     
 ]

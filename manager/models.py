@@ -72,6 +72,7 @@ class PurchaseRice(models.Model):
     rice = models.ForeignKey(RicePost, on_delete=models.CASCADE, related_name="PurchaseRice")
     quantity_purchased = models.FloatField()
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    profit_or_loss = models.FloatField(null=True, blank=True)
     delivery_cost = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     is_confirmed = models.BooleanField(default=False)
     payment = models.BooleanField(default=False)

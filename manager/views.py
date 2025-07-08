@@ -602,15 +602,23 @@ def my_rice_order(request):
     return render(request,"manager/my_rice_order.html",{"orders":orders})
 
 # after delivery rice order from another manager i have to update status as confirm
-def confirm_rice_delivery_done_by_other_manager(request,id):
+@login_required
+def confirm_rice_delivery_done_by_other_manager(request, id):
     order = get_object_or_404(PurchaseRice, id=id, manager=request.user)
+
     if order.status == "Delivered":
         if order.payment:
             order.status = "Successful"
             order.save()
+            messages.success(request, "Order successfully confirmed.")
             return redirect("my_rice_order")
         else:
-            return redirect("mock_rice_payment",id=order.id)
+            messages.warning(request, "Please complete payment before confirming delivery.")
+            return redirect("mock_rice_payment", id=order.id)
+
+    # ✅ If status is not "Delivered", show a warning and redirect
+    messages.info(request, "Order must be in 'Delivered' status to confirm.")
+    return redirect("my_rice_order")
 
 
 
@@ -784,8 +792,6 @@ def rice_stock_report(request):
     return render(request, "manager/stock/rice_stock_report.html",context)
 
 
-def profit_loss_report(request):
-    return HttpResponse("Have to be implemented")
 
 @login_required
 @user_passes_test(check_manager)
@@ -916,3 +922,56 @@ def delete_paddy_stock(request,id):
         messages.warning(request,"Paddy stock deleted successfully!")
         return redirect("paddy_stock_report")
     return redirect("paddy_stock_report")
+
+
+@login_required(login_url="login")
+@user_passes_test(check_manager_and_admin)
+def profit_loss_report(request):
+    selling_rice_to_customers = PurchaseRice.objects.filter(
+        rice__manager=request.user, status="Successful"
+    ).order_by("-purchase_date")
+    
+    # ###########
+    Owner = PurchaseRice.objects.filter(
+        manager=request.user, status="Successful"
+    ).order_by("-purchase_date")
+    # #########
+    report_data = []
+    for selling in Owner:
+        print(selling.manager)
+        selling_rice = RiceStock.objects.get(manager=selling.manager,rice_name = selling.rice.rice_name)
+        selling_price_per_kg = selling_rice.average_price_per_kg
+        print(selling_price_per_kg)
+        for row in selling_rice_to_customers:
+            
+            
+            print("Buyer_manager: ",row.manager.managerprofile.full_name)
+            print("Buyer_manager: ",selling_rice.manager.managerprofile.full_name)
+            print("Seller_manager: ",row.rice.manager.managerprofile.full_name)
+            print("Seller_manager: ",selling.rice.manager.managerprofile.full_name)
+            
+            if row.manager.managerprofile.full_name == selling.rice.manager.managerprofile.full_name:
+            
+                try:
+                    stock = RiceStock.objects.get( rice_name=row.rice.rice_name)
+                    cost_per_kg = stock.average_price_per_kg
+                except RiceStock.DoesNotExist:
+                    cost_per_kg = Decimal('0.00')
+                print(cost_per_kg)
+
+                quantity = Decimal(str(row.quantity_purchased))
+                total_cost = selling_price_per_kg * quantity
+                profit_or_loss = row.total_price - total_cost
+                profit_or_loss_abs = abs(profit_or_loss)
+
+                report_data.append({
+                    "row": row,
+                    "cost_per_kg": selling_rice.average_price_per_kg,
+                    "total_cost": total_cost,
+                    "profit_or_loss": profit_or_loss,
+                    "profit_or_loss_abs": profit_or_loss_abs
+                })
+
+            return render(request, "manager/stock/profit_loss_report.html", {
+                "report_data": report_data
+            })
