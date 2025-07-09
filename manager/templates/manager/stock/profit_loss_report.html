@@ -23,12 +23,13 @@
                         <th>Rice Name</th>
                         <th><abbr title="Manager who bought the rice">Buyer</abbr></th>
                         <th>Quantity<br>(kg)</th>
-                        <th>Selling Price<br><small>(৳)</small></th>
+                        <th>Selling price / <br>(kg)</th>
+                        <th>Total Selling Price<br><small>(৳)</small></th>
                         <th>
-                            Cost / kg<br><small>(৳)</small>
+                           Buying Cost / kg<br><small>(৳)</small>
                         </th>
                         <th>
-                            Total Selling Cost<br><small>(৳)</small>
+                            Total Buying Cost<br><small>(৳)</small>
                         </th>
                         <th>Profit / Loss<br><small>(৳)</small></th>
                         <th>Date</th>
@@ -41,7 +42,8 @@
                         <td>{{ item.row.rice.rice_name }}</td>
                         <td>{{ item.row.manager.managerprofile.full_name }}</td>
                         <td>{{ item.row.quantity_purchased|floatformat:2 }}</td>
-                        <td>৳{{ item.row.total_price|floatformat:2 }}</td>
+                        <td>৳{{ item.selling_price_per_kg|floatformat:2 }}</td>
+                        <td>৳{{ item.selling_price|floatformat:2 }}</td>
                         <td>৳{{ item.cost_per_kg|floatformat:2 }}</td>
                         <td>৳{{ item.total_cost|floatformat:2 }}</td>
                         <td>
@@ -64,9 +66,9 @@
             No rice has been sold yet to generate a profit or loss report.
         </div>
     {% endif %}
+    <a href="{% url 'manager_stock_management' %}  " class="btn btn-primary">Back</a>
 </div>
 {% endif %}
-
 
 {% if check == 2 %}
     
@@ -87,9 +89,10 @@
                         <th>Rice Name</th>
                         <th><abbr title="Manager who bought the rice">Buyer</abbr></th>
                         <th>Quantity<br>(kg)</th>
-                        <th>Selling Price<br><small>(৳)</small></th>
+                        <th>Selling price / <br>(kg)</th>
+                        <th>Total Selling Price<br><small>(৳)</small></th>
                         <th>
-                            Cost / kg<br><small>(৳)</small>
+                           Buying Cost / kg<br><small>(৳)</small>
                         </th>
                         <th>
                             Total Buying Cost<br><small>(৳)</small>
@@ -105,7 +108,8 @@
                         <td>{{ item.row.rice.rice_name }}</td>
                         <td>{{ item.row.customer.customerprofile.full_name }}</td>
                         <td>{{ item.row.quantity_purchased|floatformat:2 }}</td>
-                        <td>৳{{ item.row.total_price|floatformat:2 }}</td>
+                        <td>৳{{ item.selling_price_per_kg|floatformat:2 }}</td>
+                        <td>৳{{ item.selling_price|floatformat:2 }}</td>
                         <td>৳{{ item.cost_per_kg|floatformat:2 }}</td>
                         <td>৳{{ item.total_cost|floatformat:2 }}</td>
                         <td>
@@ -128,6 +132,7 @@
             No rice has been sold yet to generate a profit or loss report.
         </div>
     {% endif %}
+    <a href="{% url 'manager_stock_management' %}  " class="btn btn-primary">Back</a>
 </div>
 {% endif %}
 {% endblock %}

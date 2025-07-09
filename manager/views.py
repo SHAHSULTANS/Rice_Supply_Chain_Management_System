@@ -944,8 +944,8 @@ def profit_loss_report_for_rice_to_manager(request):
     for selling in Owner_manager:
         # print(selling.manager)
         selling_rice = RiceStock.objects.get(manager=selling.manager,rice_name = selling.rice.rice_name)
-        selling_price_per_kg = selling_rice.average_price_per_kg
-        # print(selling_price_per_kg)
+        buying_price_per_kg = selling_rice.average_price_per_kg
+        # print(buying_price_per_kg)
         for row in selling_rice_to_manager:
             
             
@@ -964,13 +964,18 @@ def profit_loss_report_for_rice_to_manager(request):
                 # print(cost_per_kg)
 
                 quantity = Decimal(str(row.quantity_purchased))
-                total_cost = selling_price_per_kg * quantity
-                profit_or_loss = row.total_price - total_cost
+                total_cost = buying_price_per_kg * quantity
+                selling_price = Decimal(str(row.total_price)) -Decimal(str(row.delivery_cost))
+                print(buying_price_per_kg)
+                selling_price_per_kg = selling_price / quantity
+                profit_or_loss = selling_price - total_cost
                 profit_or_loss_abs = abs(profit_or_loss)
 
                 report_data.append({
                     "row": row,
                     "cost_per_kg": selling_rice.average_price_per_kg,
+                    "selling_price":selling_price,
+                    "selling_price_per_kg":selling_price_per_kg,
                     "total_cost": total_cost,
                     "profit_or_loss": profit_or_loss,
                     "profit_or_loss_abs": profit_or_loss_abs
@@ -1005,20 +1010,25 @@ def profit_loss_report_for_rice_to_customer(request):
             cost_per_kg = Decimal(str(stock.average_price_per_kg))
         except RiceStock.DoesNotExist:
             cost_per_kg = Decimal('0.00')
-        print(cost_per_kg)
+        # print(cost_per_kg)
 
         quantity = Decimal(str(row.quantity_purchased))
 
         total_cost = cost_per_kg * quantity
-        selling_price = Decimal(str(row.total_price))
+        selling_price = Decimal(str(row.total_price))-Decimal(str(row.delivery_cost))
+        selling_price_per_kg = selling_price/quantity
         if row.rice.rice_name == "Amon":
             print(row.total_price)
         profit_or_loss = selling_price - total_cost
         profit_or_loss_abs = abs(profit_or_loss)
 
+        
+        
         report_data.append({
             "row": row,
             "cost_per_kg": cost_per_kg,
+            "selling_price":selling_price,
+            "selling_price_per_kg":selling_price_per_kg,
             "total_cost": total_cost,
             "profit_or_loss": profit_or_loss,
             "profit_or_loss_abs": profit_or_loss_abs
