@@ -751,6 +751,7 @@ def process_paddy_to_rice(request,stock_id):
     if request.method == "POST":
         try:
             process_qty = float(request.POST.get('process_quantity'))
+            process_rice_name = request.POST.get('rice_name')
         except (ValueError, TypeError):
             messages.error(request, "Invalid quantity")
             return redirect('paddy_stock_report')
@@ -769,7 +770,7 @@ def process_paddy_to_rice(request,stock_id):
         
         rice_stock , created = RiceStock.objects.get_or_create(
             manager = request.user,
-            rice_name = stock.paddy_name,
+            rice_name = process_rice_name,
             defaults={
                 'stock_quantity':0,
                 'average_price_per_kg':0,

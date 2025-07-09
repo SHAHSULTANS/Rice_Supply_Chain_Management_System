@@ -51,7 +51,11 @@
                                         </div>
                                         <div class="modal-body">
                                             <label class="form-label">Enter Quantity (kg):</label>
-                                            <input type="number" step="0.1" min="1" max="{{ stock.total_quantity }}" class="form-control" name="process_quantity" required>
+                                            <input type="number" step="1" min="1" max="{{ stock.total_quantity }}" class="form-control" name="process_quantity" required>
+                                        </div>
+                                        <div class="modal-body">
+                                            <label class="form-label">Enter Rice Name :</label>
+                                            <input type="text"  class="form-control" name="rice_name" required>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="submit" class="btn btn-primary">Process</button>
