@@ -73,8 +73,17 @@
             <div class="card card-hover shadow border-dark">
                 <div class="card-body text-center">
                     <div class="card-icon text-dark">💹</div>
-                    <h5 class="card-title mt-2">Profit & Loss Report</h5>
-                    <a href="{% url 'profit_loss_report' %}" class="stretched-link"></a>
+                    <h5 class="card-title mt-2">Profit & Loss Report For Selling rice to another manager</h5>
+                    <a href="{% url 'profit_loss_report_for_rice_to_manager' %}" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up">
+            <div class="card card-hover shadow border-dark">
+                <div class="card-body text-center">
+                    <div class="card-icon text-dark">💹</div>
+                    <h5 class="card-title mt-2">Profit & Loss Report for selling rice to customers</h5>
+                    <a href="{% url 'profit_loss_report_for_rice_to_customer' %}" class="stretched-link"></a>
                 </div>
             </div>
         </div>

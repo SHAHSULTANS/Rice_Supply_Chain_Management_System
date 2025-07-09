@@ -926,29 +926,33 @@ def delete_paddy_stock(request,id):
 
 @login_required(login_url="login")
 @user_passes_test(check_manager_and_admin)
-def profit_loss_report(request):
-    selling_rice_to_customers = PurchaseRice.objects.filter(
+def profit_loss_report_for_rice_to_manager(request):
+    
+    # Find the manager who buy rice from another manager
+    selling_rice_to_manager = PurchaseRice.objects.filter(
         rice__manager=request.user, status="Successful"
     ).order_by("-purchase_date")
     
-    # ###########
-    Owner = PurchaseRice.objects.filter(
+    # find the manager who sell rice to another manager
+    Owner_manager = PurchaseRice.objects.filter(
         manager=request.user, status="Successful"
     ).order_by("-purchase_date")
     # #########
+    
+    
     report_data = []
-    for selling in Owner:
-        print(selling.manager)
+    for selling in Owner_manager:
+        # print(selling.manager)
         selling_rice = RiceStock.objects.get(manager=selling.manager,rice_name = selling.rice.rice_name)
         selling_price_per_kg = selling_rice.average_price_per_kg
-        print(selling_price_per_kg)
-        for row in selling_rice_to_customers:
+        # print(selling_price_per_kg)
+        for row in selling_rice_to_manager:
             
             
-            print("Buyer_manager: ",row.manager.managerprofile.full_name)
-            print("Buyer_manager: ",selling_rice.manager.managerprofile.full_name)
-            print("Seller_manager: ",row.rice.manager.managerprofile.full_name)
-            print("Seller_manager: ",selling.rice.manager.managerprofile.full_name)
+            # print("Buyer_manager: ",row.manager.managerprofile.full_name)
+            # print("Seller_manager: ",selling_rice.manager.managerprofile.full_name)
+            # print("Seller_manager: ",row.rice.manager.managerprofile.full_name)
+            # print("Buyer_manager: ",selling.rice.manager.managerprofile.full_name)
             
             if row.manager.managerprofile.full_name == selling.rice.manager.managerprofile.full_name:
             
@@ -957,7 +961,7 @@ def profit_loss_report(request):
                     cost_per_kg = stock.average_price_per_kg
                 except RiceStock.DoesNotExist:
                     cost_per_kg = Decimal('0.00')
-                print(cost_per_kg)
+                # print(cost_per_kg)
 
                 quantity = Decimal(str(row.quantity_purchased))
                 total_cost = selling_price_per_kg * quantity
@@ -971,7 +975,59 @@ def profit_loss_report(request):
                     "profit_or_loss": profit_or_loss,
                     "profit_or_loss_abs": profit_or_loss_abs
                 })
+                
+                
+                context = {
+                    "check":1,
+                    "report_data": report_data,
+                }
 
-            return render(request, "manager/stock/profit_loss_report.html", {
-                "report_data": report_data
-            })
+                return render(request, "manager/stock/profit_loss_report.html",context)
+        
+        
+ # or your actual permission check
+
+
+@login_required(login_url="login")
+@user_passes_test(check_manager_and_admin)
+def profit_loss_report_for_rice_to_customer(request):
+    # ✅ Get all successful sales made by this manager to customers
+    selling_rice_to_customer = Purchase_Rice.objects.filter(
+        rice__manager=request.user, status="Successful"
+    ).order_by("-purchase_date")
+
+    report_data = []
+
+    for row in selling_rice_to_customer:
+        try:
+            # ✅ Get the stock record from which the manager sold this rice
+            stock = RiceStock.objects.get(manager=request.user, rice_name=row.rice.rice_name)
+            cost_per_kg = Decimal(str(stock.average_price_per_kg))
+        except RiceStock.DoesNotExist:
+            cost_per_kg = Decimal('0.00')
+        print(cost_per_kg)
+
+        quantity = Decimal(str(row.quantity_purchased))
+
+        total_cost = cost_per_kg * quantity
+        selling_price = Decimal(str(row.total_price))
+        if row.rice.rice_name == "Amon":
+            print(row.total_price)
+        profit_or_loss = selling_price - total_cost
+        profit_or_loss_abs = abs(profit_or_loss)
+
+        report_data.append({
+            "row": row,
+            "cost_per_kg": cost_per_kg,
+            "total_cost": total_cost,
+            "profit_or_loss": profit_or_loss,
+            "profit_or_loss_abs": profit_or_loss_abs
+        })
+
+    context = {
+        "check": 2,
+        "report_data": report_data,
+    }
+
+    return render(request, "manager/stock/profit_loss_report.html", context)
+            

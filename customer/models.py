@@ -3,7 +3,7 @@ from accounts.models import CustomUser
 from manager.models import RicePost
 # Create your models here.
 class CustomerProfile(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, limit_choices_to={'role':'customer'})
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, limit_choices_to={'role':'customer'},related_name="customerprofile")
     full_name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=11)
     address =models.TextField()

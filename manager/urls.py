@@ -90,6 +90,7 @@ urlpatterns = [
     path("paddy_stock_update/",views.paddy_stock_update,name="paddy_stock_update"),
     path("delete_paddy_stock/<int:id>",views.delete_paddy_stock,name="delete_paddy_stock"),
     
-    path("profit_loss_report/",views.profit_loss_report,name="profit_loss_report"),
+    path("profit_loss_report_for_rice_to_manager/",views.profit_loss_report_for_rice_to_manager,name="profit_loss_report_for_rice_to_manager"),
+    path("profit_loss_report_for_rice_to_customer/",views.profit_loss_report_for_rice_to_customer,name="profit_loss_report_for_rice_to_customer"),
     
 ]

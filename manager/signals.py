@@ -71,24 +71,32 @@ def add_purchased_rice_to_stock(sender, instance, created, **kwargs):
             stock.save()
 
 
-# @receiver(post_save, sender=Purchase_Rice)
-# def calculate_profit_or_loss(sender, instance, created, **kwargs):
-#     if instance.status == "Successful" and instance.profit_or_loss is None:
-#         try:
-#             stock = RiceStock.objects.get(manager=instance.rice.manager, rice_name=instance.rice.rice_name)
-#             cost_price = stock.average_price_per_kg
-#             total_cost = float(cost_price) * float(instance.quantity_purchased)
-#             profit = float(instance.total_price) - total_cost
+@receiver(post_save, sender=Purchase_Rice)
+def profit_loss_report_for_rice_to_customer(sender, instance, created, **kwargs):
+    # Avoid recursion by updating only when needed
+    if instance.status == "Successful" and instance.profit_or_loss in [None, 0]:
+        try:
+            stock = RiceStock.objects.get(
+                manager=instance.rice.manager,
+                rice_name=instance.rice.rice_name
+            )
 
-#             instance.profit_or_loss = profit
-#             instance.save(update_fields=['profit_or_loss'])
-#         except RiceStock.DoesNotExist:
-#             instance.profit_or_loss = 0
-#             instance.save(update_fields=['profit_or_loss'])
+            cost_price = Decimal(stock.average_price_per_kg or 0)
+            quantity = Decimal(instance.quantity_purchased or 0)
+            total_cost = cost_price * quantity
+            total_sale = Decimal(instance.total_price or 0)
+            profit = total_sale - total_cost
+
+            # ✅ Only update if value has changed
+            if instance.profit_or_loss != profit:
+                Purchase_Rice.objects.filter(id=instance.id).update(profit_or_loss=profit)
+
+        except RiceStock.DoesNotExist:
+            Purchase_Rice.objects.filter(id=instance.id).update(profit_or_loss=0)
             
             
 @receiver(post_save, sender=PurchaseRice)
-def calculate_profit_or_loss(sender, instance, created, **kwargs):
+def profit_loss_report_for_rice_to_manager(sender, instance, created, **kwargs):
     # Only recalculate if status is Successful and profit_or_loss not already set
     if instance.status == "Successful" and instance.profit_or_loss is None:
         try:
