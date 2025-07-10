@@ -22,6 +22,7 @@
                         
                     <th>Delivery Status</th>
                     <th>Payment Status</th>
+                    <th>Download Receipt</th>
                 </tr>
             </thead>
             <tbody>
@@ -44,6 +45,14 @@
                         {% comment %} {% else %}
                             <a href="{% url 'mock_customer_rice_payment' purchase.id %}" class="btn btn-sm btn-primary">Mock Pay</a> {% endcomment %}
                         {% endif %}
+                    </td>
+                    <td>
+                         <form action="{% url 'download_receipt_for_buying_rice_for_customer' purchase.id %} " method="get" class="mb-3">
+                            <button type="submit" class="btn btn-small btn-danger">
+                                {% comment %} 🧾Download  {% endcomment %}
+                                Download
+                            </button>
+                        </form>
                     </td>
                 </tr>
                     

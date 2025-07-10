@@ -269,3 +269,41 @@ def confirm_delivery(request, id):
             return redirect('my_order_page')
         else:
             return redirect('mock_rice_payment', id=order.id)
+        
+        
+
+
+# @login_required
+# @user_passes_test(check_manager)
+# def download_rice_stock_report(request):
+#     rice_stocks = RiceStock.objects.filter(manager=request.user)
+    
+#     html_string = render_to_string("manager/stock/rice_stock_pdf.html",{'rice_stocks':rice_stocks,'manager':request.user})
+#     response = HttpResponse(content_type = 'application/pdf')
+#     response['Content-Disposition'] = 'attachment; filename="rice_stock_report.pdf"'
+    
+#     HTML(string=html_string).write_pdf(response)
+#     return response
+
+
+
+@login_required
+@user_passes_test(lambda u: u.role == 'customer')
+def download_receipt_for_buying_rice_for_customer(request, id):
+    
+    rice = get_object_or_404(Purchase_Rice,id=id,customer=request.user)
+    price_per_kg = float(rice.total_price-rice.delivery_cost)//float(rice.quantity_purchased)
+    
+    html_string = render_to_string("customer/receipt.html",{"rice":rice,"price_per_kg":price_per_kg})
+    response = HttpResponse(content_type = 'application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="receipt.pdf"'
+    
+    HTML(string=html_string).write_pdf(response)
+    return response
+    # print(rice.rice.rice_name)
+    # print(rice.rice.manager.managerprofile.full_name)
+    # print(rice.rice.manager.managerprofile.mill_name)
+    # print(rice.quantity_purchased)
+    # print(rice.total_price)
+    # print(rice.purchase_date)
+    # return HttpResponse("Hi")

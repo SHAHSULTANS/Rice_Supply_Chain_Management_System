@@ -26,5 +26,9 @@ urlpatterns = [
     # Oder track
     path('my_rice_orders/', views.my_order_page, name='my_order_page'),
     path('confirm_delivery/<int:id>/', views.confirm_delivery, name='confirm_delivery'),
+    
+    
+    
+    path('download_receipt_for_buying_rice_for_customer/<int:id>/', views.download_receipt_for_buying_rice_for_customer, name='download_receipt_for_buying_rice_for_customer'),
 
 ]
