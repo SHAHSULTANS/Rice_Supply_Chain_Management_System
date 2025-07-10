@@ -1,70 +1,70 @@
 {% extends "base.html" %}
+
+{% block title %}Rice Purchase History{% endblock %}
+
 {% block content %}
-<!-- Rice Purchases Section -->
-<div class="container mt-5">
-    <h2 class="mb-4">Your Purchase History For Rice</h2>
+<div class="container mt-5 px-4 py-4 rounded" style="background-color: #f8f9fa;">
+    <h2 class="mb-4 fw-bold text-primary">📜 Your Rice Purchase History</h2>
 
     {% if purchases_rice %}
-        <table class="table table-bordered table-striped">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Rice Name</th>
-                    <th>Manager</th>
-                    <th>Quantity (kg)</th>
-                    <th>Price/kg (৳)</th>
-                    <th>Delivery Cost (৳)</th>
-                    <th>Total Price (৳)</th>
-                    <th>Date</th>
-                    
-                    {% comment %} {% if  %}
-                        
-                    {% endif %} {% endcomment %}
-                        
-                    <th>Delivery Status</th>
-                    <th>Payment Status</th>
-                    <th>Download Receipt</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for purchase in purchases_rice %}
-                
-                {% if purchase.status == "Successful" %}
-
-                <tr>
-                    <td>{{ purchase.rice.rice_name }}</td>
-                    <td>{{ purchase.rice.manager.managerprofile.full_name }}</td>
-                    <td>{{ purchase.quantity_purchased }}</td>
-                    <td>{{ purchase.rice.price_per_kg }}</td>
-                    <td>{{ purchase.delivery_cost }}</td>
-                    <td>{{ purchase.total_price }}</td>
-                    <td>{{ purchase.purchase_date|date:"M d, Y h:i A" }}</td>
-                    <td><span class="badge bg-info">{{purchase.status}}</span></td>
-                    <td class="text-center">
-                        {% if purchase.payment %}
-                            <span class="btn btn-success">Paid</span>
-                        {% comment %} {% else %}
-                            <a href="{% url 'mock_customer_rice_payment' purchase.id %}" class="btn btn-sm btn-primary">Mock Pay</a> {% endcomment %}
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle text-center bg-white">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">🌾 Rice Name</th>
+                        <th scope="col">👨‍🌾 Manager</th>
+                        <th scope="col">⚖️ Quantity (kg)</th>
+                        <th scope="col">💰 Price/kg (৳)</th>
+                        <th scope="col">🚚 Delivery Cost (৳)</th>
+                        <th scope="col">🧾 Total Price (৳)</th>
+                        <th scope="col">📅 Date</th>
+                        <th scope="col">🚛 Delivery Status</th>
+                        <th scope="col">💳 Payment</th>
+                        <th scope="col">📥 Receipt</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for purchase in purchases_rice %}
+                        {% if purchase.status == "Successful" %}
+                        <tr>
+                            <td>{{ purchase.rice.rice_name }}</td>
+                            <td>{{ purchase.rice.manager.managerprofile.full_name }}</td>
+                            <td>{{ purchase.quantity_purchased }}</td>
+                            <td>{{ purchase.rice.price_per_kg }}</td>
+                            <td>{{ purchase.delivery_cost }}</td>
+                            <td>{{ purchase.total_price }}</td>
+                            <td>{{ purchase.purchase_date|date:"M d, Y h:i A" }}</td>
+                            <td>
+                                <span class="badge bg-success">{{ purchase.status }}</span>
+                            </td>
+                            <td>
+                                {% if purchase.payment %}
+                                    <span class="badge bg-success">Paid</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Unpaid</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <form action="{% url 'download_receipt_for_buying_rice_for_customer' purchase.id %}" method="get">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        🧾 Download
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
                         {% endif %}
-                    </td>
-                    <td>
-                         <form action="{% url 'download_receipt_for_buying_rice_for_customer' purchase.id %} " method="get" class="mb-3">
-                            <button type="submit" class="btn btn-small btn-danger">
-                                {% comment %} 🧾Download  {% endcomment %}
-                                Download
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                    
-                {% endif %}
-                    
-                {% endfor %}
-            </tbody>
-        </table>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% else %}
-        <p>You have not made any purchases yet.</p>
+        <div class="alert alert-info" role="alert">
+            You have not made any purchases yet.
+        </div>
     {% endif %}
 
-    <a href="{% url 'customer_dashboard' %}" class="btn btn-success mt-4">Back to Dashboard</a>
+    <div class="mt-4">
+        <a href="{% url 'customer_dashboard' %}" class="btn btn-outline-primary">⬅ Back to Dashboard</a>
+    </div>
 </div>
 {% endblock %}
