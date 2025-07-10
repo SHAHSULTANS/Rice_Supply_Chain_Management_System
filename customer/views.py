@@ -7,8 +7,21 @@ from decimal import Decimal
 from .forms import CustomerProfileForm, PurchaseRiceForm
 from django.contrib import messages
 
-
 import uuid
+import random
+from datetime import datetime, timedelta
+from django.core.mail import send_mail
+from django.conf import settings
+from django.db.models import Q
+
+
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from weasyprint import HTML
+
+from django.template.loader import get_template
+import tempfile
+
 
 def check_customer(user):
     return user.is_authenticated and user.role == 'customer'
@@ -80,7 +93,8 @@ def purchase_rice_from_manager(request, id):
 
     return render(request, "customer/purchase_rice.html", {'form': form, 'rice': rice})
 
-
+@login_required
+@user_passes_test(check_customer)
 def rice_purchases_history(request):
     purchases_rice = Purchase_Rice.objects.filter(customer=request.user).order_by("-purchase_date")
     # print(purchases_rice.payment)
@@ -103,27 +117,16 @@ def mock_customer_rice_payment(request, purchase_id):
     if request.method == "POST":
         form = PaymentForRiceForm(request.POST)
         if form.is_valid():
-            payment = form.save(commit=False)
-            payment.user = request.user
-            payment.rice = purchase.rice
-            payment.transaction_id = f"CUSTMOCK-{uuid.uuid4().hex[:8]}"
-            payment.amount = form.cleaned_data['amount']
-
-            if payment.amount == purchase.total_price:
-                payment.is_paid = True
-                payment.status = "Success"
-                purchase.payment = True
-                purchase.status = "Successful"  # ✅ Update status after payment
-                payment.save()
-                purchase.save()
-                messages.success(request, "Payment successful and order marked as received.")
-                
-                return redirect("mock_customer_rice_payment_success")  # ✅ Use your new success page
-            else:
-                payment.status = "Failed"
-                payment.save()
-                messages.error(request, "Payment failed. Amount mismatch.")
-                return redirect("mock_customer_rice_payment_fail")
+           amount = form.cleaned_data['amount']
+           if float(amount) == float(purchase.total_price):
+               request.session["payment_amount"] = float(amount)
+               return redirect('insert_phone_number_customer',purchase_id=purchase_id )
+           
+           messages.error(request, "Amount does not match the total price.")
+           return render(request, "customer/payment/mock_customer_rice_payment.html", {
+                "form": form,
+                "purchase": purchase
+            })
     else:
         form = PaymentForRiceForm(initial={'amount': purchase.total_price})
 
@@ -132,12 +135,115 @@ def mock_customer_rice_payment(request, purchase_id):
         "purchase": purchase
     })
 
+@login_required
+@user_passes_test(check_customer)
+def insert_phone_number_customer(request,purchase_id):
+    rice = get_object_or_404(Purchase_Rice,pk=purchase_id,customer=request.user) 
+    
+    if request.method == "POST":
+        phone_number = request.POST.get('phone')
+        if phone_number == rice.customer.customerprofile.phone_number:
+            return redirect('send_purchases_otp_customer',email=rice.customer.customerprofile.user.email,purchase_id=purchase_id)
+        else:
+            messages.error(request,"Wrong phone number, insert the correct number")
+            return redirect("insert_phone_number_customer",purchase_id=purchase_id)
+
+    return render(request,"customer/payment/insert_phone_number.html")
+
+otp_storage = {}
+@login_required
+@user_passes_test(check_customer)
+def send_purchases_otp_customer(request,email,purchase_id):
+    otp = random.randint(100000,999999)
+    otp_storage[email] = {
+        'otp' : otp,
+        'timestamp' : datetime.now()
+    }
+    subject = "Transaction OTP - RSCMS"
+    message = f"Assalamu Alaikum\n\nYour OTP for transaction is: {otp}\n\nNever share your Code and PIN with anyone.\n\nRSCMS never ask for this.\n\nExpiry: within 300 seconds"
+    send_mail(subject,message,settings.EMAIL_HOST_USER, [email])
+    
+    return redirect("insert_otp_customer",purchase_id=purchase_id,email=email)
+    
+@login_required
+@user_passes_test(check_customer)
+def verify_purchases_otp_customer(request, email, purchase_id, otp):
+    data = otp_storage.get(email)
+    if data:
+        otp_valid = data['otp'] == otp
+        otp_expired = datetime.now() > data['timestamp'] + timedelta(minutes=5)
+
+        if otp_valid and not otp_expired:
+            del otp_storage[email]
+            messages.success(request, "OTP verified successfully.")
+            return redirect("insert_password_customer", purchase_id=purchase_id,email=email)
+        elif otp_expired:
+            del otp_storage[email]
+            messages.error(request, "OTP has expired. Please request a new one.")
+            return redirect('insert_phone_number_customer', purchase_id=purchase_id)
+        else:
+            messages.error(request, "Invalid OTP. Please try again.")
+            return redirect('insert_otp_customer', purchase_id=purchase_id, email=email)
+    else:
+        messages.error(request, "No OTP found for this email.")
+        return redirect('insert_phone_number_customer', purchase_id=purchase_id)
+
+
 
 @login_required
+@user_passes_test(check_customer)
+def insert_otp_customer(request,purchase_id,email):
+    if request.method == "POST":
+        otp = request.POST.get("otp")
+        return redirect("verify_purchases_otp_customer",email=email,purchase_id=purchase_id,otp=otp)
+    return render(request,"customer/payment/insert_otp.html",{'purchase_id':purchase_id})
+    
+@login_required
+@user_passes_test(check_customer)
+def insert_password_customer(request, purchase_id, email):
+    purchase = get_object_or_404(Purchase_Rice, pk=purchase_id, customer=request.user)
+    rice = purchase.rice
+    amount = request.session.get('payment_amount')  # Get from session
+
+    if not amount:
+        messages.error(request, "Payment session expired.")
+        return redirect('mock_customer_rice_payment', purchase_id=purchase_id)
+
+    if request.method == "POST":
+        password = request.POST.get('password')
+        if password == purchase.customer.customerprofile.Transaction_password:
+            # ✅ Now process payment
+            payment = Payment_For_Rice.objects.create(
+                user=request.user,
+                rice=rice,
+                amount=amount,
+                transaction_id=f'MOCK-{uuid.uuid4().hex[:8]}',
+                is_paid=True,
+                status="Success"
+            )
+            purchase.payment = True
+            purchase.save()
+
+            del request.session['payment_amount']  # ✅ Clean up session
+            messages.success(request, "Payment successful.")
+            return redirect('mock_customer_rice_payment_success')
+        else:
+            messages.error(request, "Incorrect password.")
+            return redirect("insert_password_customer", purchase_id=purchase_id, email=email)
+
+    return render(request, "customer/payment/insert_password.html", {
+        'purchase_id': purchase_id,
+        'email': email
+    })
+
+
+@login_required
+@user_passes_test(check_customer)
 def mock_customer_rice_payment_success(request):
     return render(request, "customer/payment/success.html")
 
 @login_required
+@user_passes_test(check_customer)
 def mock_customer_rice_payment_fail(request):
     return render(request, "customer/payment/fail.html")
 
