@@ -31,6 +31,7 @@
                         <th>Total Price (৳)</th>
                         <th>Date</th>
                         <th>Payment Status</th>
+                        <th>Download Receipt</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -57,6 +58,13 @@
                                     <a href="{% url 'mock_paddy_payment' purchase.id %}" class="btn btn-sm btn-primary">Mock Pay</a>
                                 {% endif %}
                             {% endif %}
+                        </td>
+                        <td>
+                            <form action="{% url 'download_receipt_for_buying_paddy_for_manager' purchase.id %}" method="get">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        🧾 Download
+                                    </button>
+                            </form>
                         </td>
                     </tr>
                     {% endfor %}
@@ -93,6 +101,7 @@
                         <th>Total Price (৳)</th>
                         <th>Date</th>
                         <th>Payment</th>
+                        <th>Download Receipt</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -119,6 +128,13 @@
                                     <a href="{% url 'mock_rice_payment' purchase.id %}" class="btn btn-sm btn-primary">Mock Pay</a>
                                 {% endif %}
                             {% endif %}
+                        </td>
+                        <td>
+                            <form action="" method="get">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        🧾 Download
+                                    </button>
+                            </form>
                         </td>
                     </tr>
                     {% endfor %}
@@ -155,6 +171,7 @@
                         <th>Total Price (৳)</th>
                         <th>Date</th>
                         <th>Payment</th>
+                        <th>Download Receipt</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -179,6 +196,13 @@
                             {% else %}
                                 <span class="badge bg-warning">Unpaid</span>
                             {% endif %}
+                        </td>
+                        <td>
+                            <form action="" method="get">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        🧾 Download
+                                    </button>
+                            </form>
                         </td>
                     </tr>
                     {% endfor %}
@@ -215,6 +239,7 @@
                         <th>Total Price (৳)</th>
                         <th>Date</th>
                         <th>Payment</th>
+                        <th>Download Receipt</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -233,6 +258,13 @@
                             {% else %}
                                 <span class="badge bg-warning">Unpaid</span>
                             {% endif %}
+                        </td>
+                        <td>
+                            <form action="" method="get">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        🧾 Download
+                                    </button>
+                            </form>
                         </td>
                     </tr>
                     {% endfor %}
