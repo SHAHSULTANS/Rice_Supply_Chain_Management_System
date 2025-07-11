@@ -22,5 +22,10 @@ urlpatterns = [
     path('incoming_order_for_paddy/', views.incoming_order_for_paddy, name='incoming_order_for_paddy'),
     path('accept_paddy_order/<int:id>/', views.accept_paddy_order, name='accept_paddy_order'),
     path('update_order_status_for_paddy/<int:id>/', views.update_order_status_for_paddy, name='update_order_status_for_paddy'),
+    
+    
+    #latest update
+    path('paddy-purchase/add/', views.create_purchase, name='paddy_purchase_add'),
+
 
 ]

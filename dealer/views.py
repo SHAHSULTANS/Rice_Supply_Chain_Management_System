@@ -1,4 +1,5 @@
-from datetime import timezone
+from django.utils import timezone
+
 from django.shortcuts import get_object_or_404, redirect, render,HttpResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse
@@ -151,7 +152,7 @@ def delete_post(request, post_id):
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import DealerProfile
-from .forms import DealerProfileEditForm
+from .forms import DealerProfileEditForm, PaddyPurchaseForm
 
 def edit_dealer_profile(request):
     dealer_profile = request.user.dealerprofile
@@ -397,3 +398,22 @@ def update_order_status_for_paddy(request, id):
     return redirect('incoming_order_for_paddy')
 
 
+
+
+
+
+
+
+def create_purchase(request):
+    dealer = get_object_or_404(DealerProfile, user=request.user)
+    if request.method == 'POST':
+        form = PaddyPurchaseForm(request.POST)
+        if form.is_valid():
+            purchase = form.save(commit=False)
+            purchase.dealer = dealer
+            purchase.save()
+            messages.success(request, "Purchase recorded successfully.")
+            return redirect('dealer_dashboard')
+    else:
+        form = PaddyPurchaseForm()
+    return render(request, 'dealer/purchase_form.html', {'form': form})
