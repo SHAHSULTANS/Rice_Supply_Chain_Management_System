@@ -799,7 +799,7 @@ def rice_stock_report(request):
 def download_rice_stock_report(request):
     rice_stocks = RiceStock.objects.filter(manager=request.user)
     
-    html_string = render_to_string("manager/stock/rice_stock_pdf.html",{'rice_stocks':rice_stocks,'manager':request.user})
+    html_string = render_to_string("manager/pdf_download/rice_stock_pdf.html",{'rice_stocks':rice_stocks,'manager':request.user})
     response = HttpResponse(content_type = 'application/pdf')
     response['Content-Disposition'] = 'attachment; filename="rice_stock_report.pdf"'
     
@@ -813,7 +813,7 @@ def download_paddy_stock_report(request):
     manager = request.user
     paddy_stocks = PaddyStockOfManager.objects.filter(manager=manager)
 
-    template = get_template("manager/stock/paddy_stock_report_pdf.html")
+    template = get_template("manager/pdf_download/paddy_stock_report_pdf.html")
     html_content = template.render({"manager": manager, "paddy_stocks": paddy_stocks})
 
     with tempfile.NamedTemporaryFile(delete=True, suffix=".pdf") as output:
@@ -1057,7 +1057,7 @@ def download_receipt_for_buying_paddy_for_manager(request,id):
         "price_per_kg":price_per_kg,
     }
     
-    html_string = render_to_string("manager/stock/receipt_for_buying_paddy_pdf.html",context)
+    html_string = render_to_string("manager/pdf_download/receipt_for_buying_paddy_pdf.html",context)
     response = HttpResponse(content_type = "application/pdf")
     response["Content-Disposition"] = 'attachment; filename="receipt_for_buying_paddy_pdf"'
     
@@ -1078,7 +1078,7 @@ def download_receipt_for_buying_rice_for_manager(request,id):
         "price_per_kg":price_per_kg,
     }
     
-    html_string = render_to_string("manager/stock/receipt_for_buying_rice_pdf.html",context)
+    html_string = render_to_string("manager/pdf_download/receipt_for_buying_rice_pdf.html",context)
     response = HttpResponse(content_type = "application/pdf")
     response["Content-Disposition"] = 'attachment; filename="receipt_for_buying_rice_pdf"'
     
@@ -1099,7 +1099,7 @@ def download_receipt_for_selling_rice_to_customer_for_manager(request,id):
         "price_per_kg":price_per_kg,
     }
     
-    html_string = render_to_string("manager/stock/receipt_for_selling_to_cuatomer_rice_pdf.html",context)
+    html_string = render_to_string("manager/pdf_download/receipt_for_selling_to_cuatomer_rice_pdf.html",context)
     response = HttpResponse(content_type = "application/pdf")
     response["Content-Disposition"] = 'attachment; filename="receipt_for_buying_rice_pdf"'
     
@@ -1124,7 +1124,7 @@ def download_receipt_for_selling_rice_to_others_manager_for_manager(request,id):
         "price_per_kg":price_per_kg,
     }
     
-    html_string = render_to_string("manager/stock/receipt_for_selling_rice_to_manager_pdf.html",context)
+    html_string = render_to_string("manager/pdf_download/receipt_for_selling_rice_to_manager_pdf.html",context)
     response = HttpResponse(content_type = "application/pdf")
     response["Content-Disposition"] = 'attachment; filename="receipt_for_selling_rice_pdf"'
     
