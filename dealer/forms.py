@@ -1,5 +1,6 @@
 from django import forms
-from .models import DealerProfile, PaddyStock
+from .models import DealerProfile, PaddyPurchaseFromFarmer, PaddyStock
+from django.core.exceptions import ValidationError
 
 class DealerProfileForm(forms.ModelForm):
      class Meta:
@@ -58,3 +59,27 @@ class DealerProfileEditForm(forms.ModelForm):
             dealer.user.save()
             dealer.save()
         return dealer
+    
+    
+# --- Purchase Form ---
+class PaddyPurchaseForm(forms.ModelForm):
+    class Meta:
+        model = PaddyPurchaseFromFarmer
+        fields = [
+            'farmer_name', 'farmer_phone', 'paddy_type', 'quantity',
+            'purchase_price_per_mon', 'moisture_content',
+            'transport_cost', 'other_costs',
+            'notes'
+        ]
+        widgets = {
+            'purchase_date': forms.DateInput(attrs={'type': 'date'}),
+            'notes': forms.Textarea(attrs={'rows': 3}),
+        }
+
+    def clean_moisture_content(self):
+        moisture = self.cleaned_data['moisture_content']
+        if not 5 <= moisture <= 25:
+            raise ValidationError("Moisture content must be between 5% and 25%")
+        return moisture
+    
+    
