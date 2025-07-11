@@ -25,7 +25,11 @@ import tempfile
 
 def check_customer(user):
     return user.is_authenticated and user.role == 'customer'
+def check_admin(user):
+    return user.is_authenticated and user.role == 'admin'
 
+def check_customer_or_admin(user):
+    return check_customer(user) or check_admin(user)
 
 @login_required(login_url='login')
 @user_passes_test(check_customer)
@@ -94,7 +98,7 @@ def purchase_rice_from_manager(request, id):
     return render(request, "customer/purchase_rice.html", {'form': form, 'rice': rice})
 
 @login_required
-@user_passes_test(check_customer)
+@user_passes_test(check_customer_or_admin)
 def rice_purchases_history(request):
     purchases_rice = Purchase_Rice.objects.filter(customer=request.user).order_by("-purchase_date")
     # print(purchases_rice.payment)

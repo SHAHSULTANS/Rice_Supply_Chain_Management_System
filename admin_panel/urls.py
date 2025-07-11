@@ -29,4 +29,9 @@ urlpatterns = [
     path('delete_customer/<int:id>/', views.delete_customer, name='delete_customer'),
     path('delete_manager/<int:id>/', views.delete_manager, name='delete_manager'),
     path('delete_delear/<int:id>/', views.delete_delear, name='delete_delear'),
+    
+    
+    path('customer_rice_purchases_history_seen_by_admin/<int:id>/', views.customer_rice_purchases_history_seen_by_admin, name='customer_rice_purchases_history_seen_by_admin'),
+    
+    
 ]

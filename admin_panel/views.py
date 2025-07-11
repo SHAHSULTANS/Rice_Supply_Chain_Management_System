@@ -13,7 +13,7 @@ from .forms import PasswordResetRequestForm, AdminProfileForm,UserPasswordChange
 from .models import AdminProfile
 from dealer.models import DealerProfile
 from manager.models import ManagerProfile
-from customer.models import CustomerProfile
+from customer.models import CustomerProfile, Purchase_Rice
 
 # Check if user is an admin
 def check_admin(user):
@@ -208,6 +208,27 @@ def change_password(request):
 
 def password_change_complete(request):
     return render(request, 'password_reset_and_change/password_change_complete.html')
+
+
+
+
+def customer_rice_purchases_history_seen_by_admin(request, id):
+    customer_profile = get_object_or_404(CustomerProfile, id=id)
+    
+    # Get the associated user object
+    customer_user = customer_profile.user
+    
+    # Filter by user, not profile
+    purchases = Purchase_Rice.objects.filter(customer=customer_user, status="Successful").order_by("-purchase_date")
+    print(purchases)
+    
+    context = {
+        "purchases": purchases,
+        "customer_profile": customer_profile
+    }
+    
+    return render(request, "admin/customer_purchases_history.html", context)
+
 
 
 
