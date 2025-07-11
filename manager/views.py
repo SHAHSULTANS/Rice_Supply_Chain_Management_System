@@ -1043,34 +1043,7 @@ def profit_loss_report_for_rice_to_customer(request):
     return render(request, "manager/stock/profit_loss_report.html", context)
             
             
-# @login_required
-# @user_passes_test(check_manager)
-# def download_rice_stock_report(request):
-#     rice_stocks = RiceStock.objects.filter(manager=request.user)
-    
-#     html_string = render_to_string("manager/stock/rice_stock_pdf.html",{'rice_stocks':rice_stocks,'manager':request.user})
-#     response = HttpResponse(content_type = 'application/pdf')
-#     response['Content-Disposition'] = 'attachment; filename="rice_stock_report.pdf"'
-    
-#     HTML(string=html_string).write_pdf(response)
-#     return response   
 
-
-# class Location(models.Model):
-#     """For tracking geographical locations of all parties"""
-#     district = models.CharField(max_length=50,blank=True,null=True)
-#     upazila = models.CharField(max_length=50,blank=True,null=True)
-#     union = models.CharField(max_length=50, blank=True,null=True)
-#     address = models.TextField(blank=True,null=True)
-#     class Meta:
-#         abstract = True  # <-- Make it abstract so no separate table is created
-
-# class DealerProfile(Location):
-#     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-#     license_number = models.CharField(max_length=50)
-#     storage_capacity = models.PositiveIntegerField()
-#     def __str__(self):
-#         return f"{self.user.username}"
             
 @login_required(login_url="login")
 @user_passes_test(check_manager_and_admin)          
@@ -1087,6 +1060,73 @@ def download_receipt_for_buying_paddy_for_manager(request,id):
     html_string = render_to_string("manager/stock/receipt_for_buying_paddy_pdf.html",context)
     response = HttpResponse(content_type = "application/pdf")
     response["Content-Disposition"] = 'attachment; filename="receipt_for_buying_paddy_pdf"'
+    
+    HTML(string=html_string).write_pdf(response)
+    return response
+
+
+
+
+@login_required(login_url="login")
+@user_passes_test(check_manager_and_admin)          
+def download_receipt_for_buying_rice_for_manager(request,id):
+    rice = get_object_or_404(PurchaseRice,id=id, manager=request.user)
+    price_per_kg = float(rice.total_price-rice.delivery_cost)//float(rice.quantity_purchased)
+    
+    context ={
+        "rice":rice,
+        "price_per_kg":price_per_kg,
+    }
+    
+    html_string = render_to_string("manager/stock/receipt_for_buying_rice_pdf.html",context)
+    response = HttpResponse(content_type = "application/pdf")
+    response["Content-Disposition"] = 'attachment; filename="receipt_for_buying_rice_pdf"'
+    
+    HTML(string=html_string).write_pdf(response)
+    return response
+
+
+
+
+@login_required(login_url="login")
+@user_passes_test(check_manager_and_admin)          
+def download_receipt_for_selling_rice_to_customer_for_manager(request,id):
+    rice = get_object_or_404(Purchase_Rice,id=id, rice__manager=request.user)
+    price_per_kg = float(rice.total_price-rice.delivery_cost)//float(rice.quantity_purchased)
+    
+    context ={
+        "rice":rice,
+        "price_per_kg":price_per_kg,
+    }
+    
+    html_string = render_to_string("manager/stock/receipt_for_selling_to_cuatomer_rice_pdf.html",context)
+    response = HttpResponse(content_type = "application/pdf")
+    response["Content-Disposition"] = 'attachment; filename="receipt_for_buying_rice_pdf"'
+    
+    HTML(string=html_string).write_pdf(response)
+    return response
+
+
+
+@login_required(login_url="login")
+@user_passes_test(check_manager_and_admin)          
+def download_receipt_for_selling_rice_to_others_manager_for_manager(request,id):
+    rice = get_object_or_404(PurchaseRice,id=id, rice__manager=request.user)
+    
+    price_per_kg = float(rice.total_price-rice.delivery_cost)//float(rice.quantity_purchased)
+    
+    print(rice.manager.managerprofile.full_name)
+    print(rice.quantity_purchased)
+    
+    
+    context ={
+        "rice":rice,
+        "price_per_kg":price_per_kg,
+    }
+    
+    html_string = render_to_string("manager/stock/receipt_for_selling_rice_to_manager_pdf.html",context)
+    response = HttpResponse(content_type = "application/pdf")
+    response["Content-Disposition"] = 'attachment; filename="receipt_for_selling_rice_pdf"'
     
     HTML(string=html_string).write_pdf(response)
     return response

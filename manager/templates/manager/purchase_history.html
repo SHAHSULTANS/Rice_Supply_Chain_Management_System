@@ -130,7 +130,7 @@
                             {% endif %}
                         </td>
                         <td>
-                            <form action="" method="get">
+                            <form action="{% url 'download_receipt_for_buying_rice_for_manager' purchase.id %}" method="get">
                                     <button type="submit" class="btn btn-sm btn-outline-danger">
                                         🧾 Download
                                     </button>
@@ -198,7 +198,7 @@
                             {% endif %}
                         </td>
                         <td>
-                            <form action="" method="get">
+                            <form action="{% url 'download_receipt_for_selling_rice_to_customer_for_manager' purchase.id %}" method="get">
                                     <button type="submit" class="btn btn-sm btn-outline-danger">
                                         🧾 Download
                                     </button>
@@ -260,7 +260,7 @@
                             {% endif %}
                         </td>
                         <td>
-                            <form action="" method="get">
+                            <form action="{% url 'download_receipt_for_selling_rice_to_others_manager_for_manager' purchase.id %}" method="get">
                                     <button type="submit" class="btn btn-sm btn-outline-danger">
                                         🧾 Download
                                     </button>
