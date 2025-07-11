@@ -1,0 +1,40 @@
+{% extends 'base.html' %}  {# or your main layout #}
+
+{% block content %}
+<h2>All Paddy Purchases</h2>
+
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Reference Code</th>
+            <th>Farmer Name</th>
+            <th>Paddy Type</th>
+            <th>Quantity</th>
+            <th>Purchase Price (per mon)</th>
+            <th>Moisture Content (%)</th>
+            <th>Total Cost</th>
+            <th>Purchase Date</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for purchase in purchases %}
+        <tr>
+            <td>{{ purchase.reference_code }}</td>
+            <td>{{ purchase.farmer_name }}</td>
+            <td>{{ purchase.paddy_type }}</td>
+            <td>{{ purchase.quantity }}</td>
+            <td>{{ purchase.purchase_price_per_mon }}</td>
+            <td>{{ purchase.moisture_content }}</td>
+            <td>{{ purchase.total_cost }}</td>
+            <td>{{ purchase.created_at|date:"Y-m-d H:i" }}</td>
+            <td>{{ purchase.notes|default:"-" }}</td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td colspan="9">No purchases found.</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

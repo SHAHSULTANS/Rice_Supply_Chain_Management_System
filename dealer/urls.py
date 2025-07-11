@@ -26,6 +26,7 @@ urlpatterns = [
     
     #latest update
     path('paddy-purchase/add/', views.create_purchase, name='paddy_purchase_add'),
+    path('purchases/', views.all_purchases_list, name='all_purchases_list'),
 
 
 ]

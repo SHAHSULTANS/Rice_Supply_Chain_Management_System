@@ -151,7 +151,7 @@ def delete_post(request, post_id):
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import DealerProfile
+from .models import DealerProfile, PaddyPurchaseFromFarmer
 from .forms import DealerProfileEditForm, PaddyPurchaseForm
 
 def edit_dealer_profile(request):
@@ -417,3 +417,13 @@ def create_purchase(request):
     else:
         form = PaddyPurchaseForm()
     return render(request, 'dealer/purchase_form.html', {'form': form})
+
+
+def all_purchases_list(request):
+    dealer = request.user.dealerprofile
+    purchases = PaddyPurchaseFromFarmer.objects.filter(dealer=dealer).order_by('-created_at')
+
+    context = {
+        'purchases': purchases
+    }
+    return render(request, 'dealer/purchases_list.html', context)
