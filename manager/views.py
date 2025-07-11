@@ -799,7 +799,11 @@ def rice_stock_report(request):
 def download_rice_stock_report(request):
     rice_stocks = RiceStock.objects.filter(manager=request.user)
     
-    html_string = render_to_string("manager/pdf_download/rice_stock_pdf.html",{'rice_stocks':rice_stocks,'manager':request.user})
+    total_rice_stock = 0
+    for stock in rice_stocks:
+        total_rice_stock += stock.stock_quantity
+    
+    html_string = render_to_string("manager/pdf_download/rice_stock_pdf.html",{'rice_stocks':rice_stocks,'manager':request.user,'total_rice_stock':total_rice_stock})
     response = HttpResponse(content_type = 'application/pdf')
     response['Content-Disposition'] = 'attachment; filename="rice_stock_report.pdf"'
     
@@ -812,9 +816,14 @@ def download_rice_stock_report(request):
 def download_paddy_stock_report(request):
     manager = request.user
     paddy_stocks = PaddyStockOfManager.objects.filter(manager=manager)
+    
+    total_paddy_stock = 0
+    for stock in paddy_stocks:
+        total_paddy_stock += stock.total_quantity
+    
 
     template = get_template("manager/pdf_download/paddy_stock_report_pdf.html")
-    html_content = template.render({"manager": manager, "paddy_stocks": paddy_stocks})
+    html_content = template.render({"manager": manager, "paddy_stocks": paddy_stocks,"total_paddy_stock":total_paddy_stock})
 
     with tempfile.NamedTemporaryFile(delete=True, suffix=".pdf") as output:
         HTML(string=html_content).write_pdf(target=output.name)
