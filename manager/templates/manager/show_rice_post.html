@@ -96,7 +96,7 @@
         </div>
     {% endif %}
 
-    {% if request.user.role != "customer" %}
+    {% if request.user.role != "customer"  and request.user.role != "admin"%}
         <a href="{% url 'rice_stock_report' %}" class="btn btn-primary mt-4 shadow">
             ➕ Create Rice Post
         </a>
