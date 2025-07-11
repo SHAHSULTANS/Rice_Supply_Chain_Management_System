@@ -86,7 +86,7 @@
                         </div>
                         <div class="d-grid gap-2 mt-2">
                             {% comment %} {% url 'paddy_stock_detail' stock.id %} {% endcomment %}
-                            <a href="" class="btn btn-outline-secondary">
+                            <a href="{% url 'paddy_detail' stock.id %}" class="btn btn-outline-secondary">
                                 <i class="fas fa-info-circle"></i> View Details
                             </a>
                         </div>
