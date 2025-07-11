@@ -32,6 +32,7 @@ urlpatterns = [
     
     
     path('customer_rice_purchases_history_seen_by_admin/<int:id>/', views.customer_rice_purchases_history_seen_by_admin, name='customer_rice_purchases_history_seen_by_admin'),
+    path('dealer_purchases_history/<int:id>/', views.dealer_purchases_history, name='dealer_purchases_history'),
     
     
 ]

@@ -30,8 +30,11 @@
                     <p><strong>Upazila:</strong> {{ dealer.upazila|default:"N/A" }}</p>
                     <p><strong>Union:</strong> {{ dealer.union|default:"N/A" }}</p>
                     <p><strong>Address:</strong> {{ dealer.address|default:"N/A" }}</p>
+                    <div class= "d-flex justify-content-between">
 
-                    <a href="{% url 'see_all_delears' %}" class="btn btn-secondary mt-3">Back to List</a>
+                        <a href="{% url 'dealer_purchases_history' dealer.id %}" class="btn btn-primary mt-3">Purchases History</a>
+                        <a href="{% url 'see_all_delears' %}" class="btn btn-secondary mt-3">Back to List</a>
+                    </div>
                 </div>
             </div>
         </div>

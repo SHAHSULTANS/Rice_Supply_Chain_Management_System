@@ -12,7 +12,7 @@ from django.conf import settings
 from .forms import PasswordResetRequestForm, AdminProfileForm,UserPasswordChangeForm
 from .models import AdminProfile
 from dealer.models import DealerProfile
-from manager.models import ManagerProfile
+from manager.models import ManagerProfile,Purchase_paddy
 from customer.models import CustomerProfile, Purchase_Rice
 
 # Check if user is an admin
@@ -193,6 +193,7 @@ def reset_password(request, email):
 
 
 @login_required(login_url='login_user')
+@user_passes_test(check_admin)
 def change_password(request):
     if request.method == 'POST':
         form = UserPasswordChangeForm(data=request.POST, user=request.user)  # ✅ Corrected form initialization
@@ -211,7 +212,8 @@ def password_change_complete(request):
 
 
 
-
+@login_required(login_url='login_user')
+@user_passes_test(check_admin)
 def customer_rice_purchases_history_seen_by_admin(request, id):
     customer_profile = get_object_or_404(CustomerProfile, id=id)
     
@@ -228,6 +230,23 @@ def customer_rice_purchases_history_seen_by_admin(request, id):
     }
     
     return render(request, "admin/customer_purchases_history.html", context)
+
+
+
+@login_required(login_url='login_user')
+@user_passes_test(check_admin)
+def dealer_purchases_history(request, id):
+    dealer_profile = get_object_or_404(DealerProfile, id=id)
+
+    # Use DealerProfile instead of dealer_profile.user
+    purchases = Purchase_paddy.objects.filter(paddy__dealer=dealer_profile, status="Successful")
+
+    context = {
+        "purchases": purchases,
+    }
+
+    return render(request, "admin/dealer_purchases_history.html", context)
+    
 
 
 
