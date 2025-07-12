@@ -180,7 +180,8 @@ class Marketplace(models.Model):
 
     # অতিরিক্ত
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Draft')
-    created_at = models.DateTimeField(auto_now_add=True)
+    stored_since = models.DateTimeField(auto_now_add=True)
+
 
     def __str__(self):
         return f"{self.name} - {self.quantity} mon @ {self.price_per_mon}/mon"
