@@ -152,7 +152,7 @@ def delete_post(request, post_id):
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import DealerProfile, PaddyPurchaseFromFarmer
-from .forms import DealerProfileEditForm, PaddyPurchaseForm
+from .forms import DealerProfileEditForm, MarketplaceForm, PaddyPurchaseForm
 
 def edit_dealer_profile(request):
     dealer_profile = request.user.dealerprofile
@@ -427,3 +427,35 @@ def all_purchases_list(request):
         'purchases': purchases
     }
     return render(request, 'dealer/purchases_list.html', context)
+
+
+
+
+from django.shortcuts import get_object_or_404, redirect, render
+from .models import PaddyStock
+from .forms import MarketplaceForm
+
+def create_marketplace_post(request, id):  # এখানে id হলো PaddyStock এর id
+    dealer = request.user.dealerprofile
+    paddy_stock = get_object_or_404(PaddyStock, id=id, dealer=dealer)  # স্টক নিশ্চিত করতে যে ওই ডিলারেরই
+
+    if request.method == "POST":
+        form = MarketplaceForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.dealer = dealer
+            post.save()
+            return redirect('dealer_dashboard')
+    else:
+        # GET রিকোয়েস্টে ফর্মে ডিফল্ট ভ্যালু হিসেবে PaddyStock থেকে ডাটা সেট করা
+        initial_data = {
+            'paddy_stock': paddy_stock,
+            'name': paddy_stock.name,
+            'quantity': paddy_stock.available_quantity,
+            'moisture_content': paddy_stock.moisture_content,
+            'price_per_mon': paddy_stock.price_per_mon,
+            'image': paddy_stock.image,
+        }
+        form = MarketplaceForm(initial=initial_data)
+
+    return render(request, 'dealer/dummy_marketplace.html', {'form': form})
