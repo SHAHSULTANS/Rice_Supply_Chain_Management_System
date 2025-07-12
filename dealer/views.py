@@ -86,7 +86,7 @@ def add_paddy_post(request):
 def see_all_paddy_posts(request):
     sort = request.GET.get('sort', 'recent')
 
-    posts = PaddyStock.objects.filter(is_available=True)
+    posts = Marketplace.objects.filter(is_available=True)
 
     if sort == 'price_asc':
         posts = posts.order_by('price_per_mon')
@@ -95,7 +95,8 @@ def see_all_paddy_posts(request):
     elif sort == 'moisture':
         posts = posts.order_by('moisture_content')
     else:  # 'recent' বা By Default
-        posts = posts.order_by('-stored_since')
+        # posts = posts.order_by('-stored_since')
+        pass
 
     avg_price = posts.aggregate(avg=Avg('price_per_mon'))['avg']
     total_quantity = posts.aggregate(total=Sum('quantity'))['total'] or 0
@@ -151,7 +152,7 @@ def delete_post(request, post_id):
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import DealerProfile, PaddyPurchaseFromFarmer
+from .models import DealerProfile, Marketplace, PaddyPurchaseFromFarmer
 from .forms import DealerProfileEditForm, MarketplaceForm, PaddyPurchaseForm
 
 def edit_dealer_profile(request):
