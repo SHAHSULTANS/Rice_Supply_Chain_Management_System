@@ -23,7 +23,11 @@ def dealer_dashboard(request):
     dealer = get_object_or_404(DealerProfile, user=request.user)
 
     # Get all posts by this dealer
-    posts = PaddyStock.objects.filter(dealer=dealer).order_by('-stored_since')
+    posts = PaddyStock.objects.filter(
+                dealer=dealer,
+                available_quantity__gt=0
+            ).order_by('-stored_since')
+
 
     # Dashboard metrics
     active_posts_count = posts.filter(is_available=True).count()
