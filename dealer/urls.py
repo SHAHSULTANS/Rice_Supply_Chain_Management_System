@@ -28,5 +28,7 @@ urlpatterns = [
     path('paddy-purchase/add/', views.create_purchase, name='paddy_purchase_add'),
     path('purchases/', views.all_purchases_list, name='all_purchases_list'),
 
+    path('marketplace/create/<int:id>/', views.create_marketplace_post, name='create_marketplace_post'),
+
 
 ]
