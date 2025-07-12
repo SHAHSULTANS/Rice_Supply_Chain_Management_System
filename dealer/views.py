@@ -113,8 +113,8 @@ def see_all_paddy_posts(request):
 
 
 def paddy_detail(request,post_id):
-    post = get_object_or_404(PaddyStock, id=post_id)
-    similar_products = PaddyStock.objects.filter(
+    post = get_object_or_404(Marketplace, id=post_id)
+    similar_products = Marketplace.objects.filter(
         dealer=post.dealer, is_available=True
     ).exclude(id=post_id)[:4]
     
