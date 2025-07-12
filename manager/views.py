@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render,redirect,get_object_or_404,HttpResponse
 from .models import ManagerProfile, RicePost, Purchase_paddy,PurchaseRice,PaymentForPaddy,PaymentForRice, PaddyStockOfManager,RiceStock
-from dealer.models import PaddyStock
+from dealer.models import Marketplace, PaddyStock
 from .forms import ManagerProfileForm, RicePostForm, Purchase_paddyForm, PurchaseRiceForm,PaymentForPaddyForm, PaymentForRiceForm,RiceStockForm,PaddyStockForm
 from decimal import Decimal
 from django.db.models import Count, Sum, Avg
@@ -169,7 +169,7 @@ def explore_paddy_post(request):
     
     sort = request.GET.get('sort', 'recent')
 
-    posts = PaddyStock.objects.filter(is_available=True)
+    posts = Marketplace.objects.filter(is_available=True)
 
     if sort == 'price_asc':
         posts = posts.order_by('price_per_mon')
