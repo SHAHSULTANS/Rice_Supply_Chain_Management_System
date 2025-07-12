@@ -21,6 +21,9 @@
       <a href="{% url 'paddy_purchase_add' %}" class="btn btn-success btn-hover-grow">
         <i class="fas fa-plus-circle me-2"></i>Add New Purchase
       </a>
+       <a href="{% url 'all_purchases_list' %}" class="btn btn-outline-primary btn-hover-grow">
+        <i class="fas fa-store me-2"></i>Purchases History
+      </a>
       <a href="{% url 'marketplace_paddy_posts' %}" class="btn btn-outline-primary btn-hover-grow">
         <i class="fas fa-store me-2"></i>Marketplace
       </a>
@@ -170,6 +173,12 @@
                                   data-bs-target="#deleteModal{{ post.id }}" title="Delete">
                             <i class="fas fa-trash-alt"></i>
                           </button>
+                          <a href="{% url 'create_marketplace_post' post.id %}" 
+                            class="btn btn-sm btn-outline-success btn-action"
+                            data-bs-toggle="tooltip" title="Post to Marketplace">
+                            <i class="fas fa-store"></i>
+                          </a>
+
                         </div>
                       </td>
                     </tr>
