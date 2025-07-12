@@ -18,7 +18,6 @@ def check_dealer(user):
 
 @login_required(login_url='login')
 @user_passes_test(check_dealer)
-@login_required
 def dealer_dashboard(request):
     dealer = get_object_or_404(DealerProfile, user=request.user)
 
@@ -69,7 +68,8 @@ def dealer_profile_create(request, user_id):
 
 
 
-
+@login_required(login_url='login')
+@user_passes_test(check_dealer)
 def add_paddy_post(request):
     if request.method == 'POST':
         form = PaddyStockForm(request.POST , request.FILES)
@@ -127,6 +127,8 @@ def paddy_detail(request,post_id):
         'similar_products': similar_products
     })
 
+@login_required(login_url='login')
+@user_passes_test(check_dealer, login_url='login')
 def edit_paddy_post(request, post_id):
     post = get_object_or_404(PaddyStock, id=post_id)
 
@@ -144,6 +146,8 @@ def edit_paddy_post(request, post_id):
 
 
 from django.contrib import messages
+@login_required(login_url='login')
+@user_passes_test(check_dealer, login_url='login')
 def delete_post(request, post_id):
     post = get_object_or_404(PaddyStock, id=post_id)
     if request.method == 'POST':
@@ -158,6 +162,8 @@ from django.contrib import messages
 from .models import DealerProfile, Marketplace, PaddyPurchaseFromFarmer
 from .forms import DealerProfileEditForm, MarketplaceForm, PaddyPurchaseForm
 
+@login_required(login_url='login')
+@user_passes_test(check_dealer, login_url='login')
 def edit_dealer_profile(request):
     dealer_profile = request.user.dealerprofile
     print(dealer_profile)
@@ -182,7 +188,8 @@ def edit_dealer_profile(request):
 
 #order list
 
-@login_required
+@login_required(login_url='login')
+@user_passes_test(check_dealer, login_url='login')
 def dealer_order_list(request):
     dealer = get_object_or_404(DealerProfile, user=request.user)
     orders = Purchase_paddy.objects.filter(paddy__dealer=dealer).select_related('paddy', 'manager').order_by('-purchase_date')
@@ -407,7 +414,8 @@ def update_order_status_for_paddy(request, id):
 
 
 
-
+@login_required(login_url='login')
+@user_passes_test(check_dealer, login_url='login')
 def create_purchase(request):
     dealer = get_object_or_404(DealerProfile, user=request.user)
     if request.method == 'POST':
@@ -422,7 +430,8 @@ def create_purchase(request):
         form = PaddyPurchaseForm()
     return render(request, 'dealer/purchase_form.html', {'form': form})
 
-
+@login_required(login_url='login')
+@user_passes_test(check_dealer, login_url='login')
 def all_purchases_list(request):
     dealer = request.user.dealerprofile
     purchases = PaddyPurchaseFromFarmer.objects.filter(dealer=dealer).order_by('-created_at')
@@ -439,6 +448,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .models import PaddyStock
 from .forms import MarketplaceForm
 
+@login_required(login_url='login')
+@user_passes_test(check_dealer, login_url='login')
 def create_marketplace_post(request, id):
     dealer = request.user.dealerprofile
     paddy_stock = get_object_or_404(PaddyStock, id=id, dealer=dealer)
