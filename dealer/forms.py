@@ -62,27 +62,78 @@ class DealerProfileEditForm(forms.ModelForm):
     
     
 # --- Purchase Form ---
+# forms.py
+from django import forms
+from django.core.validators import MinValueValidator
+from .models import PaddyPurchaseFromFarmer
+
 class PaddyPurchaseForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Add Bootstrap classes to all fields
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control',
+                'placeholder': f'Enter {self.fields[field].label.lower()}'
+            })
+        
+        # Specific field customizations
+        self.fields['farmer_phone'].widget.attrs.update({
+            'pattern': '01[3-9]{1}[0-9]{8}',
+            'title': 'Please enter a valid Bangladeshi mobile number'
+        })
+        self.fields['quantity'].widget.attrs.update({
+            'min': '0.1',
+            'step': '0.1'
+        })
+        self.fields['purchase_price_per_mon'].widget.attrs.update({
+            'min': '0',
+            'step': '10'
+        })
+
     class Meta:
         model = PaddyPurchaseFromFarmer
         fields = [
             'farmer_name', 'farmer_phone', 'paddy_type', 'quantity',
             'purchase_price_per_mon', 'moisture_content',
-            'transport_cost', 'other_costs',
-            'notes'
+            'transport_cost', 'other_costs', 'notes'
         ]
         widgets = {
-            'purchase_date': forms.DateInput(attrs={'type': 'date'}),
+            'paddy_type': forms.Select(choices=[
+                ('BRRI 28', 'BRRI Dhan 28'),
+                ('BRRI 29', 'BRRI Dhan 29'),
+                ('BRRI 84', 'BRRI Dhan 84'),
+                ('Hybrid', 'Hybrid Variety'),
+                ('Local', 'Local Variety'),
+            ]),
             'notes': forms.Textarea(attrs={'rows': 3}),
+        }
+        labels = {
+            'purchase_price_per_mon': 'Price per Mon',
+            'moisture_content': 'Moisture Content'
+        }
+        help_texts = {
+            'moisture_content': 'Measure with moisture meter (12-14% ideal)',
+            'farmer_phone': 'For future communication'
         }
 
     def clean_moisture_content(self):
         moisture = self.cleaned_data['moisture_content']
         if not 5 <= moisture <= 25:
-            raise ValidationError("Moisture content must be between 5% and 25%")
-        return moisture
-    
-    
+            raise forms.ValidationError("Moisture content must be between 5% and 25%")
+        return round(moisture, 1)
+
+    def clean_quantity(self):
+        quantity = self.cleaned_data['quantity']
+        if quantity < 0.1:
+            raise forms.ValidationError("Minimum purchase quantity is 0.1 Mon (4kg)")
+        return quantity
+
+    def clean_farmer_phone(self):
+        phone = self.cleaned_data['farmer_phone']
+        if phone and (len(phone) != 11 or not phone.startswith('01')):
+            raise forms.ValidationError("Please enter a valid Bangladeshi mobile number")
+        return phone 
 
 
 from .models import Marketplace
