@@ -83,3 +83,23 @@ class PaddyPurchaseForm(forms.ModelForm):
         return moisture
     
     
+
+
+from .models import Marketplace
+
+class MarketplaceForm(forms.ModelForm):
+    class Meta:
+        model = Marketplace
+        fields = [
+            'paddy_stock', 'name', 'image',
+            'quantity', 'moisture_content',
+            'price_per_mon', 'quality_notes','status'
+        ]
+        
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+            # Read-only (disabled) fields
+            self.fields['name'].disabled = True
+            self.fields['image'].disabled = True
+            self.fields['moisture_content'].disabled = True

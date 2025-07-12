@@ -136,3 +136,48 @@ class PaddyPurchaseFromFarmer(models.Model):
         
         
         
+class Marketplace(models.Model):
+    STATUS_CHOICES = [
+        ('Draft', 'Draft'),
+        ('Published', 'Published'),
+        ('Sold', 'Sold'),
+    ]
+
+    # সম্পর্কিত স্টক
+    paddy_stock = models.ForeignKey(PaddyStock, on_delete=models.CASCADE, related_name='marketplace_posts')
+    dealer = models.ForeignKey(DealerProfile, on_delete=models.CASCADE)
+
+    # স্টক থেকে কপি হওয়া ফিল্ড — ফর্মে অটো-ফিল হবে
+    name = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='marketplace_images/', blank=True, null=True)
+    quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    moisture_content = models.DecimalField(max_digits=4, decimal_places=1)
+    price_per_mon = models.DecimalField(max_digits=10, decimal_places=2)
+    quality_notes = models.TextField(blank=True)
+    is_available = models.BooleanField(default=True)
+
+    # অতিরিক্ত
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Draft')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.quantity} mon @ {self.price_per_mon}/mon"
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            # প্রথমবার সেভ হলে প্যাডি স্টক থেকে ডেটা নিয়ে আসা
+            self.name = self.name or self.paddy_stock.name
+            self.image = self.image or self.paddy_stock.image
+            self.moisture_content = self.moisture_content or self.paddy_stock.moisture_content
+            self.price_per_mon = self.price_per_mon or self.paddy_stock.price_per_mon
+            self.quality_notes = self.quality_notes or self.paddy_stock.quality_notes
+
+            # 🔴 নিরাপত্তা: স্টকে পর্যাপ্ত পরিমাণ আছে কি না
+            if self.quantity > self.paddy_stock.available_quantity:
+                raise ValueError("Cannot list more than available quantity in stock")
+
+            # 🟡 স্টক থেকে quantity কমানো
+            self.paddy_stock.available_quantity -= self.quantity
+            self.paddy_stock.save()
+
+        super().save(*args, **kwargs)
