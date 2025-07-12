@@ -436,9 +436,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .models import PaddyStock
 from .forms import MarketplaceForm
 
-def create_marketplace_post(request, id):  # এখানে id হলো PaddyStock এর id
+def create_marketplace_post(request, id):
     dealer = request.user.dealerprofile
-    paddy_stock = get_object_or_404(PaddyStock, id=id, dealer=dealer)  # স্টক নিশ্চিত করতে যে ওই ডিলারেরই
+    paddy_stock = get_object_or_404(PaddyStock, id=id, dealer=dealer)
 
     if request.method == "POST":
         form = MarketplaceForm(request.POST, request.FILES)
@@ -448,7 +448,6 @@ def create_marketplace_post(request, id):  # এখানে id হলো PaddyS
             post.save()
             return redirect('dealer_dashboard')
     else:
-        # GET রিকোয়েস্টে ফর্মে ডিফল্ট ভ্যালু হিসেবে PaddyStock থেকে ডাটা সেট করা
         initial_data = {
             'paddy_stock': paddy_stock,
             'name': paddy_stock.name,
@@ -459,4 +458,7 @@ def create_marketplace_post(request, id):  # এখানে id হলো PaddyS
         }
         form = MarketplaceForm(initial=initial_data)
 
-    return render(request, 'dealer/dummy_marketplace.html', {'form': form})
+    return render(request, 'dealer/marketplace_form.html', {
+        'form': form,
+        'paddy_stock': paddy_stock  # Pass the stock object to template
+    })
