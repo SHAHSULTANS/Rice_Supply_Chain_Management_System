@@ -141,10 +141,11 @@
                     <th>Variety</th>
                     <th>Qty</th>
                     <th>Price</th>
+                    <th>Others Cost</th>
                     <th>Moisture</th>
                     <th>Status</th>
                     <th>Actions</th>
-                    <th>AVG</th>
+                    
                   </tr>
                 </thead>
                 <tbody>
@@ -156,6 +157,7 @@
                       </td>
                       <td>{{ post.available_quantity }} units</td>
                       <td>৳{{ post.average_purchase_price }}/মন</td>
+                      <td>{{post.average_transport_cost}} + {{post.average_other_cost}}</td>
                       <td>{{ post.moisture_content }}%</td>
                       <td>
                         {% if post.is_available %}
@@ -182,7 +184,6 @@
 
                         </div>
                       </td>
-                      <td>{{post.average_transport_cost}}</td>
                     </tr>
                   {% endfor %}
                 </tbody>
