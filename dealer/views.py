@@ -95,8 +95,7 @@ def see_all_paddy_posts(request):
     elif sort == 'moisture':
         posts = posts.order_by('moisture_content')
     else:  # 'recent' বা By Default
-        # posts = posts.order_by('-stored_since')
-        pass
+        posts = posts.order_by('-stored_since')
 
     avg_price = posts.aggregate(avg=Avg('price_per_mon'))['avg']
     total_quantity = posts.aggregate(total=Sum('quantity'))['total'] or 0
