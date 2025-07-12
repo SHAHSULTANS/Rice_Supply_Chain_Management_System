@@ -141,16 +141,24 @@ from .models import Marketplace
 class MarketplaceForm(forms.ModelForm):
     class Meta:
         model = Marketplace
-        fields = [
-            'paddy_stock', 'name', 'image',
-            'quantity', 'moisture_content',
-            'price_per_mon', 'quality_notes','status'
-        ]
+        fields = ['paddy_stock', 'name', 'image', 'quantity', 
+                 'moisture_content', 'price_per_mon', 'quality_notes', 'status']
         
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-
-            # Read-only (disabled) fields
-            self.fields['name'].disabled = True
-            self.fields['image'].disabled = True
-            self.fields['moisture_content'].disabled = True
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Style all fields
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
+            
+        # Special handling
+        self.fields['quality_notes'].widget.attrs.update({
+            'rows': 3,
+            'placeholder': 'Describe the quality, any special characteristics...'
+        })
+        
+        # Disabled fields
+        self.fields['name'].disabled = True
+        self.fields['moisture_content'].disabled = True
