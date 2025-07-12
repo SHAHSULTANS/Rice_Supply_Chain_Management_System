@@ -46,7 +46,7 @@ class PaddyStock(models.Model):
     available_quantity = models.PositiveIntegerField(default=0)
     average_purchase_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     average_transport_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    other_costs = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    average_other_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     moisture_content = models.DecimalField(max_digits=4, decimal_places=1)
     image = models.ImageField(upload_to='paddy_images/', blank=True, null=True)
     #this avg price per mon( with transport, other cost)
