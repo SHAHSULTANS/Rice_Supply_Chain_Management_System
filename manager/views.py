@@ -1001,17 +1001,17 @@ def profit_loss_report_for_rice_to_manager(request):
                 # print(report_data)
                 
                 
-                context = {
+                # context = {
+                #     "check": 1,
+                #     "report_data": report_data if report_data else '',
+                # }
+                # return render(request, "manager/stock/profit_loss_report.html", context)
+
+    context = {
                     "check": 1,
                     "report_data": report_data if report_data else '',
                 }
-                return render(request, "manager/stock/profit_loss_report.html", context)
-    print("Last")
-    # context = {
-    #                 "check": 1,
-    #                 "report_data": report_data if report_data else '',
-    #             }
-    # return render(request, "manager/stock/profit_loss_report.html", context)    
+    return render(request, "manager/stock/profit_loss_report.html", context)    
         
  # or your actual permission check
 

@@ -5,8 +5,8 @@ password : 1234
 username: belaboshe379
 password: onnerhole
 
-Username : abdullah
-password : 1234
+username: sourav
+pass: sa389389
 
 
 
@@ -19,8 +19,12 @@ password: TInishat2002
 # for delear
 username : hasan
 password : 1234hhhh
+
 username: alamin77
 password: tumiami07
+
+username : pallas
+pass: ehp378378
 
 
 
