@@ -10,7 +10,6 @@ from dealer.models import DealerProfile, PaddyStock
 from manager.models import Purchase_paddy
 from django.utils import timezone
 from datetime import timedelta
-
 # Create your views here.
 
 def check_dealer(user):
@@ -376,10 +375,12 @@ def accept_paddy_order(request, id):
     except DealerProfile.DoesNotExist:
         return HttpResponse("Dealer profile not found", status=404)
     
+    print(dealer_profile)
     order = get_object_or_404(Purchase_paddy, id=id, paddy__dealer=dealer_profile)
 
     if request.method == "POST":
-        new_status = request.POST.get("new_status")
+        new_status = request.POST.get("Accepted")
+        print(new_status)
         if new_status in ["Accepted", "Cancel"]:
             order.status = new_status
             order.save()
@@ -435,11 +436,19 @@ def create_purchase(request):
 def all_purchases_list(request):
     dealer = request.user.dealerprofile
     purchases = PaddyPurchaseFromFarmer.objects.filter(dealer=dealer).order_by('-created_at')
+    
+    if purchases:
 
-    context = {
-        'purchases': purchases
-    }
-    return render(request, 'dealer/purchases_list.html', context)
+        context = {
+            'purchases': purchases,
+        }
+        return render(request, 'dealer/purchases_list.html', context)
+    else:
+        context = {
+            'purchases': "",
+        }
+        return render(request, 'dealer/purchases_list.html', context)
+        
 
 
 
@@ -468,7 +477,7 @@ def create_marketplace_post(request, id):
             'quantity': paddy_stock.available_quantity,
             'moisture_content': paddy_stock.moisture_content,
             'price_per_mon': paddy_stock.price_per_mon,
-            'image': paddy_stock.image,
+            # 'image': paddy_stock.image,
         }
         form = MarketplaceForm(initial=initial_data)
 

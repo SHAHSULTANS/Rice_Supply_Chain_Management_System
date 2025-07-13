@@ -1,7 +1,7 @@
 from django.db import models
 
 from accounts.models import CustomUser
-from dealer.models import PaddyStock
+from dealer.models import Marketplace, PaddyStock
 
 # Create your models here.
 
@@ -44,7 +44,7 @@ class Purchase_paddy(models.Model):
         ('Successful', 'Successful'),
     ]
     manager = models.ForeignKey(CustomUser,on_delete=models.CASCADE,limit_choices_to={'role':'manager'})
-    paddy = models.ForeignKey(PaddyStock,on_delete=models.CASCADE,related_name="purchase_paddy")
+    paddy = models.ForeignKey(Marketplace,on_delete=models.CASCADE,related_name="purchase_paddy")
     quantity_purchased = models.FloatField()
     moisture_content = models.DecimalField(max_digits=4, decimal_places=1, help_text="Moisture content (%)", null=True,blank=True)
     total_price = models.DecimalField(max_digits=10,decimal_places=2)
@@ -88,7 +88,7 @@ class PaymentForPaddy(models.Model):
     ]
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    paddy = models.ForeignKey(PaddyStock, on_delete=models.CASCADE)
+    paddy = models.ForeignKey(Marketplace, on_delete=models.CASCADE)
     transaction_id = models.CharField(max_length=100, unique=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     is_paid = models.BooleanField(default=False)

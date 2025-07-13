@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render,redirect,get_object_or_404,HttpResponse
 from .models import ManagerProfile, RicePost, Purchase_paddy,PurchaseRice,PaymentForPaddy,PaymentForRice, PaddyStockOfManager,RiceStock
-from dealer.models import Marketplace, PaddyStock
+from dealer.models import Marketplace, PaddyStock,Marketplace
 from .forms import ManagerProfileForm, RicePostForm, Purchase_paddyForm, PurchaseRiceForm,PaymentForPaddyForm, PaymentForRiceForm,RiceStockForm,PaddyStockForm
 from decimal import Decimal
 from django.db.models import Count, Sum, Avg
@@ -199,7 +199,7 @@ def explore_paddy_post(request):
 @login_required(login_url="login")
 @user_passes_test(check_manager)
 def purchase_paddy(request,id):
-    paddy = get_object_or_404(PaddyStock, id=id , is_available=True)
+    paddy = get_object_or_404(Marketplace, id=id , is_available=True)
     if request.method == "POST":
         form = Purchase_paddyForm(request.POST)
         if form.is_valid():
@@ -563,7 +563,7 @@ def search(request):
     paddy_results = []
 
     user = request.user
-
+    print(query)
     if user.is_authenticated:
         if user.role in ["manager", "admin"]:
             if query:
@@ -571,13 +571,15 @@ def search(request):
                     Q(rice_name__icontains=query) |
                     Q(description__icontains=query)
                 )
-                paddy_results = PaddyStock.objects.filter(
+                paddy_results = Marketplace.objects.filter(
                     Q(name__icontains=query)
                 )
+                all = Marketplace.objects.all()
+                print(all)
 
         elif user.role == "dealer":
             if query:
-                paddy_results = PaddyStock.objects.filter(
+                paddy_results = Marketplace.objects.filter(
                     Q(name__icontains=query)
                 )
 
@@ -937,7 +939,7 @@ def delete_paddy_stock(request,id):
 @login_required(login_url="login")
 @user_passes_test(check_manager_and_admin)
 def profit_loss_report_for_rice_to_manager(request):
-    
+    report_data = []
     # Find the manager who buy rice from another manager
     selling_rice_to_manager = PurchaseRice.objects.filter(
         rice__manager=request.user, status="Successful"
@@ -945,66 +947,71 @@ def profit_loss_report_for_rice_to_manager(request):
     
     # find the manager who sell rice to another manager
     Owner_manager = PurchaseRice.objects.filter(
-        manager=request.user, status="Successful"
+        status="Successful"
     ).order_by("-purchase_date")
     # #########
-    
-    if selling_rice_to_manager:
-        report_data = []
-        for selling in Owner_manager:
-            # print(selling.manager)
-            selling_rice = RiceStock.objects.get(manager=selling.manager,rice_name = selling.rice.rice_name)
-            buying_price_per_kg = selling_rice.average_price_per_kg
-            # print(buying_price_per_kg)
-            for row in selling_rice_to_manager:
-                
-                
-                # print("Buyer_manager: ",row.manager.managerprofile.full_name)
-                # print("Seller_manager: ",selling_rice.manager.managerprofile.full_name)
-                # print("Seller_manager: ",row.rice.manager.managerprofile.full_name)
-                # print("Buyer_manager: ",selling.rice.manager.managerprofile.full_name)
-                
-                if row.manager.managerprofile.full_name == selling.rice.manager.managerprofile.full_name:
-                
-                    try:
-                        stock = RiceStock.objects.get( rice_name=row.rice.rice_name)
-                        cost_per_kg = stock.average_price_per_kg
-                    except RiceStock.DoesNotExist:
-                        cost_per_kg = Decimal('0.00')
-                    # print(cost_per_kg)
-
-                    quantity = Decimal(str(row.quantity_purchased))
-                    total_cost = buying_price_per_kg * quantity
-                    selling_price = Decimal(str(row.total_price)) -Decimal(str(row.delivery_cost))
-                    print(buying_price_per_kg)
-                    selling_price_per_kg = selling_price / quantity
-                    profit_or_loss = selling_price - total_cost
-                    profit_or_loss_abs = abs(profit_or_loss)
-
-                    report_data.append({
-                        "row": row,
-                        "cost_per_kg": selling_rice.average_price_per_kg,
-                        "selling_price":selling_price,
-                        "selling_price_per_kg":selling_price_per_kg,
-                        "total_cost": total_cost,
-                        "profit_or_loss": profit_or_loss,
-                        "profit_or_loss_abs": profit_or_loss_abs
-                    })
-                    
-                    
-                    context = {
-                        "check":1,
-                        "report_data": report_data,
-                    }
-
-                    return render(request, "manager/stock/profit_loss_report.html",context)
-    else:
-        context = {
-                        "check":1,
-                        "report_data":'',
-                    }
-        return render(request, "manager/stock/profit_loss_report.html",context)
+    # for rice in selling_rice_to_manager:
         
+    #     print(rice.manager.managerprofile.full_name)
+    # print(Owner_manager)
+    # print("HI")
+    for selling in Owner_manager:
+        # print(selling.manager)
+        # print("hello")
+        selling_rice = RiceStock.objects.get(manager=selling.manager,rice_name = selling.rice.rice_name)
+        # buying_price_per_kg = selling_rice.average_price_per_kg
+        # print(buying_price_per_kg)
+        for row in selling_rice_to_manager:
+                
+                
+            # print("\nBuyer_manager: ",row.manager.managerprofile.full_name)
+            # print("Seller_manager: ",selling_rice.manager.managerprofile.full_name)
+            # print("Seller_manager: ",row.rice.manager.managerprofile.full_name)
+            # print("Buyer_manager: ",selling.rice.manager.managerprofile.full_name)
+            # print()
+                
+            if row.manager.managerprofile.full_name == selling_rice.manager.managerprofile.full_name:
+                # print("Inside if")
+                buying_cost_per_kg = 0
+                try:
+                    stock = RiceStock.objects.get(manager=request.user, rice_name=row.rice.rice_name)
+                    buying_cost_per_kg = stock.average_price_per_kg
+                except RiceStock.DoesNotExist:
+                    buying_cost_per_kg = Decimal('0.00')
+
+                # print("buying_cost_per_kg= ",buying_cost_per_kg)
+                quantity = Decimal(str(row.quantity_purchased))
+                total_buying_cost = buying_cost_per_kg * quantity
+                
+                selling_price = Decimal(str(row.total_price)) -Decimal(str(row.delivery_cost))
+                buying_price_per_kg = selling_price//quantity
+                # print(buying_price_per_kg)
+                selling_price_per_kg = selling_price / quantity
+                profit_or_loss = selling_price - total_buying_cost
+                profit_or_loss_abs = abs(profit_or_loss)
+                report_data.append({
+                    "row": row,
+                    "cost_per_kg": buying_cost_per_kg,
+                    "selling_price":selling_price,
+                    "selling_price_per_kg":selling_price_per_kg,
+                    "total_cost": total_buying_cost,
+                    "profit_or_loss": profit_or_loss,
+                    "profit_or_loss_abs": profit_or_loss_abs
+                })
+                # print(report_data)
+                
+                
+                context = {
+                    "check": 1,
+                    "report_data": report_data if report_data else '',
+                }
+                return render(request, "manager/stock/profit_loss_report.html", context)
+    print("Last")
+    # context = {
+    #                 "check": 1,
+    #                 "report_data": report_data if report_data else '',
+    #             }
+    # return render(request, "manager/stock/profit_loss_report.html", context)    
         
  # or your actual permission check
 

@@ -2,6 +2,9 @@
 Username : manager
 password : 1234
 
+username: belaboshe379
+password: onnerhole
+
 Username : abdullah
 password : 1234
 
@@ -16,12 +19,14 @@ password: TInishat2002
 # for delear
 username : hasan
 password : 1234hhhh
+username: alamin77
+password: tumiami07
 
 
 
 #for Admin
-Username = khaledmahmud
-password = 1234
+username: khaled391
+password: mahmud12345
 
 python3 manage.py runserver 0.0.0.0:8000   
 http://192.168.1.107:8000

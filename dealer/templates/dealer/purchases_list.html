@@ -21,6 +21,8 @@
             </div>
         </div>
         
+        {% if purchases %}
+            
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
@@ -142,6 +144,9 @@
             </div>
             {% endif %}
         </div>
+        {% else %}
+         <p>No purchases found.</p>
+        {% endif %}
     </div>
 </div>
 
