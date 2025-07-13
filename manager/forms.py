@@ -33,13 +33,14 @@ class RicePostForm(forms.ModelForm):
 class RiceStockForm(forms.ModelForm):
     class Meta:
         model = RiceStock
-        fields = ['rice_name', 'quality', 'rice_type', 'stock_quantity', 'average_price_per_kg']
+        fields = ['rice_name', 'quality', 'rice_type', 'stock_quantity', 'average_price_per_kg','total_price']
         widgets = {
             'rice_name': forms.TextInput(attrs={'class': 'form-control'}),
             'quality': forms.TextInput(attrs={'class': 'form-control'}),
             'rice_type': forms.TextInput(attrs={'class': 'form-control'}),
             'stock_quantity': forms.NumberInput(attrs={'class': 'form-control'}),
             'average_price_per_kg': forms.NumberInput(attrs={'class': 'form-control'}),
+            'total_price': forms.NumberInput(attrs={'class': 'form-control'}),
         }
 class PaddyStockForm(forms.ModelForm):
     class Meta:

@@ -949,55 +949,61 @@ def profit_loss_report_for_rice_to_manager(request):
     ).order_by("-purchase_date")
     # #########
     
-    
-    report_data = []
-    for selling in Owner_manager:
-        # print(selling.manager)
-        selling_rice = RiceStock.objects.get(manager=selling.manager,rice_name = selling.rice.rice_name)
-        buying_price_per_kg = selling_rice.average_price_per_kg
-        # print(buying_price_per_kg)
-        for row in selling_rice_to_manager:
-            
-            
-            # print("Buyer_manager: ",row.manager.managerprofile.full_name)
-            # print("Seller_manager: ",selling_rice.manager.managerprofile.full_name)
-            # print("Seller_manager: ",row.rice.manager.managerprofile.full_name)
-            # print("Buyer_manager: ",selling.rice.manager.managerprofile.full_name)
-            
-            if row.manager.managerprofile.full_name == selling.rice.manager.managerprofile.full_name:
-            
-                try:
-                    stock = RiceStock.objects.get( rice_name=row.rice.rice_name)
-                    cost_per_kg = stock.average_price_per_kg
-                except RiceStock.DoesNotExist:
-                    cost_per_kg = Decimal('0.00')
-                # print(cost_per_kg)
-
-                quantity = Decimal(str(row.quantity_purchased))
-                total_cost = buying_price_per_kg * quantity
-                selling_price = Decimal(str(row.total_price)) -Decimal(str(row.delivery_cost))
-                print(buying_price_per_kg)
-                selling_price_per_kg = selling_price / quantity
-                profit_or_loss = selling_price - total_cost
-                profit_or_loss_abs = abs(profit_or_loss)
-
-                report_data.append({
-                    "row": row,
-                    "cost_per_kg": selling_rice.average_price_per_kg,
-                    "selling_price":selling_price,
-                    "selling_price_per_kg":selling_price_per_kg,
-                    "total_cost": total_cost,
-                    "profit_or_loss": profit_or_loss,
-                    "profit_or_loss_abs": profit_or_loss_abs
-                })
+    if selling_rice_to_manager:
+        report_data = []
+        for selling in Owner_manager:
+            # print(selling.manager)
+            selling_rice = RiceStock.objects.get(manager=selling.manager,rice_name = selling.rice.rice_name)
+            buying_price_per_kg = selling_rice.average_price_per_kg
+            # print(buying_price_per_kg)
+            for row in selling_rice_to_manager:
                 
                 
-                context = {
-                    "check":1,
-                    "report_data": report_data,
-                }
+                # print("Buyer_manager: ",row.manager.managerprofile.full_name)
+                # print("Seller_manager: ",selling_rice.manager.managerprofile.full_name)
+                # print("Seller_manager: ",row.rice.manager.managerprofile.full_name)
+                # print("Buyer_manager: ",selling.rice.manager.managerprofile.full_name)
+                
+                if row.manager.managerprofile.full_name == selling.rice.manager.managerprofile.full_name:
+                
+                    try:
+                        stock = RiceStock.objects.get( rice_name=row.rice.rice_name)
+                        cost_per_kg = stock.average_price_per_kg
+                    except RiceStock.DoesNotExist:
+                        cost_per_kg = Decimal('0.00')
+                    # print(cost_per_kg)
 
-                return render(request, "manager/stock/profit_loss_report.html",context)
+                    quantity = Decimal(str(row.quantity_purchased))
+                    total_cost = buying_price_per_kg * quantity
+                    selling_price = Decimal(str(row.total_price)) -Decimal(str(row.delivery_cost))
+                    print(buying_price_per_kg)
+                    selling_price_per_kg = selling_price / quantity
+                    profit_or_loss = selling_price - total_cost
+                    profit_or_loss_abs = abs(profit_or_loss)
+
+                    report_data.append({
+                        "row": row,
+                        "cost_per_kg": selling_rice.average_price_per_kg,
+                        "selling_price":selling_price,
+                        "selling_price_per_kg":selling_price_per_kg,
+                        "total_cost": total_cost,
+                        "profit_or_loss": profit_or_loss,
+                        "profit_or_loss_abs": profit_or_loss_abs
+                    })
+                    
+                    
+                    context = {
+                        "check":1,
+                        "report_data": report_data,
+                    }
+
+                    return render(request, "manager/stock/profit_loss_report.html",context)
+    else:
+        context = {
+                        "check":1,
+                        "report_data":'',
+                    }
+        return render(request, "manager/stock/profit_loss_report.html",context)
         
         
  # or your actual permission check
