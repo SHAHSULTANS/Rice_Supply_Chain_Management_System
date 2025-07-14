@@ -45,6 +45,9 @@
                             {% if order.payment %}
                                 
                                 <span class="btn btn-success">Paid</span>
+                            {% elif order.status == "Delivered" %}
+
+                            <button disabled class="btn btn-primary">Mock Pay</button>
                             {% else %}
                                 <a href="{% url 'mock_rice_payment' order.id %}" class="btn btn-sm btn-primary">Mock Pay</a>
                             {% endif %}

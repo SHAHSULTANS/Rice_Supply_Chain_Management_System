@@ -379,7 +379,7 @@ def accept_paddy_order(request, id):
     order = get_object_or_404(Purchase_paddy, id=id, paddy__dealer=dealer_profile)
 
     if request.method == "POST":
-        new_status = request.POST.get("Accepted")
+        new_status = request.POST.get("new_status")
         print(new_status)
         if new_status in ["Accepted", "Cancel"]:
             order.status = new_status
